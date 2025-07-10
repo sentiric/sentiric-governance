@@ -39,4 +39,17 @@ Bu doküman, platformun sağlığını, performansını ve davranışını anlam
 
 Bu yapı, proaktif bir şekilde sorunları tespit etmemizi ve platformun performansını sürekli olarak iyileştirmemizi sağlayacaktır.
 
+## 4. Dağıtık İzleme (Distributed Tracing)
+
+Loglama "ne olduğunu", metrikler "ne kadar olduğunu" söylerken, dağıtık izleme **"nerede ve neden yavaş olduğunu"** söyler. Bu, mikroservis mimarimiz için kritik öneme sahiptir.
+
+*   **Standart:** **OpenTelemetry** standardını benimseyeceğiz.
+*   **Uygulama:**
+    1.  `sentiric-telephony-gateway`, bir çağrı aldığında benzersiz bir **`trace_id`** oluşturur.
+    2.  Bu `trace_id`, isteğin geçtiği tüm servisler (`agent-worker`, `api-server`, vb.) ve hatta harici API çağrıları (HTTP header'ları aracılığıyla) boyunca taşınır.
+    3.  Her servis, kendi içindeki ana işlemler (span'ler) için (örn: `asr_processing`, `llm_call`) başlangıç ve bitiş zamanlarını bu `trace_id` ile ilişkilendirerek kaydeder.
+*   **Toplama ve Görselleştirme:**
+    *   Tüm servislerden gelen izleme verileri (traces), **Grafana Tempo** veya **Jaeger** gibi bir arka uca gönderilecektir.
+    *   Grafana üzerinden, tek bir `trace_id` ile bir çağrının tüm yaşam döngüsünü, hangi serviste ne kadar zaman harcadığını gösteren bir "şelale grafiği" (waterfall chart) görüntüleyebileceğiz. Bu, performans darboğazlarını tespit etmek için en güçlü aracımız olacaktır.
+
 ---

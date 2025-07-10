@@ -63,4 +63,23 @@ Platform içindeki `EventBus` üzerinden geçen tüm olayların payload'ları tu
 }
 ```
 
+## 4. Standart Hata Yanıt Yapısı (Geliştirilmiş)
+
+Tüm `4xx` ve `5xx` hataları, istemcinin hatayı programatik olarak işlemesini sağlayacak tutarlı bir yapı döndürmelidir.
+
+```json
+{
+  "error": {
+    "type": "VALIDATION_ERROR", // Genel hata kategorisi (örn: AUTHENTICATION_ERROR, NOT_FOUND)
+    "code": "INVALID_PHONE_NUMBER", // Daha spesifik, makine tarafından okunabilir kod
+    "message": "Provided phone number is not valid.", // İnsan tarafından okunabilir açıklama
+    "details": [ // Opsiyonel, özellikle validasyon hataları için
+      {
+        "field": "phoneNumber",
+        "issue": "Must be a 10-digit number."
+      }
+    ],
+    "trace_id": "a1b2c3d4-e5f6-7890-1234-567890abcdef" // Hatanın takibi için Trace ID
+  }
+}
 ---

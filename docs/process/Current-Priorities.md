@@ -5,7 +5,7 @@ Bu belge, projenin "şimdi" neye odaklandığını gösteren yaşayan bir doküm
 ## 🎯 Mevcut Odak: Faz 0 - Kuruluş (Foundation)
 
 *   **Açıklama:** Projenin anayasası olan merkezi yönetim reposunu oluşturmak ve temel dokümanlarla doldurmak.
-*   **Durum:** ✅ **Tamamlandı** (Bu dokümanların commit'lenmesiyle birlikte).
+*   **Durum:** ✅ **Devam** (Bu dokümanların commit'lenmesiyle birlikte).
 
 ## ⚡ Sıradaki Görev (Up Next)
 
