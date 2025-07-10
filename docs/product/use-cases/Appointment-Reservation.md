@@ -66,19 +66,20 @@ Belirli hizmetler için ön ödeme veya kapora alınması gerektiğinde bu akı�
 
 ---
 
+---
 ## 🔧 Gelişmiş Rezervasyon Senaryoları
 
 ### Ön Rezervasyon (Pre-Reservation)
 Müşteri net bir tarih belirtmediğinde, sistem esnek bir ön rezervasyon oluşturabilir.
 
-- **Akış:** Müşteri "ön rezervasyon" istediğinde, sistem bir yer ayırır ve kesinleştirme için daha sonra geri arama veya SMS gönderme seçeneği sunar.
-- **Dikkat Edilecekler:** Bu tür rezervasyonların 48 saat içinde kesinleştirilmesi gerekir.
+*   **Akış:** Müşteri "ön rezervasyon" istediğinde, sistem bir yer ayırır ve kesinleştirme için daha sonra geri arama veya SMS gönderme seçeneği sunar.
+*   **Dikkat Edilecekler:** Bu tür rezervasyonların 48 saat içinde kesinleştirilmesi gerekir.
 
 ### Ödemeli Rezervasyon (Paid Reservation)
 Kapora veya ön ödeme gerektiren hizmetler için bu akış kullanılır.
 
-- **Akış:** Sistem, hizmetin ücretli olduğu bilgisini paylaşır ve "50₺ depozito alınacaktır" gibi bir bilgilendirme yapar. Müşteri onaylarsa, güvenli ödeme linki SMS ile gönderilir. Ödeme tamamlandığında randevu kesinleşir.
-- **Teknik Akış:**
+*   **Akış:** Sistem, hizmetin ücretli olduğu bilgisini paylaşır ve "50₺ depozito alınacaktır" gibi bir bilgilendirme yapar. Müşteri onaylarsa, güvenli ödeme linki SMS ile gönderilir. Ödeme tamamlandığında randevu kesinleşir.
+*   **Teknik Akış:**
   ```mermaid
   sequenceDiagram
       participant Müşteri
@@ -92,5 +93,3 @@ Kapora veya ön ödeme gerektiren hizmetler için bu akış kullanılır.
       Banka-->>Sentiric: Onay bilgisi
       Sentiric-->>Müşteri: "Ödemeniz alındı, randevunuz onaylandı!"
   ```
-
----
