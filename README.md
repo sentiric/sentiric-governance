@@ -11,7 +11,7 @@ Bu repo, Sentiric projesinin merkezi yönetim ve dokümantasyon merkezidir. Proj
 
 Projeyi ve felsefesini anlamak için aşağıdaki temel dokümanları inceleyin:
 
-1.  **[Proje Anayasası](./docs/0_PROJECT_CHARTER/):** Projenin "NEDEN" var olduğunu ve "NASIL" çalıştığını öğrenin.
+1.  **[Proje Anayasası (Project Charter)](./docs/0_PROJECT_CHARTER/):** Projenin "NEDEN" var olduğunu, "NASIL" çalıştığını ve uçtan uca akışını öğrenin.
 2.  **[Planlama ve Yürütme](./docs/1_PLANNING_AND_EXECUTION/):** Projenin bileşenlerini, yol haritasını ve anlık önceliklerini görün.
 3.  **[Standartlar ve Rehberler](./docs/2_STANDARDS_AND_GUIDES/):** Geliştirme süreçlerimizin teknik standartlarını inceleyin.
 4.  **[Takım ve Süreçler](./docs/4_TEAM_AND_PROCESS/):** Çalışma metodolojimizi ve işbirliği modelimizi anlayın.
