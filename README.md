@@ -16,6 +16,7 @@ Projeyi ve felsefesini anlamak için aşağıdaki temel dokümantasyon direkleri
 - **[⚙️ Operations](./docs/operations/):** Platformun nasıl dağıtılacağını, izleneceğini ve güvenliğinin nasıl sağlanacağını öğrenin.
 - **[📦 Product](./docs/product/):** Uçtan uca kullanıcı akışlarını, somut kullanım senaryolarını (Use Cases) ve bilgi bankasını keşfedin.
 - **[🤝 Process](./docs/process/):** Çalışma metodolojimizi, proje yönetim süreçlerimizi ve işbirliği modelimizi anlayın.
+- **[🔍 Reviews](./docs/reviews/):** Projenin periyodik sağlık kontrollerini ve kapsamlı analizlerini okuyun.
 
 ## 🏛️ Proje Yönetimi
 
