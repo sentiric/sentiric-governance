@@ -1,0 +1,97 @@
+# Sentiric Platform - Geliştirici Ortamı v2.0
+# Bu dosyayı projenin kök dizininden `docker-compose up -d` komutu ile çalıştırın.
+
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: sentiric_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/
+    environment:
+      - RABBITMQ_DEFAULT_USER=sentiric
+      - RABBITMQ_DEFAULT_PASS=sentiric_pass
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: sentiric_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: sentiric_postgres
+    environment:
+      - POSTGRES_USER=sentiric
+      - POSTGRES_PASSWORD=sentiric_pass
+      - POSTGRES_DB=sentiric_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sentiric -d sentiric_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  telephony-gateway:
+    build:
+      context: ./sentiric-telephony-gateway
+    container_name: sentiric_gateway
+    ports:
+      - "8080:8000"
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      # Diğer ortam değişkenleri...
+
+  agent-worker:
+    build:
+      context: ./sentiric-agent-worker
+    container_name: sentiric_worker
+    depends_on:
+      rabbitmq: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      postgres: { condition: service_healthy }
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - REDIS_HOST=redis
+      - DATABASE_URL=postgresql://sentiric:sentiric_pass@postgres/sentiric_db
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - WHISPER_API_KEY=${WHISPER_API_KEY}
+      # Diğer sır ve konfigürasyonlar...
+
+  knowledge-indexer:
+    build:
+      context: ./sentiric-knowledge-indexer
+    container_name: sentiric_indexer
+    depends_on:
+      postgres: { condition: service_healthy }
+    environment:
+      - DATABASE_URL=postgresql://sentiric:sentiric_pass@postgres/sentiric_db
+      # Vektör DB bağlantısı ve diğer ayarlar...
+    # Bu servis sürekli çalışmak yerine periyodik olarak çalışabilir (cron)
+    # veya bir olayla tetiklenebilir.
+
+volumes:
+  rabbitmq_data:
+  redis_data:
+  postgres_data:

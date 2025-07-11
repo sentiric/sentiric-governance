@@ -1,0 +1,9 @@
+# 🛡️ Sentiric: Güvenlik ve Uyumluluk Politikası (v2.0)
+...
+## 2. Veri Güvenliği ve Gizliliği
+...
+*   **Sır Yönetimi (Secret Management):** Güvenlik en yüksek önceliğimizdir.
+    *   **Politika:** API anahtarları, şifreler, veritabanı bağlantı dizeleri gibi sırlar **asla** kod tabanına veya Git repolarına commit edilmez.
+    *   **Geliştirme Ortamı (`local`):** Geliştirme kolaylığı için sırlar, `.gitignore` dosyasında listelenen bir `.env` dosyası aracılığıyla yönetilir. `docker-compose.yml` bu dosyayı okuyarak servislere ortam değişkeni olarak aktarır.
+    *   **Üretim Ortamı (`production`):** Sırlar, **ortam değişkenleri (environment variables)** aracılığıyla konteynerlere enjekte edilir. Bu değişkenler, CI/CD pipeline'ı tarafından `GitHub Secrets` veya bulut sağlayıcısının (AWS Secrets Manager, GCP Secret Manager, Azure Key Vault) güvenli deposundan çekilir. Bu, konfigürasyonu koddan ve sırlardan tamamen ayırır.
+...

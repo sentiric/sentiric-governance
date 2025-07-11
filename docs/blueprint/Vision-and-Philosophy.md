@@ -1,10 +1,11 @@
-# 📜 Vizyon ve Felsefe: "The Sentiric Way"
+# 📜 Vizyon ve Felsefe: "The Sentiric Way" (Revize Edilmiş v2.0)
 
 ## 1. Proje Manifestosu
 
-Geleneksel sesli asistanlar ve IVR sistemleri, genellikle katı, menü tabanlı ve sinir bozucu deneyimler sunar. Kullanıcı, sistemin kurallarına uymak zorundadır. **Sentiric, bu paradigmayı tersine çevirir.** Sistem, kullanıcının niyetini anlar, konuşmanın akışına adapte olur ve karmaşık görevleri tamamlamak için arka plandaki iş sistemleriyle akıllıca etkileşime girer.
+Geleneksel sesli asistanlar ve IVR sistemleri, kullanıcıyı katı menülere hapseden, sinir bozucu deneyimler sunar. **Sentiric, bu paradigmayı kökünden değiştirir.** Amacımız, `ChatGPT` veya `Google Gemini` ile konuşur gibi doğal ve akışkan bir deneyimi, gerçek dünya iş süreçlerine entegre etmektir. Sistem, kullanıcının kurallarına uymak yerine, kullanıcının niyetini anlar, konuşmanın akışına adapte olur ve karmaşık görevleri tamamlamak için arka plandaki iş sistemleriyle akıllıca etkileşime girer.
 
-**Vizyonumuz:** Geliştiricilerin, herhangi bir iş sürecini, güvenli, ölçeklenebilir ve son derece doğal bir sesli diyalog aracılığıyla otomatize edebileceği bir platform yaratmak.
+**Vizyonumuz:** Geliştiricilerin, herhangi bir iş sürecini, **gerçek zamanlı, akışkan ve insan benzeri bir sesli diyalog** aracılığıyla otomatize edebileceği bir platform yaratmak.
+
 
 **Hedef Kitlemiz:**
 *   **Geliştiriciler ve Startup'lar:** Karmaşık altyapılarla uğraşmadan, kendi ürünlerine hızlıca sesli etkileşim yetenekleri eklemek isteyenler.

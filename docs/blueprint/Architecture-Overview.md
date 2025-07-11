@@ -1,130 +1,124 @@
-# 🏗️ Sentiric: Kapsamlı Mimari Dokümanı
+# 🏗️ Sentiric: Kapsamlı Mimari Dokümanı (Mevcut Anayasa v3.0)
 
 ## 1. Mimari Vizyon ve Temel Prensipler
-**"Tak-Çıkar Lego Seti" Felsefesi:**
-- Her bileşen belirli bir sorumluluğa odaklanır
-- Bileşenler arası iletişim kesinlikle arayüzler üzerinden yapılır
-- Yeni adaptörler çalışma zamanında yüklenebilir
-- Sistem konfigürasyonla davranış değiştirebilir
+**"Tak-Çıkar Lego Seti" & "Gerçek Zamanlı AI Diyaloğu" Felsefesi:**
+- **Asenkron ve Dayanıklı:** Sistem, telefon görüşmesinin gerçek zamanlı doğasına saygı duyar. Bileşenler, **RabbitMQ** gibi bir mesaj kuyruğu üzerinden asenkron iletişim kurarak birbirlerinin yavaşlamasından veya çökmesinden etkilenmez.
+- **Teknoloji Bağımsız:** Her işlev (LLM, TTS, Takvim), soyut bir arayüz (`BaseLLM`) arkasında çalışan somut bir adaptör (`GeminiAdapter`) ile sisteme bağlanır. Bu, teknoloji yığınını (stack) kolayca değiştirmemizi sağlar.
+- **Akışkan Diyalog Odaklı:** Amacımız, katı menüler sunan bir IVR değil, `ChatGPT` veya `Gemini` gibi akışkan, bağlam farkındalığına sahip ve insan benzeri diyaloglar kurabilen bir platform oluşturmaktır.
 
-## 2. Tam Mimari Şeması (Geliştirilmiş Versiyon)
+## 2. Genel Mimari Şeması (Uygulanabilir ve Düzeltilmiş Versiyon)
+
+Bu şema, sistemin dayanıklılığını ve ölçeklenebilirliğini artıran Mesaj Kuyruğu (RabbitMQ) ve merkezi durum/konfigürasyon yönetimi (Redis) gibi kritik ve **bugün uygulamaya başlayacağımız** bileşenleri içermektedir.
 
 ```mermaid
 graph TD
-    subgraph "Dış Sistemler"
-        Kullanici[📞 Kullanıcı Telefonu]
-        Telefoni[☎️ Telefoni Sağlayıcısı]
-        AI[🧠 AI Servisleri]
-        Calendar[📅 Takvim Sistemleri]
-        CRM[👥 CRM Sistemleri]
+    subgraph Dış Sistemler
+        Kullanici("📞 Kullanıcı Telefonu")
+        Telefoni("☎️ Telefoni Sağlayıcısı (Twilio, vb.)")
+        AI("🧠 Harici AI Servisleri (Gemini, Whisper)")
+        ExternalSystems("💼 Harici İş Sistemleri (Takvim, CRM)")
+        VectorDB("📚 Vektör Veritabanı")
     end
 
-    subgraph "Sentiric Platformu"
-        Gateway[[sentiric-telephony-gateway]]
-        Worker[[sentiric-agent-worker]]
-        API[[sentiric-api-server]]
-        Dashboard[[sentiric-dashboard]]
-        DB[(🗄️ PostgreSQL)]
-        Cache[(⚡ Redis)]
-        Config[⚙️ Config Manager]
+    subgraph Sentiric Platformu
+        Gateway("[[sentiric-telephony-gateway]]")
+        Worker("[[sentiric-agent-worker]]")
+        API("[[sentiric-api-server]]")
+        Indexer("[[sentiric-knowledge-indexer]]")
+        Dashboard("[[sentiric-dashboard]]")
+
+        subgraph Çekirdek Altyapı
+            MQ("🐇 RabbitMQ (Mesaj Kuyruğu)")
+            DB("🗄️ PostgreSQL (SQLModel)")
+            Cache("⚡ Redis (Durum ve Önbellek)")
+        end
     end
 
+    %% Akışlar
     Kullanici -->|Arama| Telefoni
-    Telefoni -->|WebSocket| Gateway
-    Gateway -->|Ses Akışı| Worker
-    Worker -->|LLM API| AI
-    Worker -->|Calendar API| Calendar
-    Worker -->|CRM Entegrasyonu| CRM
-    Worker -->|Veri İşleme| DB
-    Worker -->|Önbellek| Cache
-    Dashboard -->|REST| API
+    Telefoni -->|WebSocket Ses| Gateway
+    Gateway -->|NewCallEvent| MQ
+    MQ -->|İşi Tüketir| Worker
+    
+    Worker -->|Durum Oku/Yaz| Cache
+    Worker -->|API Çağrıları| AI
+    Worker -->|Entegrasyon| ExternalSystems
+    Worker -->|Anlamsal Arama| VectorDB
+    Worker -->|Veri Saklama| DB
+    Worker -->|Ses Çalma Komutu| MQ
+    MQ -->|Komutu Tüketir| Gateway
+    Gateway -->|Ses Akışı| Telefoni
+    
+    Indexer -->|Vektör Yazar| VectorDB
+    Dashboard -->|REST API| API
     API -->|Veri Erişimi| DB
-    Config -->|Yapılandırma| Worker
-    Config -->|Yapılandırma| Gateway
 ```
 
-## 3. Genişletilmiş ve Detaylı Lego Mimarisi
+## 3. Genişletilmiş ve Detaylı Lego Mimarisi (Arayüz & Adaptörler)
+
+Bu diyagram, platformun "Tak-Çıkar" felsefesinin kalbini gösterir. `AgentWorker`, somut implementasyonlardan değil, soyut arayüzlerden (interfaces) haberdardır.
 
 ```mermaid
 classDiagram
-    %% Arayüz Tanımları
     class BaseLLM {
         <<interface>>
         +generateText(prompt: str, context: dict): str
+    }
+    class BaseSTT {
+        <<interface>>
         +transcribe(audio: bytes): str
     }
-
+    class BaseTTS {
+        <<interface>>
+        +synthesize(text: str): bytes
+    }
     class BaseTask {
         <<interface>>
-        +execute(context: dict): TaskResult
-        +getNextPrompt(): str
+        +execute(context: object): object
     }
-
-    class BaseAvailability {
+    class BaseCalendar {
         <<interface>>
-        +checkAvailability(slot: TimeSlot): bool
-        +reserveSlot(slot: TimeSlot): bool
+        +checkAvailability(slot: object): bool
     }
 
-    class BaseCRM {
-        <<interface>>
-        +getCustomerInfo(phone: str): Customer
-        +updateCustomerInfo(customer: Customer): bool
-    }
-
-    %% Adaptör Implementasyonları
     class GeminiAdapter {
-        +generateText(prompt: str, context: dict): str
-        +transcribe(audio: bytes): str
+      +generateText(prompt, context)
     }
-
+    class WhisperAdapter {
+      +transcribe(audio)
+    }
+    class ElevenLabsAdapter {
+      +synthesize(text)
+    }
     class GoogleCalendarAdapter {
-        +checkAvailability(slot: TimeSlot): bool
-        +reserveSlot(slot: TimeSlot): bool
+      +checkAvailability(slot)
     }
-
-    class SalesforceAdapter {
-        +getCustomerInfo(phone: str): Customer
-        +updateCustomerInfo(customer: Customer): bool
+    class ReservationTask {
+      +execute(context)
     }
-
-    %% Çekirdek Bileşenler
+    
     class AgentWorker {
-        -llmAdapter: BaseLLM
-        -activeTask: BaseTask
-        -crmAdapter: BaseCRM
-        +handleCall()
-        +switchTask()
-        +saveContext()
+        -llm_adapter: BaseLLM
+        -stt_adapter: BaseSTT
+        -tts_adapter: BaseTTS
+        -active_task: BaseTask
+        +handle_message_from_queue()
     }
 
-    %% İlişkiler
     BaseLLM <|-- GeminiAdapter
+    BaseSTT <|-- WhisperAdapter
+    BaseTTS <|-- ElevenLabsAdapter
     BaseTask <|-- ReservationTask
-    BaseTask <|-- InformationTask
-    BaseAvailability <|-- GoogleCalendarAdapter
-    BaseCRM <|-- SalesforceAdapter
+    BaseCalendar <|-- GoogleCalendarAdapter
     
     AgentWorker o--> BaseLLM
+    AgentWorker o--> BaseSTT
+    AgentWorker o--> BaseTTS
     AgentWorker o--> BaseTask
-    AgentWorker o--> BaseCRM
-    ReservationTask o--> BaseAvailability
+    ReservationTask o--> BaseCalendar
 ```
 
-**Anahtar Özellikler:**
-1. **Dinamik Adaptör Yönetimi:**
-```python
-def load_adapter(adapter_type: str, adapter_class: str, config: dict):
-    if adapter_type == "LLM":
-        self.llm_adapter = import_class(adapter_class)(config)
-    elif adapter_type == "CRM":
-        self.crm_adapter = import_class(adapter_class)(config)
-```
-
-2. **Görev Yaşam Döngüsü:**
-   - Görev bulucu (Task Finder) → Görev başlatma → Context yönetimi → Sonlandırma
-
-## 4. Tam Arama Akışı (Detaylı Sequence Diagram)
+## 4. Detaylı Arama Akışı (Sequence Diagram)
 
 ```mermaid
 sequenceDiagram
@@ -132,138 +126,77 @@ sequenceDiagram
     participant K as Kullanıcı
     participant T as Telefoni
     participant G as Gateway
+    participant MQ as RabbitMQ
     participant W as Worker
-    participant AI as AI Servisi
-    participant TS as Görev Sistemi
-    participant CRM as CRM
+    participant AI as AI Servisleri
     participant DB as Veritabanı
 
-    K->>T: Arama başlatır (0555 XXX XX XX)
+    K->>T: Arama başlatır
     T->>G: WebSocket bağlantısı açar
-    G->>W: NewCallEvent (call_id, metadata)
+    G->>MQ: publish(NewCallEvent)
     
-    %% Müşteri Tanıma
-    W->>CRM: getCustomerInfo(phoneNumber)
-    CRM-->>W: Customer (varsa) veya null
-    
-    %% Karşılama Mesajı
-    W->>AI: generateWelcomeMessage(customer)
-    AI-->>W: "Merhaba [isim], nasıl yardımcı olabilirim?"
-    W->>G: playAudio(TTS_Response)
-    G->>T: Ses akışı
-    T->>K: Karşılama mesajı
+    MQ-->>W: consume(NewCallEvent)
+    W->>AI: generateWelcomeMessage()
+    AI-->>W: "Merhaba, nasıl yardımcı olabilirim?"
+    W->>AI: synthesize(text)
+    AI-->>W: welcome_audio.wav
+    W->>MQ: publish(PlayAudioCommand)
+    MQ-->>G: consume(PlayAudioCommand)
+    G-->>T: Ses akışı
+    T-->>K: Karşılama mesajı
 
     loop Etkileşim Döngüsü
         K->>T: Sesli yanıt ("Randevu almak istiyorum")
         T->>G: Ses paketleri
-        G->>W: AudioChunk (raw)
+        G->>MQ: publish(AudioChunk)
         
-        %% STT ve Niyet Analizi
-        W->>AI: transcribeAudio(audio)
-        AI-->>W: "Randevu almak istiyorum"
-        W->>DB: saveInteraction(call_id, transcript)
-        
-        %% Görev Yönlendirme
-        W->>TS: findTask(intent="appointment")
-        TS-->>W: ReservationTask
-        W->>W: task.execute(context)
-        
-        %% Takvim Kontrolü
-        W->>AI: generateDatePrompt(available_slots)
-        AI-->>W: "Hangi tarih uygun: 15 Mart 10:00 veya 16 Mart 14:00?"
-        W->>G: playAudio(response)
-        G->>T: Ses yanıtı
-        T->>K: Soru iletimi
-        
-        %% Kullanıcı Yanıtı İşleme
-        K->>T: "15 Mart uygun"
-        T->>G: Ses verisi
-        G->>W: AudioChunk
+        MQ-->>W: consume(AudioChunk)
         W->>AI: transcribe(audio)
-        AI-->>W: "15 Mart"
-        W->>DB: saveResponse(call_id, "date_pref", "15 Mart")
+        AI-->>W: "Randevu almak istiyorum"
+        W->>DB: saveInteraction(transcript)
         
-        %% Onay ve Sonlandırma
-        W->>AI: generateConfirmation()
-        AI-->>W: "Randevunuz 15 Mart için ayarlandı"
-        W->>G: playAudio(confirmation)
+        W->>W: Görev Yönlendirme
+        W->>AI: generateNextPrompt()
+        AI-->>W: "Elbette, hangi tarih için?"
+        W->>AI: synthesize(prompt)
+        AI-->>W: prompt_audio.wav
+        W->>MQ: publish(PlayAudioCommand)
+        MQ-->>G: consume(PlayAudioCommand)
+        G-->>T: Ses yanıtı
+        T-->>K: "Elbette, hangi tarih için?"
     end
-    
-    %% Post-call İşlemler
-    W->>CRM: updateCustomer(call_data)
-    W->>DB: finalizeCall(call_id)
-    W->>G: terminateCall()
 ```
 
-## 5. Bileşen Detayları ve Sürüm Yönetimi
+## 5. Konfigürasyon Yönetimi (Güvenli ve Esnek)
 
-| Bileşen                  | Sürüm  | Açıklama                          | Bağımlılıklar                 |
-|--------------------------|--------|----------------------------------|-------------------------------|
-| telephony-gateway        | v2.2.0 | Çoklu protokol desteği            | WebSocket, SIP, RTMP          |
-| agent-worker            | v3.1.0 | Akıllı görev orkestrasyonu        | Python 3.10+, Redis           |
-| api-server              | v1.5.2 | REST API ve yönetim arayüzü       | FastAPI, JWT Auth             |
-| task-framework          | v2.3.0 | Standart görev kütüphanesi        | BaseInterfaces v1.4+          |
-| llm-adapters            | v1.2.0 | Çoklu AI sağlayıcı desteği        | Gemini, Whisper, OpenAI       |
+Konfigürasyon, sır içermeyen davranışsal parametreleri tanımlar. Sırlar, ortam değişkenleri ile yönetilir.
 
-## 6. Konfigürasyon Yönetimi (Örnek)
-
+**Örnek Konfigürasyon (`config/tenant_acme.yaml`):**
 ```yaml
-# config/production.yaml
+# ACME Şirketi'ne özel konfigürasyon
 telephony:
-  active_adapter: "Twilio"
+  adapter: "TwilioAdapter"
   params:
-    account_sid: "ACXXXXXX"
-    auth_token: "YYYYYY"
+    account_sid_ref: "TWILIO_ACCOUNT_SID"
 
 ai:
-  primary: 
-    adapter: "GeminiPro"
-    params:
-      api_key: "ZZZZZZ"
-      model: "gemini-1.5"
-  fallback: "OpenAI"
+  stt_adapter: "WhisperAdapter"
+  llm_adapter: "GeminiAdapter"
+  tts_adapter: "ElevenLabsAdapter"
 
 tasks:
   enabled:
-    - "Reservation"
-    - "Information"
-    - "Complaint"
-  
-  reservation:
-    calendar_adapter: "GoogleCalendar"
-    min_advance_hours: 24
+    - "ReservationTask"
+    - "InformationRequestTask"
 ```
 
-## 7. Hata Senaryoları ve Kurtarma Mekanizmaları
+## 6. Bileşen Detayları ve Sürüm Yönetimi
 
-**Senaryo 1: AI Servis Kesintisi**
-1. Worker primary AI'dan 3 saniye yanıt alamazsa
-2. Otomatik olarak fallback adaptöre geçer
-3. Olayı monitoring sistemine kaydeder
-4. Sağlıklı adaptör dönünce otomatik geri geçer
-
-**Senaryo 2: Telefoni Bağlantı Kopması**
-1. Gateway 10 saniye içinde yeniden bağlanmaya çalışır
-2. Başarısız olursa çağrıyı "failed_calls" tablosuna kaydeder
-3. Yöneticiye otomatik bildirim gönderir
-
-## 8. Genişletme Noktaları
-
-**Yeni Adaptör Eklemek İçin:**
-1. İlgili base interface'i implemente et
-2. Adapter sınıfını oluştur
-3. `adapters/` dizinine ekle
-4. Config'de aktifleştir
-
-**Örnek Adaptör Kodu:**
-```python
-class NewLLMAdapter(BaseLLM):
-    def __init__(self, config):
-        self.api_key = config['api_key']
-    
-    def generateText(self, prompt, context):
-        # Özel implementasyon
-        return response
-```
-
-Bu doküman, sistemin tüm kritik yönlerini kapsarken, hem geliştiriciler hem de sistem mimarları için kapsamlı bir rehber sunmaktadır.
+| Bileşen                  | Sorumlu Repo                   | Açıklama                                       |
+|--------------------------|--------------------------------|------------------------------------------------|
+| telephony-gateway        | `sentiric-telephony-gateway`   | Telefoni sağlayıcıları ile WebSocket bağlantısı kurar. |
+| agent-worker             | `sentiric-agent-worker`        | Diyalog mantığını yürütür, görevleri orkestre eder. |
+| api-server               | `sentiric-api-server`          | Dashboard için REST API sunar.                 |
+| knowledge-indexer        | `sentiric-knowledge-indexer`   | Bilgi bankasını vektör veritabanına indeksler. |
+| core-interfaces          | `sentiric-core-interfaces`     | Tüm adaptörlerin uyması gereken soyut sınıflar.  |
+---
