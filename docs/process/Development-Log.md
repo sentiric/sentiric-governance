@@ -77,3 +77,13 @@ Bu belge, projenin gelişim hikayesini, alınan önemli kararları ve bu kararla
     *   **LLM Kullanımı Optimizasyonu:** LLM'e tek bir taleple birden fazla bilgi çıkarma görevi verilerek, her bilgi için ayrı bir LLM çağrısı yapma ihtiyacı azaltılmıştır (bilişsel yük).
 *   **Sonuç:** `sentiric-mvp-v1` artık hem tekil (soru-cevap) hem de çoklu (tek cümlede birden çok bilgi) parametre girişlerini başarılı bir şekilde işleyebilen, daha insana yakın bir diyalog deneyimi sunmaktadır. Bu gelişme, platformun "Konuşan İşlem Platformu" vizyonuna önemli bir katkı sağlamıştır.
 ---
+### **2024-07-23: Faz 1 Adım 1 - MVP'de Modüler Mimari, TTS Sağlık Kontrolü ve Mini-Dashboard**
+
+*   **Karar:** `sentiric-mvp-v1` prototipi, ana `sentiric-governance` reposunda tanımlanan kurumsal düzeydeki mimari prensipleri (modülerlik, gözlemlenebilirlik, hata yönetimi) ve ürün vizyonunu (operasyonel dashboard) daha fazla yansıtacak şekilde kapsamlı bir iyileştirmeden geçirilmiştir.
+*   **Gerekçe:**
+    *   **Mimari Bütünlük:** `worker.js`'in sorumlulukları `CallContextManager` ve `DialogOrchestrator` gibi ayrı modüllere taşınarak, kod organizasyonu ve "Tak-Çıkar Lego Seti" felsefesine uygunluk büyük ölçüde artırılmıştır. Bu, gelecekteki ölçeklenebilirlik ve Python'daki ana projeye aktarım için sağlam bir temel oluşturur.
+    *   **Dayanıklılık ve Gözlemlenebilirlik:** Sentiric Voice Engine (Coqui-TTS) sunucusuna eklenen sağlık kontrolü endpoint'i sayesinde, sistem TTS servisinin durumunu proaktif olarak izleyebilmekte ve sağlıksız durumlarda sesli yanıt denemek yerine metin tabanlı geri bildirim sağlayarak hatalı davranışı engellemektedir. Bu, `docs/operations/Monitoring-and-Logging.md`'deki hedeflerle uyumludur.
+    *   **Operasyonel Farkındalık:** Kullanıcı arayüzüne eklenen "Aktif Oturum Bilgisi" paneli ve "TTS Durumu" göstergesi, platformun iç işleyişine dair anlık görünürlük sağlayarak `docs/product/User-Persona-Guides.md`'deki Yönetici/Operatör perspektifinin temelini atmıştır.
+    *   **Kullanıcı Deneyimi:** Oturum yönetimi iyileştirilerek, bir görev tamamlandıktan sonra oturumun tamamen sıfırlanması yerine senaryo bağlamının sıfırlanması sağlanmış, böylece kullanıcıların aynı oturumda farklı görevlere geçiş yapması kolaylaştırılmıştır. UI'daki çeşitli `TypeError` ve `SyntaxError` hataları da giderilmiştir.
+*   **Sonuç:** `sentiric-mvp-v1` artık sadece temel bir prototip olmaktan çıkmış, gerçek bir "Konuşan İşlem Platformu"nun temel özelliklerini (modüler mimari, akıllı diyalog, sağlam hata yönetimi ve operasyonel görünürlük) sergileyen, son derece yetenekli ve etkileyici bir Minimal Değerli Ürün (MVP) haline gelmiştir. Faz 1'deki hedeflere büyük ölçüde ulaşılmıştır.
+---
