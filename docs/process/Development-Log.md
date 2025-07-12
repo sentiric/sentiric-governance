@@ -68,3 +68,12 @@ Bu belge, projenin gelişim hikayesini, alınan önemli kararları ve bu kararla
     *   **Kararlılık:** LLM'den sayısal değer döndüğünde ortaya çıkan `TypeError` gibi kritik hatalar giderilerek sistemin genel kararlılığı artırılmıştır.
 *   **Sonuç:** `sentiric-mvp-v1` artık hem görev odaklı (otel rezervasyonu gibi) hem de bilgi odaklı (çalışma saatleri sorma gibi) diyalogları başarılı bir şekilde yürütebilen, daha akıllı, esnek ve güvenilir bir prototip haline gelmiştir. Bu, projenin bir sonraki fazları için sağlam bir temel oluşturmaktadır.
 ---
+### **2024-07-23: Faz 1 Adım 1 - MVP'de Çoklu Parametre Çıkarımı ve Akışkan Diyalog**
+
+*   **Karar:** `sentiric-mvp-v1` prototipine, kullanıcının tek bir cümlede birden fazla bilgi vermesi durumunda bu bilgileri eş zamanlı olarak algılama ve işleme yeteneği (Çoklu Parametre Çıkarımı) entegre edilmiştir. Bu, sistemin diyalog akıcılığını ve doğal dil anlama kabiliyetini önemli ölçüde artırmıştır.
+*   **Gerekçe:**
+    *   **Akışkan Diyalog:** Kullanıcıların daha doğal konuşma alışkanlıklarına uyum sağlayarak, sistemin birden fazla soruyu tek seferde yanıtlaması, diyalogdaki tur sayısını azaltmış ve kullanıcı deneyimini iyileştirmiştir. Bu, "Gerçek Zamanlı AI Diyaloğu" felsefesinin somut bir çıktısıdır.
+    *   **Verimlilik:** Gerekli tüm parametrelerin daha erken aşamalarda toplanması, form doldurma sürecini hızlandırmış ve sistemin görevleri daha verimli tamamlamasına olanak tanımıştır.
+    *   **LLM Kullanımı Optimizasyonu:** LLM'e tek bir taleple birden fazla bilgi çıkarma görevi verilerek, her bilgi için ayrı bir LLM çağrısı yapma ihtiyacı azaltılmıştır (bilişsel yük).
+*   **Sonuç:** `sentiric-mvp-v1` artık hem tekil (soru-cevap) hem de çoklu (tek cümlede birden çok bilgi) parametre girişlerini başarılı bir şekilde işleyebilen, daha insana yakın bir diyalog deneyimi sunmaktadır. Bu gelişme, platformun "Konuşan İşlem Platformu" vizyonuna önemli bir katkı sağlamıştır.
+---
