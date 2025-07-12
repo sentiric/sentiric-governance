@@ -47,3 +47,13 @@ Bu belge, projenin gelişim hikayesini, alınan önemli kararları ve bu kararla
     *   **Hızlı Geri Bildirim:** Bu tür temel mimari kararların MVP aşamasında denenmesi, ilerideki daha büyük entegrasyonlar için değerli öğrenimler sağlar ve potansiyel sorunları erken aşamada tespit eder.
 *   **Sonuç:** `sentiric-mvp-v1` artık `sentiric-governance`'daki mimari vizyonu yansıtan, dinamik olarak yapılandırılabilir LLM ve TTS adaptörlerine sahip, daha "akıllı" bir prototip haline gelmiştir. Bu, projenin sadece teoride değil, pratikte de sağlam temeller üzerinde ilerlediğini kanıtlamıştır.
 ---
+### **2024-07-23: Faz 1 Adım 1 - MVP Diyalog Akışı ve Anlama İyileştirmeleri**
+
+*   **Karar:** `sentiric-mvp-v1` prototipinin diyalog akışı ve kullanıcı girdilerini anlama yeteneği, LLM prompt'larının sıkılaştırılması, parametre doğrulama mekanizmalarının eklenmesi ve anlayamama durumlarının kullanıcı dostu bir şekilde yönetilmesiyle önemli ölçüde iyileştirilmiştir.
+*   **Gerekçe:**
+    *   **Kullanıcı Deneyimi:** LLM'in anlamsız değerler döndürmesi ve diyalogda takılı kalma sorunları giderilerek, kullanıcıların sistemle daha doğal ve akıcı bir şekilde etkileşime girmesi sağlanmıştır. "Anlayamadım" geri bildirimi ve tekrar deneme hakkı, platformun dayanıklılığını artırmıştır.
+    *   **LLM Kontrolü:** LLM'den beklenen JSON formatının ve içeriksel değerin (örn. `null` döndürme talimatı, sayısal değerler) daha katı bir şekilde talep edilmesi, modellerin güvenilirliğini artırmıştır.
+    *   **Veri Bütünlüğü:** Çıkarılan parametrelerin basit kurallarla (örn. konum için kelime sayısı, sayısal alanlar için sayısal doğrulama) doğrulanması, veritabanına yanlış veya anlamsız verilerin kaydedilmesini engellemiştir.
+    *   **Hata Dayanıklılığı:** Kod tabanındaki `TypeError` gibi kritik hatalar giderilerek sistemin kararlılığı sağlanmış, genel hata yakalama mekanizması iyileştirilmiştir.
+*   **Sonuç:** `sentiric-mvp-v1` artık "otel rezervasyonu" görevini çok daha güvenilir, hatasız ve kullanıcı dostu bir şekilde tamamlayabilen, pratik bir konuşma AI'sı haline gelmiştir. Bu gelişme, projenin "Konuşan İşlem Platformu" vizyonunun somut bir kanıtıdır.
+---
