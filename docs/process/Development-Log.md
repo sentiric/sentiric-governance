@@ -57,3 +57,14 @@ Bu belge, projenin gelişim hikayesini, alınan önemli kararları ve bu kararla
     *   **Hata Dayanıklılığı:** Kod tabanındaki `TypeError` gibi kritik hatalar giderilerek sistemin kararlılığı sağlanmış, genel hata yakalama mekanizması iyileştirilmiştir.
 *   **Sonuç:** `sentiric-mvp-v1` artık "otel rezervasyonu" görevini çok daha güvenilir, hatasız ve kullanıcı dostu bir şekilde tamamlayabilen, pratik bir konuşma AI'sı haline gelmiştir. Bu gelişme, projenin "Konuşan İşlem Platformu" vizyonunun somut bir kanıtıdır.
 ---
+
+### **2024-07-23: Faz 1 Adım 1 - MVP'de Bilgi Talebi (RAG) ve Gelişmiş Diyalog**
+
+*   **Karar:** `sentiric-mvp-v1` prototipinde temel bir RAG (Retrieval-Augmented Generation) yeteneği ve daha gelişmiş diyalog akışı entegre edilmiştir. Bu, sistemin sadece belirli formları doldurmakla kalmayıp, statik bir bilgi bankasından genel soruları da yanıtlayabilmesini sağlamıştır.
+*   **Gerekçe:**
+    *   **Ürün Vizyonunun Genişletilmesi:** "Konuşan İşlem Platformu" vizyonunun temel bileşenlerinden olan bilgi erişimi (RAG) özelliğinin MVP'de somutlaştırılması, projenin kapsamını ve değer önerisini artırmıştır.
+    *   **Geliştirilmiş Anlama:** LLM prompt'larının daha da sıkılaştırılması (özellikle `null` değer döndürme talimatı ve sayısal değerler için özel prompt'lar), Ollama'nın yanıt kalitesini ve parametre çıkarma doğruluğunu önemli ölçüde artırmıştır. LLM'den kaynaklanan halüsinasyonlar ve hatalı bilgi atamaları minimize edilmiştir.
+    *   **Daha Akıcı Diyalog:** `worker` mantığındaki iyileştirmeler sayesinde, kullanıcı girişlerinin daha akıllıca işlenmesi, geçersiz veya eksik girdilerde daha nazik geri bildirimler verilmesi ve senaryolar arası dinamik geçişler (örn. otel rezervasyonundan bilgi talebine) sağlanmıştır.
+    *   **Kararlılık:** LLM'den sayısal değer döndüğünde ortaya çıkan `TypeError` gibi kritik hatalar giderilerek sistemin genel kararlılığı artırılmıştır.
+*   **Sonuç:** `sentiric-mvp-v1` artık hem görev odaklı (otel rezervasyonu gibi) hem de bilgi odaklı (çalışma saatleri sorma gibi) diyalogları başarılı bir şekilde yürütebilen, daha akıllı, esnek ve güvenilir bir prototip haline gelmiştir. Bu, projenin bir sonraki fazları için sağlam bir temel oluşturmaktadır.
+---
