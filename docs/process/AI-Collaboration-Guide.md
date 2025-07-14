@@ -8,6 +8,8 @@ Bu manifesto, **Proje Sahibi & Lider Stratejist (Siz)** ve **AI Baş Mimar & Ana
 2.  **Tam İzlenebilirlik:** Tüm kararlar, analizler ve çıktılar belgelenir. Hiçbir adım "sihirli" veya belirsiz kalmaz.
 3.  **Standartlaştırılmış Çıktılar:** Tüm etkileşimler, tutarlı ve öngörülebilir bir formatta gerçekleşir.
 
+4.  **Belge Odaklı Geliştirme Prensibi (YENİ):** Bir karar veya fikir, `sentiric-governance` reposuna yazılmadığı sürece resmi kabul edilmez. Tüm önemli tartışmalar, analizler ve stratejik yön değişiklikleri, ilgili dokümanın güncellenmesi veya yeni bir doküman oluşturulmasıyla somutlaştırılmalıdır. Projenin hafızası kod değil, bu repodur.
+
 ## 2. Rol Tanımları ve Sorumluluklar
 
 *   **Proje Sahibi & Lider Stratejist (Siz):**

@@ -33,7 +33,8 @@ Bu doküman, Sentiric platformunun geliştirme sürecini fazlara ayırarak, hede
 *   **Potansiyel Özellikler:**
     *   `sentiric-cli` komut satırı aracı (`create-task`, `add-adapter`).
     *   Detaylı geliştirici dokümantasyonu ve API referansı.
-    *   Dashboard'da görev ve reçete (recipe) yönetim arayüzü.
+    *   Dashboard'da görev ve **Reçete (Recipe)** yönetim arayüzü.
+    *   **İlk Endüstri Dikey Çözümü:** Seçilecek bir endüstri (Sağlık, Emlak vb.) için önceden paketlenmiş "Reçete" ve görev seti geliştirilmesi.
 
 ### Faz 3 - Zeka ve Optimizasyon
 
@@ -44,6 +45,15 @@ Bu doküman, Sentiric platformunun geliştirme sürecini fazlara ayırarak, hede
     *   **Akıllı Yönlendirme:** Basit görevler için daha küçük/ucuz LLM'leri, karmaşık görevler için büyük LLM'leri kullanan "Model Kademelendirme" (Model Cascading).
     *   **Analitikler:** Dashboard'da arama süreleri, başarılı/başarısız görev oranları gibi metrikleri gösterme.
 
+### Faz 4 - Çoklu Kanal (Omnichannel) Genişlemesi (YENİ)
+
+*   **Durum:** ⬜ **Vizyon**
+*   **Hedef:** Sentiric'in diyalog yeteneklerini sesin ötesine taşıyarak, metin tabanlı ve görsel kanalları da destekleyen bütünleşik bir platform haline getirmek.
+*   **Potansiyel Özellikler:**
+    *   **SMS Entegrasyonu:** Randevu hatırlatmaları, 2FA kodları, anketler gibi işlevler için SMS gönderme/alma yeteneği.
+    *   **Web Chat / Mobil SDK:** Web sitelerine veya mobil uygulamalara (Flutter, React Native) entegre edilebilecek bir chat bileşeni.
+    *   **Video Agent Desteği:** SignalWire'a benzer şekilde, video görüşmelerine katılabilecek ve görsel verileri işleyebilecek AI agent'lar için altyapı hazırlığı.
+    
 ---
 *Bu yol haritası, projenin gelişimine ve alınan geri bildirimlere göre güncellenecek "yaşayan" bir belgedir.*
 

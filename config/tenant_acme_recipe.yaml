@@ -1,0 +1,24 @@
+# ACME Şirketi'ne özel Reçete
+recipe_name: "Standart Müşteri Hizmetleri Akışı"
+version: 1.0
+
+# Hangi adaptörlerin kullanılacağı
+adapters:
+  telephony: "TwilioAdapter"
+  stt: "DeepgramAdapter"
+  llm: "GeminiAdapter"
+  tts: "SentiricVoiceEngineAdapter" # Kendi TTS motorumuz
+
+# Bu reçetede hangi görevlerin etkin olduğu
+enabled_tasks:
+  - "AppointmentReservationTask"
+  - "InformationRequestTask"
+  - "ComplaintManagementTask"
+
+# Görevlerin tetiklenme kuralları
+task_routing:
+  - intent: "randevu_al"
+    task: "AppointmentReservationTask"
+  - intent: "bilgi_iste"
+    task: "InformationRequestTask"
+...

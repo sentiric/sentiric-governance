@@ -83,3 +83,19 @@ Tüm `4xx` ve `5xx` hataları, istemcinin hatayı programatik olarak işlemesini
   }
 }
 ---
+
+## 5. Dahili TTS API Kontratı (SSML Desteği)
+
+`agent-worker` ile `sentiric-tts-api` (veya harici TTS adaptörleri) arasındaki iletişim, doğal diyalog akışını sağlamak için **SSML**'i önceliklendirmelidir.
+
+*   **İstek Formatı:** İstek, düz metin yerine SSML içeren bir JSON nesnesi olmalıdır.
+*   **Örnek Payload (`agent-worker` -> TTS Servisi):**
+    ```json
+    {
+      "format": "ssml",
+      "text": "<speak>Randevunuz başarıyla oluşturuldu.<break time='500ms'/> Size başka bir konuda yardımcı olabilir miyim?</speak>",
+      "language": "tr-TR",
+      "speed": 1.0
+    }
+    ```
+*   **Gerekçe:** Bu yapı, TTS motoruna sadece ne söyleyeceğini değil, nasıl söyleyeceğini de (duraklamalar, tonlama vb.) ileterek, çok daha insan benzeri ve kaliteli bir sesli yanıt üretilmesini sağlar.

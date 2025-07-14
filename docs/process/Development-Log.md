@@ -87,3 +87,11 @@ Bu belge, projenin gelişim hikayesini, alınan önemli kararları ve bu kararla
     *   **Kullanıcı Deneyimi:** Oturum yönetimi iyileştirilerek, bir görev tamamlandıktan sonra oturumun tamamen sıfırlanması yerine senaryo bağlamının sıfırlanması sağlanmış, böylece kullanıcıların aynı oturumda farklı görevlere geçiş yapması kolaylaştırılmıştır. UI'daki çeşitli `TypeError` ve `SyntaxError` hataları da giderilmiştir.
 *   **Sonuç:** `sentiric-mvp-v1` artık sadece temel bir prototip olmaktan çıkmış, gerçek bir "Konuşan İşlem Platformu"nun temel özelliklerini (modüler mimari, akıllı diyalog, sağlam hata yönetimi ve operasyonel görünürlük) sergileyen, son derece yetenekli ve etkileyici bir Minimal Değerli Ürün (MVP) haline gelmiştir. Faz 1'deki hedeflere büyük ölçüde ulaşılmıştır.
 ---
+### **2024-07-24: Stratejik Yeniden Hizalanma ve Mimari Netleştirme (v4.0)**
+
+*   **Karar:** Pazar ve rakip analizi (SignalWire vb.) sonucunda projenin vizyonu, sadece bir "Konuşan İşlem Platformu" olmaktan çıkarak, farklı endüstriler için özelleştirilmiş çözümler sunan bir **"Dikey Entegrasyon Platformu ve Geliştirici Ekosistemi"** olarak genişletilmiştir. Bu karar, projenin benzersiz hibrit (bulut/yerel) yapısını bir rekabet avantajı olarak konumlandırmayı hedefler.
+*   **Karar:** Platformun insan benzeri diyalog yeteneğini artırmak için **SSML (Speech Synthesis Markup Language)** kullanımı, mimarinin temel bir prensibi olarak benimsenmiştir. `agent-worker`'ın LLM'den SSML tabanlı yanıtlar üretmesi ve TTS servislerinin bu formatı işlemesi standartlaştırılmıştır.
+*   **Karar:** Platformun esnek iş akışı yapılandırması, **YAML tabanlı "Reçeteler" (Recipes)** olarak adlandırılmış ve bu konseptin dokümantasyonda daha belirgin hale getirilmesine karar verilmiştir.
+*   **Karar:** Mevcut Node.js MVP'si ile nihai Python üretim mimarisi arasındaki farkları ve geçiş stratejisini netleştirmek için `MVP-to-Production-Bridge.md` dokümanı oluşturulmuştur.
+*   **Gerekçe:** Bu kapsamlı güncelleme, projenin başlangıç aşamasındaki stratejik belirsizlikleri ortadan kaldırmak, tüm paydaşlar için tek ve net bir doğruluk kaynağı oluşturmak ve projenin hem teknik hem de ticari olarak sağlam bir temel üzerinde ilerlemesini sağlamak için yapılmıştır. Bu, teorik plandan, pazar farkındalığına sahip, uygulanabilir bir mühendislik ve ürün yol haritasına geçişi temsil eder.
+---

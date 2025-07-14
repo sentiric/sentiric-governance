@@ -27,8 +27,13 @@ Sentiric, monolitik bir "her şeyi kendimiz yaparız" veya esnek olmayan bir "he
     Pazara giriş hızını maksimize etmek için, başlangıçta her işlev için sınıfının en iyisi (ve mümkünse ücretsiz katmanı olan) harici servisleri kullanırız. Ancak mimarimiz, maliyet, kontrol veya performans nedenleriyle bu parçaları gelecekte kendi **"in-house"** çözümlerimizle değiştirme lüksünü bize her zaman tanır.
 
 4.  **Görev Odaklı Orkestrasyon (Task-Oriented Orchestration):**
-    Platformun zekası, sadece konuşmayı yönetmek değil, aynı zamanda **"Görevleri" (Tasks)** yürütmektir. `RestaurantReservationTask` gibi her görev, belirli bir iş akışını tanımlar. Ana orkestratör, kullanıcının niyetine göre doğru görevi seçer, çalıştırır ve görevin adımlarını yönetir. Bu, platformu sonsuz derecede genişletilebilir kılar.
+    Platformun zekası, sadece konuşmayı yönetmek değil, aynı zamanda **"Görevleri" (Tasks)** yürütmektir. `RestaurantReservationTask` gibi her görev, belirli bir iş akışını tanımlar. Ana orkestratör, kullanıcının niyetine göre doğru görevi seçer, çalıştırır ve görevin adımlarını yönetir. Bu görevler ve akışlar, koddan bağımsız **YAML "Reçete" dosyaları** ile tanımlanarak platformu sonsuz derecede genişletilebilir kılar.
 
+## 3. İnsan Benzeri Diyalog Sanatı: SSML'in Rolü
+
+Sentiric'in "akışkan diyalog" hedefi, sadece doğru kelimeleri bulmakla sınırlı değildir. Konuşmanın ritmi, tonu ve doğallığı da aynı derecede önemlidir. Bu nedenle mimarimiz, **SSML (Speech Synthesis Markup Language)** kullanımını temel bir prensip olarak benimser.
+
+LLM'den sadece metin değil, aynı zamanda konuşmanın nasıl seslendirileceğini de (`<break time="400ms"/>` gibi duraklamalar, `<prosody>` ile tonlama) içeren SSML tabanlı yanıtlar üretmesini isteriz. Bu, robotik bir sesten, nefes alan, duraklayan ve vurgu yapan, insana çok daha yakın bir diyalog deneyimine geçmemizi sağlar.
 Bu felsefe, Sentiric'i hem bugün hızlıca değer yaratabilen hem de gelecekteki her türlü teknolojik ve stratejik değişikliğe karşı dayanıklı, esnek bir platform haline getirir.
 
 ---

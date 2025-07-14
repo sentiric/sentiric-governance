@@ -167,6 +167,30 @@ sequenceDiagram
     end
 ```
 
+```mermaid
+sequenceDiagram
+    autonumber
+    participant K as Kullanıcı
+    participant T as Telefoni
+    participant G as Gateway
+    participant MQ as RabbitMQ
+    participant W as Worker
+    participant AI as AI Servisleri
+    participant DB as Veritabanı
+
+    ...
+    
+    W->>W: Görev Yönlendirme
+    W->>AI: **generateNextPromptAsSSML()**
+    AI-->>W: **SSML Yanıtı:** <speak>Elbette, <break time="300ms"/> hangi tarih için?</speak>
+    W->>AI: synthesizeSSML(ssml_text)
+    AI-->>W: prompt_audio.wav
+    W->>MQ: publish(PlayAudioCommand)
+    MQ-->>G: consume(PlayAudioCommand)
+    G-->>T: Ses yanıtı
+    T-->>K: "Elbette, (duraksama) hangi tarih için?"
+```
+
 ## 5. Konfigürasyon Yönetimi (Güvenli ve Esnek)
 
 Konfigürasyon, sır içermeyen davranışsal parametreleri tanımlar. Sırlar, ortam değişkenleri ile yönetilir.
