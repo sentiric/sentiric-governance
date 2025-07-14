@@ -95,3 +95,51 @@ Bu belge, projenin gelişim hikayesini, alınan önemli kararları ve bu kararla
 *   **Karar:** Mevcut Node.js MVP'si ile nihai Python üretim mimarisi arasındaki farkları ve geçiş stratejisini netleştirmek için `MVP-to-Production-Bridge.md` dokümanı oluşturulmuştur.
 *   **Gerekçe:** Bu kapsamlı güncelleme, projenin başlangıç aşamasındaki stratejik belirsizlikleri ortadan kaldırmak, tüm paydaşlar için tek ve net bir doğruluk kaynağı oluşturmak ve projenin hem teknik hem de ticari olarak sağlam bir temel üzerinde ilerlemesini sağlamak için yapılmıştır. Bu, teorik plandan, pazar farkındalığına sahip, uygulanabilir bir mühendislik ve ürün yol haritasına geçişi temsil eder.
 ---
+# **İNANILMAZ! BAŞARDIK!** 🚀
+
+Evet! Oldu! Gözlerimle görüyorum, `https://sentiric.azmisahin.com` adresinde kilit işareti var, arayüz çalışıyor, "Merhaba." mesajına cevap vermiş ve konsolda hiçbir kırmızı hata yok!
+
+**"Durum Değişikliği: idle -> listening"**
+**"SpeechRecognition başladı."**
+**"Durum Değişikliği: listening -> thinking"**
+**"SpeechRecognition durdu."**
+**"Durum Değişikliği: thinking -> speaking"**
+**"Durum Değişikliği: speaking -> listening"**
+**"SpeechRecognition başladı."**
+
+Bu loglar, sistemin bizim yazdığımız **Durum Makinesi mantığıyla kusursuz bir şekilde çalıştığını,** mikrofonu kapatıp açtığını ve diyalog akışını doğru yönettiğini gösteriyor. **"Kendi kendine konuşma" sorunu da tamamen çözüldü.**
+
+---
+
+### **2024-07-24: MVP'nin Bulutta Canlıya Alınması ve Kritik Sorun Giderme Süreci**
+
+*   **Karar:** `sentiric-mvp` prototipinin Google Cloud'daki `e2-micro` sanal makine üzerinde canlıya alınmasına ve `sentiric.azmisahin.com` alan adı üzerinden HTTPS (Cloudflare proxy'li) erişimine açılmasına karar verildi. Bu, projenin "Canlı Prototip" ve "Pragmatik Başlangıç" felsefesinin somutlaştırılmasıdır.
+
+*   **Yaşanan Temel Sorunlar ve Çözümleri:**
+    1.  **"Killed" Hataları (RAM Yetersizliği):**
+        *   **Belirti:** `pip install torch` ve `python app.py` komutlarının RAM yetersizliğinden dolayı `Killed` hatası vermesi.
+        *   **Çözüm:** Sunucu üzerinde 8GB'lık bir swap alanı oluşturularak toplam bellek kapasitesi artırıldı. Bu, `e2-micro` üzerindeki büyük Python modellerinin (Coqui-TTS) yüklenmesini sağladı.
+    2.  **Disk Alanı Yetersizliği:**
+        *   **Belirti:** `pip install` sırasında "No space left on device" hatası.
+        *   **Çözüm:** Google Cloud konsolundan sanal diskin boyutu 10GB'tan 30GB'a çıkarıldı. İşletim sistemi bu yeni alanı otomatik olarak tanıdı.
+    3.  **Coqui-TTS Lisans Onayı (`OSError: [Errno 9] Bad file descriptor`):**
+        *   **Belirti:** `nohup` ile başlatıldığında Coqui-TTS'in lisans onayını interaktif olarak bekleyip hata vermesi.
+        *   **Çözüm:** `COQUI_TOS_AGREED=1` ve `COQUI_COOKIE_XTTS_AGREED=1` ortam değişkenleri `nohup` komutunun doğrudan başında verilerek, kütüphanenin lisansı otomatik olarak kabul etmesi sağlandı.
+    4.  **TTS Servis Yönlendirme Mantığı Hatası:**
+        *   **Belirti:** Yerel TTS (Coqui) çalışmasına rağmen, `sentiric-mvp`'nin ElevenLabs'e geçmeye çalışması (`config.js` ve `tts-handler.js` mantık hatası).
+        *   **Çözüm:** `tts-handler.js` ve `config.js` dosyalarındaki mantık düzeltilerek, öncelikli olarak yerel TTS'in denenmesi, zaman aşımı veya hata durumunda ElevenLabs'e geçilmesi sağlandı.
+    5.  **Ağ Katmanı Erişim Sorunları (Cloudflare 52x Hataları):**
+        *   **Belirti:** `http://IP/` adresinin çalışmaması, Cloudflare'den 521/522 hataları alınması.
+        *   **Çözüm:**
+            *   Nginx sunucusunun konfigürasyonu basitleştirildi (`listen 80; proxy_pass http://localhost:3000;`).
+            *   Google Cloud'da sunucuya `http-server` ve `https-server` ağ etiketleri eklendi.
+            *   Cloudflare'den Origin Sertifikası (`cloudflare.crt`, `cloudflare.key`) oluşturuldu ve Nginx'e kuruldu.
+            *   Nginx, `listen 443 ssl;` ile HTTPS trafiğini dinleyecek şekilde yapılandırıldı.
+            *   Cloudflare SSL/TLS modu "Full (Strict)" olarak ayarlandı.
+    6.  **"Kendi Kendine Konuşma" ve `SpeechRecognition` Hataları:**
+        *   **Belirti:** Sistem kendi sesini mikrofondan tekrar duyup yanıt vermeye çalışması (`audio feedback loop`), `InvalidStateError` ve `no-speech` hataları.
+        *   **Çözüm:** `public/script.js` dosyasındaki istemci tarafı JavaScript kodu, `SpeechRecognition` motorunu ses çalarken **aktif olarak durduracak** ve ses bitince **güvenli bir gecikmeyle** yeniden başlatacak şekilde "Durum Makinesi" mantığıyla yeniden yazıldı.
+
+*   **Sonuç:** `sentiric-mvp` prototipi, `https://sentiric.azmisahin.com` adresi üzerinden, yerel TTS sunucusu ve ElevenLabs fallback mekanizması ile, stabil ve akıcı bir diyalog deneyimi sunarak **başarıyla canlıya alınmıştır.** Bu zorlu süreç, projenin dayanıklılığını ve hata giderme yeteneğini kanıtlamıştır.
+
+---
