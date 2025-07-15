@@ -177,3 +177,23 @@ Bu loglar, sistemin bizim yazdığımız **Durum Makinesi mantığıyla kusursuz
     3.  **URL Yönetimi:** `PUBLIC_GATEWAY_WSS_URL` ortam değişkeni kullanımı, hardcode edilmiş URL'lerin yerine geçerek projenin dağıtım esnekliğini ve mimari tutarlılığını artırmıştır.
 *   **Sonuç:** Bu kapsamlı düzeltmelerle, Sentiric MVP'nin temel kullanıcı deneyimi sorunları (kendi kendini duyma, otomatik oynatma hatası, çift mesaj) giderilmiş, diyalog akışı çok daha tutarlı ve güvenilir hale gelmiştir. Proje artık, zorlu diyalog senaryolarını test etmek için sağlam bir temele sahiptir.
 ---
+### **2024-07-16: Diyalog Akışı ve LLM Tutarlılığı İçin Kapsamlı Geliştirmeler (MVP V2.0 - Finalize)**
+
+*   **Karar:** Daha önceki testlerde gözlemlenen diyalog akışı bağlam kaybı (görev ortasında bilgi/genel sohbet sonrası senaryo sıfırlama), LLM yanıt kalitesi ve tarih/kişi sayısı algılama hataları, yapılan köklü refaktörler ve LLM prompt iyileştirmeleriyle büyük ölçüde giderilmiştir. Sistem artık insan benzeri akışkan diyalog kurma hedefinde önemli bir aşama kaydetmiştir.
+*   **Gerekçe:**
+    *   **Bağlam Kaybı (Çalışma Saatleri Regresyonu):** `dialog_orchestrator.js` içindeki `INFORMATION_REQUEST` ve `GENERAL_CHAT` intent tiplerinde görev ortasında `session.reset = true;` bayrağının koşulsuz ayarlanması, aktif görev bağlamının kaybolmasına neden oluyordu. Bu durum, LLM prompt'undaki bağlam koruma kurallarının uygulanmamasına yol açıyordu.
+    *   **Tarih/Kişi Sayısı Algılama Hataları:** LLM'in göreceli tarih ifadelerini `YYYY-MM-DD` formatına çevirmekte zorlanması ve `sanitizeLlmOutput`'un hatalı tarih formatlarını zorla yorumlamaya çalışması, yanlış rezervasyon tarihlerine neden oluyordu. Kişi sayısı algılamada da karmaşık ifadelerde tutarsızlıklar vardı.
+    *   **LLM Yanıt Kalitesi:** Genel sohbet ve otel dışı konulara verilen yanıtlar hala yeterince doğal veya net değildi.
+*   **Uygulanan Çözümler:**
+    1.  **`src/dialog_flow/dialog_orchestrator.js`:**
+        *   `INFORMATION_REQUEST` ve `GENERAL_CHAT` intent'leri, aktif bir görev (`session.scenarioId`) varken tetiklendiğinde `session.reset = true;` bayrağını ayarlamayacak şekilde revize edilmiştir. Bu, sistemin görev ortasında bilgi sorgulama veya genel sohbet yapıldıktan sonra **rezervasyon görevine sorunsuz bir şekilde geri dönmesini** sağlamıştır. Bu, projenin en büyük diyalog akışı başarısıdır.
+        *   `handleTask` fonksiyonu içinde rezervasyon onay mesajında `checkin_date`'in `toLocaleDateString('tr-TR', options)` ile **gün, ay, yıl ve gün adı formatında okunması** sağlanarak kullanıcı deneyimi iyileştirilmiştir.
+    2.  **`src/core/ai-handler.js`:**
+        *   `sanitizeLlmOutput` fonksiyonu, `checkin_date` için `YYYY-MM-DD` formatı dışında gelen değerleri doğrudan `null` olarak işaretleyecek şekilde basitleştirilmiştir. Bu, LLM'i daha disiplinli formatlar döndürmeye zorlayacak ve hatalı tarihlerle rezervasyon yapılmasını engelleyecektir.
+        *   `people_count` için kelime karşılıkları listesi (`bir`, `iki` vb.) genişletilmiştir.
+    3.  **`src/prompts/ai_system_prompt.md`:**
+        *   Görevin ortasında bilgi/genel sohbet yapıldıktan sonra **"REZERVASYON BAĞLAMINI KESİNLİKLE UNUTMAMA"** ve **"DEVAM ETMEYİ BEKLEME"** kuralı daha güçlü bir şekilde vurgulanmıştır.
+        *   Kapsam dışı sorular için (örn. "Dünyanın en yüksek dağı?"), LLM'in **"KESİNLİKLE nazikçe ve doğrudan reddetmesi"** ve ardından otel konularına yönlendirmesi kuralı daha netleştirilmiştir.
+        *   Rezervasyon onay mesajında `checkin_date`'in insan dostu formatta (`GG Ay YYYY`) belirtilmesi gerektiği eklenmiştir.
+*   **Sonuç:** Sentiric MVP, artık çok daha akışkan, bağlam farkındalığına sahip ve insan benzeri bir diyalog kurabilmektedir. Görev akışındaki kritik bağlam kayıpları giderilmiş, LLM yanıt tutarlılığı artırılmış ve tarih/kişi sayısı algılama hassasiyeti yükseltilmiştir. Bu, projenin Faz 1 hedeflerine ulaşmasında büyük bir adımdır.
+---
