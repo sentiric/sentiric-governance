@@ -161,3 +161,19 @@ Bu loglar, sistemin bizim yazdığımız **Durum Makinesi mantığıyla kusursuz
 *   **Sonuç:** Bu refaktörle, tarayıcıda oluşan ses oynatma hatası giderilmiş, UI'daki çift mesaj ve karmaşa sorunları çözülmüş, frontend ve backend arasındaki sorumluluk ayrımı netleştirilmiş ve sunucu URL'lerinin hardcode edilmesi hatası ortadan kaldırılmıştır. Proje, daha sağlam, taşınabilir ve kullanıcı dostu bir yapıya kavuşmuştur. Bu, telefon araması testlerindeki ilerlememizi destekleyici niteliktedir.
 
 ---
+### **2024-07-15: Kendi Kendini Duyma, UI/UX ve Otomatik Oynatma Hataları İçin Kapsamlı Düzeltmeler**
+
+*   **Karar:** Daha önce çözüldüğü düşünülen "kendi kendini duyma" (audio feedback loop) sorunu, tarayıcının otomatik ses oynatma politikası (`NotAllowedError`) ve UI'daki çift mesaj/tutarsızlık sorunları, köklü bir refaktörle nihai olarak giderilmiştir. Bu düzeltmeler, projenin en temel kullanıcı deneyimi sorunlarını çözmeyi hedeflemiştir.
+*   **Gerekçe:**
+    *   **Kendi Kendini Duyma (Regresyon):** `public/script.js`'deki `SpeechRecognition`'ın yaşam döngüsü ve `currentState` geçişlerindeki zamanlama hataları veya yanlış koşullar nedeniyle sistemin kendi sesini veya ortam sesini yanlışlıkla algılayıp diyalog akışını bozduğu tespit edilmiştir. Bu, önceki düzeltmelerde tam olarak giderilmediği veya yeni değişikliklerle tekrar ortaya çıktığı için acil bir öncelik haline gelmiştir.
+    *   **Otomatik Oynatma ve Çift Mesaj:** Tarayıcıların kullanıcı etkileşimi olmadan otomatik ses çalma yasağı ve frontend ile backend arasında mesaj gönderim sorumluluklarının net olmaması, uygulamanın ilk açılışında görsel ve işitsel karmaşaya neden olmuştur.
+    *   **TTS Zaman Aşımı:** Coqui-TTS gibi yerel modellerin ilk yüklemelerinde veya ağır yük altında kaldığı durumlarda yaşanan zaman aşımı hataları, diyalog akışını kesintiye uğratıyordu.
+*   **Uygulanan Çözümler:**
+    1.  **`public/script.js` (Kritik Alan):**
+        *   `SpeechRecognition`'ın yaşam döngüsü tamamen `currentState`'e (idle, listening, thinking, speaking) bağlı hale getirilmiştir. Mikrofon, AI `speaking` veya `thinking` durumundayken **mutlaka** durdurulmakta, sadece `listening` durumunda başlatılmaktadır. Bu, kendi kendini duyma sorununa kesin bir çözüm getirmiştir.
+        *   `connect()` fonksiyonu ve `session_init` mesajının gönderimi, tarayıcıyla ilk kullanıcı etkileşimi (mikrofon orb düğmesine tıklama) anına taşınmıştır. Bu, tarayıcının autoplay kuralını aşarak sesin ilk açılışta çalmasını sağlamıştır.
+        *   Tüm AI yanıt mesajları (ilk karşılama dahil) **sadece backend'den geldiğinde** `addMessage` ile UI'a eklenmekte, frontend'in kendi kendine mesaj üretme veya yinelenen mesajlar ekleme mantığı tamamen kaldırılmıştır.
+    2.  **`src/core/tts-handler.js`:** `synthesizeWithLocalXTTS` fonksiyonundaki `timeout` süresi, ilk model yüklemeleri ve işlem gecikmeleri için yeterli zaman tanımak amacıyla 7 saniyeden 20 saniyeye çıkarılmıştır.
+    3.  **URL Yönetimi:** `PUBLIC_GATEWAY_WSS_URL` ortam değişkeni kullanımı, hardcode edilmiş URL'lerin yerine geçerek projenin dağıtım esnekliğini ve mimari tutarlılığını artırmıştır.
+*   **Sonuç:** Bu kapsamlı düzeltmelerle, Sentiric MVP'nin temel kullanıcı deneyimi sorunları (kendi kendini duyma, otomatik oynatma hatası, çift mesaj) giderilmiş, diyalog akışı çok daha tutarlı ve güvenilir hale gelmiştir. Proje artık, zorlu diyalog senaryolarını test etmek için sağlam bir temele sahiptir.
+---
