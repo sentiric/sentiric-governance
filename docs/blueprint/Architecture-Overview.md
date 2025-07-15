@@ -63,7 +63,7 @@ graph TD
     MQ -->|Komutu Tüketir| MessagingGateway
     
     TelephonyGateway -->|Sesi Sentezle & Oynat| SIPGateway
-    MessagingGateway -->|Mesaj Gönder| ExternalSystems (SMS API, WhatsApp API)
+    MessagingGateway -->|Mesaj Gönder| ExternalSystems
 
     Indexer -->|Veriyi Vektörleştir| AI
     Dashboard -->|REST API| APIServer
@@ -244,5 +244,3 @@ services:
 ## 6. Bileşen Detayları ve Sorumlu Repolar
 
 Sentiric ekosistemindeki tüm repoların detaylı listesi ve sorumlulukları için lütfen **[Sentiric Ekosistem ve Repolar Dokümanına](./Ecosystem-Repos.md)** başvurun.
-
----
