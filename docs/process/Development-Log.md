@@ -143,3 +143,21 @@ Bu loglar, sistemin bizim yazdığımız **Durum Makinesi mantığıyla kusursuz
 *   **Sonuç:** `sentiric-mvp` prototipi, `https://sentiric.azmisahin.com` adresi üzerinden, yerel TTS sunucusu ve ElevenLabs fallback mekanizması ile, stabil ve akıcı bir diyalog deneyimi sunarak **başarıyla canlıya alınmıştır.** Bu zorlu süreç, projenin dayanıklılığını ve hata giderme yeteneğini kanıtlamıştır.
 
 ---
+### **2024-07-15: UI/UX Refaktör ve Otomatik Oynatma Engeli Çözümü**
+
+*   **Karar:** Tarayıcılardaki otomatik ses oynatma politikası (`NotAllowedError`) nedeniyle oluşan ilk karşılama mesajı hatası ve UI'daki sorumluluk ayrımı sorunlarını gidermek amacıyla kapsamlı bir refaktör yapılmıştır. Ayrıca, hardcode edilmiş sunucu URL'leri ortam değişkenleri üzerinden yönetilecek şekilde düzeltilmiştir.
+*   **Gerekçe:**
+    *   **Otomatik Oynatma Engeli:** Tarayıcıların kullanıcı etkileşimi olmadan ses oynatmasını engelleyen güvenlik politikası (`NotAllowedError`), uygulamanın ilk açılışında Sentiric'in karşılama sesini çalmasını engelliyordu.
+    *   **Sorumluluk Ayrımı:** Frontend (`public/script.js`) ve Backend (`src/services/worker.js`) arasında ilk karşılama mesajının kim tarafından gönderileceği ve UI'da nasıl gösterileceği konusunda bir karmaşa yaşanıyordu, bu da çift mesaj ve tutarsız UI davranışına yol açıyordu.
+    *   **URL Yönetimi:** Sunucu adreslerinin (özellikle Dev Tunnels URL'lerinin) kod içine doğrudan yazılması (`gateway.js` ve `script.js`'te), projenin esneklik ve dağıtım prensiplerine aykırıydı.
+*   **Uygulanan Çözümler:**
+    1.  **`public/script.js`:**
+        *   WebSocket bağlantısının (`connect()`) ve `session_init` mesajının gönderilmesinin, kullanıcının mikrofon orb düğmesine yaptığı **ilk tıklama olayına** bağlanması sağlandı. Bu, tarayıcının autoplay politikasını aşarak sesin çalınmasına izin vermiştir.
+        *   UI'ın, ilk karşılama mesajı da dahil olmak üzere, tüm yapay zeka mesajlarını **sadece backend'den geldiğinde** göstermesi sağlanmıştır. Önceden hardcode edilmiş veya yinelenen mesaj ekleme mantığı kaldırılmıştır.
+        *   WebSocket bağlantısı için sunucu adresinin `window.location.host` üzerinden dinamik olarak alınması sağlanmış, böylece frontend'in nerede çalıştığından bağımsız olması sağlanmıştır.
+    2.  **`.env`:** Gateway servisinin dışarıdan erişilebilen WebSocket URL'i (`wss://...`) için `PUBLIC_GATEWAY_WSS_URL` adında yeni bir ortam değişkeni tanımlanmıştır.
+    3.  **`src/config.js`:** Yeni `PUBLIC_GATEWAY_WSS_URL` ortam değişkenini okuyacak şekilde güncellenmiştir.
+    4.  **`src/services/gateway.js`:** Twilio'ya TwiML yanıtında geri döneceği `<Stream>` URL'i olarak `config.publicGatewayWssUrl` değeri kullanılarak, URL yönetiminin merkezi ve yapılandırılabilir olması sağlanmıştır.
+*   **Sonuç:** Bu refaktörle, tarayıcıda oluşan ses oynatma hatası giderilmiş, UI'daki çift mesaj ve karmaşa sorunları çözülmüş, frontend ve backend arasındaki sorumluluk ayrımı netleştirilmiş ve sunucu URL'lerinin hardcode edilmesi hatası ortadan kaldırılmıştır. Proje, daha sağlam, taşınabilir ve kullanıcı dostu bir yapıya kavuşmuştur. Bu, telefon araması testlerindeki ilerlememizi destekleyici niteliktedir.
+
+---
