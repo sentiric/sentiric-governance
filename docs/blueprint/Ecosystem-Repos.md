@@ -1,31 +1,31 @@
-# 🗺️ Sentiric: Ekosistem ve Repolar
+# 🗺️ Sentiric: Ekosistem ve Repolar (V2.0 - 23 Repo)
 
-Sentiric platformu, her biri belirli bir sorumluluğa sahip, bağımsız olarak geliştirilen ve yönetilen bir dizi depodan (repository) oluşur.
+Sentiric platformu, her biri belirli bir sorumluluğa sahip, bağımsız olarak geliştirilen ve yönetilen toplam **23 adet depodan (repository)** oluşur. Bu modüler yapı, projenin "Tak-Çıkar Lego Seti" felsefesini somutlaştırır, ölçeklenebilirliği artırır, sorumlulukları netleştirir ve karmaşık bir sistemin yönetimini kolaylaştırır.
 
-## 1. Yönetim
-| Repo | Sorumluluk |
-| :--- | :--- |
-| **`sentiric-governance`** | Projenin anayasası. Vizyon, mimari, yol haritası ve standartları barındırır. **Bu repo.** |
+Bu liste, Sentiric ekosistemindeki her bir reponun rolünü ve teknoloji yığınını tanımlar.
 
-## 2. Çekirdek Kütüphaneler (Platformun DNA'sı)
-| Repo | Sorumluluk | Teknoloji |
-| :--- | :--- | :--- |
-| **`sentiric-core-interfaces`** | Tüm "Tak-Çıkar" bileşenlerin uyması gereken soyut arayüzleri (`BaseTask`, `BaseLLM` vb.) tanımlar. | Python |
-| **`sentiric-task-framework`** | Belirli iş akışlarını (`RestaurantReservationTask` gibi) tanımlayan, `BaseTask`'tan türemiş somut görev sınıflarını içerir. | Python |
-
-## 3. Adaptör Kütüphaneleri (Dış Dünya ile Konuşma)
-| Repo | Sorumluluk | Teknoloji |
-| :--- | :--- | :--- |
-| **`sentiric-connectors`** | Harici **konuşma servisleri** (ASR, TTS, LLM) için adaptörleri barındırır. (örn: `GoogleGeminiAdapter`). | Python |
-| **`sentiric-resources`** | Harici **iş mantığı sistemleri** (Veritabanı, Takvim, Ödeme) için adaptörleri barındırır. (örn: `GoogleCalendarAdapter`). | Python |
-
-## 4. Platform Servisleri (Uygulama Katmanı)
-| Repo | Sorumluluk | Teknoloji |
-| :--- | :--- | :--- |
-| **`sentiric-agent-worker`** | Her arama için Ajan sürecini başlatan, adaptörleri ve görevleri orkestre eden ana işçi servis. | Python, FastAPI |
-| **`sentiric-telephony-gateway`** | Telefoni sağlayıcılarından gelen/giden ses akışını yöneten ağ geçidi. | Python, FastAPI, WebSockets |
-| **`sentiric-api-server`** | Dashboard için RESTful API sunan, veritabanı işlemlerini ve kullanıcı yönetimini yürüten servis. | Python, FastAPI |
-| **`sentiric-knowledge-indexer`** | Bilgi bankası dokümanlarını okuyup, Vektör Veritabanına gömerek RAG mimarisini besleyen servis. | Python |
-| **`sentiric-dashboard`** | Kullanıcıların aramaları, görevleri ve analizleri görüntülediği web tabanlı yönetim paneli. | React, Vite, TypeScript |
-| **`sentiric-db-models`** | Tüm servisler tarafından paylaşılan veritabanı modellerini ve `Alembic` migrasyonlarını içerir. | Python, SQLModel |
----
+| Kategori              | Repo                         | Sorumluluk                                                                                                                              | Teknoloji                                       |
+| :-------------------- | :--------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------- |
+| **Yönetim ve Dokümantasyon** | `sentiric-governance`        | Projenin anayasası; vizyon, mimari, yol haritası, standartlar ve süreçleri barındırır. **Bu repo.**                                   | Markdown                                        |
+| **Çekirdek Kütüphaneler** | `sentiric-core-interfaces`   | Tüm "Tak-Çıkar" bileşenlerin uyması gereken soyut arayüzleri (`BaseTask`, `BaseLLM` vb.) tanımlar.                                    | Python                                          |
+|                       | `sentiric-task-framework`    | Belirli iş akışlarını (`AppointmentReservationTask` gibi) tanımlayan, `BaseTask`'tan türemiş somut görev sınıflarını içerir.            | Python                                          |
+|                       | `sentiric-db-models`         | Tüm servisler tarafından paylaşılan veritabanı modellerini ve `Alembic` migrasyonlarını içerir.                                         | Python, SQLModel                                |
+| **Adaptör Kütüphaneleri** | `sentiric-connectors`        | Harici **konuşma servisleri** (ASR, TTS, LLM) için adaptörleri barındırır. (örn: `GoogleGeminiAdapter`).                                 | Python                                          |
+|                       | `sentiric-resources`         | Harici **iş mantığı sistemleri** (Veritabanı, Takvim, Ödeme) için adaptörleri barındırır. (örn: `GoogleCalendarAdapter`).                 | Python                                          |
+| **Platform Servisleri** | `sentiric-agent-worker`      | Her arama/etkileşim için Ajan sürecini başlatan, adaptörleri ve görevleri orkestre eden ana işçi servis. (Python karşılığı)            | Python, FastAPI                                 |
+|                       | `sentiric-telephony-gateway` | Telefoni sağlayıcılarından gelen/giden **WebSocket/UDP** ses akışını yöneten ağ geçidi. (Python karşılığı)                              | Python, FastAPI, WebSockets                     |
+|                       | `sentiric-api-server`        | Dashboard için REST API sunan, veritabanı işlemlerini ve kullanıcı yönetimini yürüten servis.                                          | Python, FastAPI                                 |
+|                       | `sentiric-knowledge-indexer` | Bilgi bankası dokümanlarını okuyup, Vektör Veritabanına gömerek RAG mimarisini besleyen servis.                                         | Python                                          |
+|                       | `sentiric-tts-api`           | Sentiric'in kendi geliştirdiği veya entegre ettiği, özel Metin-Konuşma (TTS) motorları için API sunan servis.                           | Python, Flask                                   |
+|                       | `sentiric-stt-api`           | Sentiric'in kendi geliştirdiği veya entegre ettiği, Konuşma-Metin (STT) motorları için API sunan servis.                                | Python, FastAPI                                 |
+| **Geçit Servisleri**  | `sentiric-sip-gateway`       | Telekom operatörlerinden gelen **doğrudan SIP/RTP** çağrılarını alıp, Sentiric'in dahili WebSocket/UDP formatına çeviren köprü servis. | FreeSWITCH/Asterisk (C/Lua/JS)                  |
+|                       | `sentiric-messaging-gateway` | SMS, WhatsApp, Telegram gibi **metin tabanlı mesajlaşma kanallarını** Sentiric platformuna entegre eden servis.                        | Python, FastAPI (veya Node.js)                  |
+| **Kullanıcı Arayüzleri** | `sentiric-dashboard`         | Yönetici ve operasyonel kullanıcıların aramaları, görevleri ve analizleri görüntülediği web tabanlı yönetim paneli.                       | React, Vite, TypeScript                         |
+|                       | `sentiric-web-agent-ui`      | Sentiric platformunun kendi tam özellikli, web tabanlı sesli/metinli etkileşim arayüzü. (Mevcut MVP UI'ının evrimi)                     | React, Vite, TypeScript                         |
+|                       | `sentiric-embeddable-voice-widget` | Herhangi bir üçüncü taraf web sitesine kolayca entegre edilebilir, hafif ve minimal sesli/metinli etkileşim widget'ı/SDK'sı.     | JavaScript, TypeScript                          |
+| **Geliştirici Araçları** | `sentiric-cli`               | Geliştiricilerin görevleri, adaptörleri oluşturmasını ve platformu yönetmesini kolaylaştıran komut satırı aracı.                        | Python                                          |
+|                       | `sentiric-sdk-python`        | Python geliştiricilerinin Sentiric API'lerine kolayca erişmesi ve platformla entegre olması için SDK.                                   | Python                                          |
+|                       | `sentiric-sdk-javascript`    | JavaScript geliştiricilerinin Sentiric API'lerine kolayca erişmesi ve web uygulamalarına entegre olması için SDK.                        | JavaScript, TypeScript                          |
+| **Altyapı ve Operasyon** | `sentiric-infrastructure`    | Platformun bulut altyapısı (Kubernetes, Terraform vb.) konfigürasyonlarını, dağıtım scriptlerini ve CI/CD pipeline'larını içerir.     | Terraform, Kubernetes YAML, Shell Script, Python |
+| **Gelecek/Kuluçka**    | `sentiric-marketplace`       | Üçüncü parti geliştiricilerin kendi görev ve adaptörlerini Sentiric kullanıcılarına sunabileceği gelecekteki pazar yeri platformu.   | (Henüz karar verilmedi)                         |
+| **Prototip/Laboratuvar** | `sentiric-mvp`               | Hızlı prototipleme ve fikir testleri için kullanılan mevcut Node.js tabanlı Minimal Değerli Ürün (MVP).                               | JavaScript                                      |

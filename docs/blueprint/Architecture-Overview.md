@@ -1,12 +1,12 @@
-# 🏗️ Sentiric: Kapsamlı Mimari Dokümanı (Anayasa v4.0)
+# 🏗️ Sentiric: Kapsamlı Mimari Dokümanı (Anayasa v4.1)
 
 ## 1. Mimari Vizyon ve Temel Prensipler
 
-*   **"Tak-Çıkar Lego Seti" Felsefesi:** Platform, belirli teknolojilere (örn: Gemini, Twilio) "kaynak" yapılmamıştır. Her harici veya dahili servis (LLM, TTS, Takvim, STT), soyut bir arayüz (`BaseLLM`) arkasında çalışan somut bir **"Adaptör"** (`GeminiAdapter`) ile sisteme bağlanır. Bu, teknoloji yığınını (stack) gelecekte kolayca ve güvenle değiştirmemizi sağlar.
+*   **"Tak-Çıkar Lego Seti" Felsefesi:** Platform, belirli teknolojilere (örn: Gemini, Twilio) "kaynak" yapılmamıştır. Her harici veya dahili servis (LLM, TTS, Takvim, STT), soyut bir arayüz (`BaseLLM`) arkasında çalışan somut bir **"Adaptör"** (`GeminiAdapter`) ile sisteme bağlanır. Bu, teknoloji yığınını (stack) gelecekte kolayca ve güvenle değiştirmemizi sağlar. Platform, şu anda **23 farklı mikroservis ve kütüphane reposundan** oluşan geniş bir Lego setidir.
 
 *   **Asenkron ve Dayanıklı Mimari:** Sistem, telefon görüşmesinin gerçek zamanlı doğasına saygı duyar. Tüm kritik servisler, bir **Mesaj Kuyruğu (`RabbitMQ`)** üzerinden asenkron iletişim kurar. Bu, bir bileşenin yavaşlamasının veya çökmesinin, sistemin geri kalanını etkilemesini engeller ve platformu son derece dayanıklı hale getirir.
 
-*   **İnsan Benzeri Akışkan Diyalog:** Amacımız, katı menüler sunan bir IVR değil, `ChatGPT` gibi akışkan, bağlamı anlayan ve doğal bir diyalog kurabilen bir platform oluşturmaktır. Bu hedefe ulaşmak için, sadece metin değil, aynı zamanda konuşmanın tonunu, hızını ve duraklamalarını da yöneten **SSML (Speech Synthesis Markup Language)** kullanımı temel bir prensiptir.
+*   **İnsan Benzeri Akışkan Diyalog:** Amacımız, katı menü sunan bir IVR değil, `ChatGPT` gibi akışkan, bağlamı anlayan ve doğal bir diyalog kurabilen bir platform oluşturmaktır. Bu hedefe ulaşmak için, sadece metin değil, aynı zamanda konuşmanın tonunu, hızını ve duraklamalarını da yöneten **SSML (Speech Synthesis Markup Language)** kullanımı temel bir prensiptir.
 
 ## 2. Genel Mimari Şeması
 
@@ -16,17 +16,23 @@ Bu şema, sistemin dayanıklılığını ve ölçeklenebilirliğini artıran Mes
 graph TD
     subgraph "Dış Dünya & Servisler"
         Kullanici("📞 Kullanıcı Telefonu")
-        Telefoni("☎️ Telefoni Sağlayıcısı (VoIP/SIP Gateway)")
+        TelefoniSaglayici("☎️ Telefoni Sağlayıcısı (VoIP/SIP)")
+        WebUygulama("🌐 Web Uygulaması / Demo Site")
         AI("🧠 Harici AI Servisleri (LLM, STT, RAG)")
         ExternalSystems("💼 Harici İş Sistemleri (Takvim, CRM)")
     end
 
     subgraph "Sentiric Platformu (Google Cloud veya On-Premise)"
-        Gateway("[[sentiric-telephony-gateway]]")
-        Worker("[[sentiric-agent-worker]]")
-        API("[[sentiric-api-server]]")
+        SIPGateway("[[sentiric-sip-gateway]]")
+        TelephonyGateway("[[sentiric-telephony-gateway]]")
+        AgentWorker("[[sentiric-agent-worker]]")
+        APIServer("[[sentiric-api-server]]")
         Indexer("[[sentiric-knowledge-indexer]]")
         Dashboard("[[sentiric-dashboard]]")
+        WebAgentUI("[[sentiric-web-agent-ui]]")
+        EmbeddableWidget("[[sentiric-embeddable-voice-widget]]")
+        MessagingGateway("[[sentiric-messaging-gateway]]")
+
 
         subgraph "Çekirdek Altyapı"
             MQ("🐇 RabbitMQ (Mesaj Kuyruğu)")
@@ -36,22 +42,34 @@ graph TD
     end
 
     %% Akışlar
-    Kullanici -->|Arama| Telefoni
-    Telefoni -->|Canlı Ses Akışı WSS-UDP| Gateway
-    Gateway -->|NewCallEvent| MQ
-    MQ -->|İşi Tüketir| Worker
+    Kullanici -->|SIP/RTP Arama| TelefoniSaglayici
+    TelefoniSaglayici -->|SIP/RTP| SIPGateway
+    SIPGateway -->|WebSocket Ses Akışı| TelephonyGateway
+
+    WebUygulama -->|HTTP/JS Embed| EmbeddableWidget
+    EmbeddableWidget -->|WebSocket Ses/Metin| TelephonyGateway
     
-    Worker -->|Durum Oku/Yaz| Cache
-    Worker -->|Akıllı Yönlendirme| AI
-    Worker -->|Entegrasyon Çağrıları| ExternalSystems
-    Worker -->|Veri Saklama| DB
-    Worker -->|Ses Çalma Komutu SSML| MQ
-    MQ -->|Komutu Tüketir| Gateway
-    Gateway -->|Sesi Sentezle & Oynat| Telefoni
+    TelephonyGateway -->|NewCallEvent / AudioStream| MQ
+    MessagingGateway -->|NewMessageEvent| MQ
+
+    MQ -->|İşi Tüketir| AgentWorker
     
+    AgentWorker -->|Durum Oku/Yaz| Cache
+    AgentWorker -->|Akıllı Yönlendirme| AI
+    AgentWorker -->|Entegrasyon Çağrıları| ExternalSystems
+    AgentWorker -->|Veri Saklama| DB
+    AgentWorker -->|Ses Çalma Komutu SSML / Metin Yanıtı| MQ
+    MQ -->|Komutu Tüketir| TelephonyGateway
+    MQ -->|Komutu Tüketir| MessagingGateway
+    
+    TelephonyGateway -->|Sesi Sentezle & Oynat| SIPGateway
+    MessagingGateway -->|Mesaj Gönder| ExternalSystems (SMS API, WhatsApp API)
+
     Indexer -->|Veriyi Vektörleştir| AI
-    Dashboard -->|REST API| API
-    API -->|Veri Erişimi| DB & Cache
+    Dashboard -->|REST API| APIServer
+    APIServer -->|Veri Erişimi| DB & Cache
+    WebAgentUI -->|REST API & WebSocket| APIServer
+    WebAgentUI -->|WebSocket Doğrudan| TelephonyGateway
 ```
 
 ## 3. Genişletilmiş Lego Mimarisi (Arayüz & Adaptörler)
@@ -66,11 +84,13 @@ classDiagram
     class BaseSTT { <<interface>> +transcribe() }
     class BaseTTS { <<interface>> +synthesize() }
     class BaseTask { <<interface>> +execute() }
+    class BaseResourceAdapter { <<interface>> +call() }
 
     class GeminiAdapter { +generateText() }
     class DeepgramAdapter { +transcribe() }
     class SentiricTTSAdapter { +synthesize() }
     class ReservationTask { +execute() }
+    class GoogleCalendarAdapter { +call() }
 
     class ServiceRouter {
       <<utility>>
@@ -81,6 +101,8 @@ classDiagram
         -stt_router: ServiceRouter
         -llm_router: ServiceRouter
         -tts_router: ServiceRouter
+        -task_router: ServiceRouter
+        -resource_router: ServiceRouter
         +handle_message()
     }
 
@@ -88,6 +110,7 @@ classDiagram
     BaseSTT <|-- DeepgramAdapter
     BaseTTS <|-- SentiricTTSAdapter
     BaseTask <|-- ReservationTask
+    BaseResourceAdapter <|-- GoogleCalendarAdapter
     
     AgentWorker o--> ServiceRouter
 ```
@@ -100,20 +123,23 @@ Bu akış, sistemin sadece bir dizi komutu değil, aynı zamanda akıllı yönle
 sequenceDiagram
     autonumber
     participant K as Kullanıcı
-    participant T as Telefoni
-    participant G as Gateway
+    participant TS as Telefoni Sağlayıcısı
+    participant SG as "Sentiric SIP Gateway"
+    participant TG as "Sentiric Telephony Gateway"
     participant MQ as RabbitMQ
     participant W as "Agent Worker"
-    participant R as "Akıllı Yönlendirici"
+    participant SR as "Akıllı Yönlendirici"
     participant AI as "AI Servisleri"
+    participant EX as "Harici Sistemler"
 
-    K->>T: Arama başlatır
-    T->>G: WebSocket/UDP ses akışı başlatır
-    G->>MQ: publish(NewCallEvent)
+    K->>TS: Arama başlatır (+90 212 454 85 90)
+    TS->>SG: SIP/RTP ses akışı
+    SG->>TG: WebSocket/UDP ses akışı başlatır
+    TG->>MQ: publish(NewCallEvent)
     
     MQ-->>W: consume(NewCallEvent)
-    W->>R: En iyi LLM'i ve TTS'i bul
-    R-->>W: GeminiAdapter ve SentiricTTSAdapter'ı ver
+    W->>SR: En iyi LLM'i ve TTS'i bul
+    SR-->>W: GeminiAdapter ve SentiricTTSAdapter'ı ver
     
     W->>AI: (Gemini) Kişiselleştirilmiş karşılama metni (SSML formatında) üret
     AI-->>W: "<speak>Merhaba Ahmet Bey, <break time='400ms'/> size nasıl yardımcı olabilirim?</speak>"
@@ -122,25 +148,27 @@ sequenceDiagram
     AI-->>W: welcome_audio.wav
     
     W->>MQ: publish(PlayAudioCommand, audio_data)
-    MQ-->>G: consume(PlayAudioCommand)
-    G-->>T: Sesi kullanıcıya oynat
-    T-->>K: (Doğal duraklamalı karşılama sesi)
+    MQ-->>TG: consume(PlayAudioCommand)
+    TG->>SG: Sesi WebSocket ile gönder
+    SG-->>TS: Sesi RTP ile kullanıcıya oynat
+    TS-->>K: (Doğal duraklamalı karşılama sesi)
 
     loop Etkileşim Döngüsü
-        K->>T: Sesli yanıt ("Randevu almak istiyorum")
-        T->>G: Ses paketleri
-        G->>MQ: publish(AudioChunk)
+        K->>TS: Sesli yanıt ("Randevu almak istiyorum")
+        TS->>SG: Ses paketleri
+        SG->>TG: Ses paketleri
+        TG->>MQ: publish(AudioChunk)
         
         MQ-->>W: consume(AudioChunk)
-        W->>R: En iyi STT servisini bul (hız öncelikli)
-        R-->>W: DeepgramAdapter'ı ver
+        W->>SR: En iyi STT servisini bul (hız öncelikli)
+        SR-->>W: DeepgramAdapter'ı ver
         W->>AI: (Deepgram) Sesi metne çevir
         AI-->>W: "Randevu almak istiyorum"
         
         W->>W: Görev Yönlendirme (ReservationTask seçilir)
         
-        W->>R: En iyi LLM'i bul (doğruluk öncelikli)
-        R-->>W: GeminiAdapter'ı ver
+        W->>SR: En iyi LLM'i bul (doğruluk öncelikli)
+        SR-->>W: GeminiAdapter'ı ver
         W->>AI: (Gemini) Sonraki soruyu SSML olarak üret
         AI-->>W: "<speak>Elbette, hangi tarih için?</speak>"
         
@@ -148,9 +176,10 @@ sequenceDiagram
         AI-->>W: prompt_audio.wav
         
         W->>MQ: publish(PlayAudioCommand, audio_data)
-        MQ-->>G: consume(PlayAudioCommand)
-        G-->>T: Sesli yanıt
-        T-->>K: "Elbette, hangi tarih için?"
+        MQ-->>TG: consume(PlayAudioCommand)
+        TG->>SG: Sesi WebSocket ile gönder
+        SG-->>TS: Sesli yanıt
+        TS-->>K: "Elbette, hangi tarih için?"
     end
 ```
 
@@ -214,10 +243,6 @@ services:
 
 ## 6. Bileşen Detayları ve Sorumlu Repolar
 
-| Bileşen | Sorumlu Repo | Açıklama |
-| :--- | :--- | :--- |
-| **telephony-gateway** | `sentiric-telephony-gateway` | Telefoni sağlayıcıları ile WebSocket/UDP ses akışını yönetir. |
-| **agent-worker** | `sentiric-agent-worker` | Diyalog mantığını yürütür, Akıllı Yönlendiriciyi kullanır, görevleri orkestre eder. |
-| **api-server** | `sentiric-api-server` | Dashboard için REST API sunar ve veritabanı işlemlerini yönetir. |
-| **knowledge-indexer** | `sentiric-knowledge-indexer` | Bilgi bankasını RAG mimarisi için vektör veritabanına indeksler. |
-| **core-interfaces** | `sentiric-core-interfaces` | Tüm adaptörlerin uyması gereken soyut Python sınıflarını (`BaseLLM` vb.) barındırır. |
+Sentiric ekosistemindeki tüm repoların detaylı listesi ve sorumlulukları için lütfen **[Sentiric Ekosistem ve Repolar Dokümanına](./Ecosystem-Repos.md)** başvurun.
+
+---

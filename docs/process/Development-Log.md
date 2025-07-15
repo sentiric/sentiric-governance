@@ -4,88 +4,16 @@ Bu belge, projenin gelişim hikayesini, alınan önemli kararları ve bu kararla
 
 
 ---
-### **2024-07-17: Faz 0 - Kuruluş**
+### **2024-07-25: Faz 0 - Sentiric Ekosisteminin Fiziksel Olarak Şekillendirilmesi (23 Repo Oluşturuldu)**
 
-*   **Karar:** Projenin adı **"Sentiric"** olarak belirlendi ve `sentiric` GitHub organizasyonu kuruldu.
-*   **Gerekçe:** "Sentient" (farkında) ve "Fabric" (doku) kelimelerinden ilhamla, platformun bağlam farkındalığını ve akıcı diyalog örme yeteneğini yansıtan, benzersiz ve akılda kalıcı bir isim seçildi. Önceki önerilerin (`Sonus`, `FluentAI` vb.) GitHub'da alınmış olması, tamamen özgün bir kelime türetme stratejisine yönelmemize neden oldu.
-*   **Karar:** Projenin merkezi yönetim reposu olarak `sentiric-governance` oluşturuldu ve projenin anayasası niteliğindeki tüm temel dokümanlar (vizyon, mimari, uçtan uca akış, yol haritası, standartlar, süreçler) bu repoya eklendi.
-*   **Gerekçe:** Koda başlamadan önce projenin tüm paydaşları için "tek bir doğruluk kaynağı" oluşturmak, gelecekteki teknik borcu ve stratejik sapmaları en aza indirecektir. Bu, `AzuraForge` ve `VocalForge` projelerinden alınan en önemli derslerden biridir. Uçtan uca akış dokümanının eklenmesi, mimari şemaların somut bir senaryo üzerinden nasıl hayata geçeceğini netleştirmiştir.
-*   **Sonuç:** Proje, sağlam bir dokümantasyon temeli ve net bir vizyonla resmi olarak "Kuruluş Fazı"nı tamamlamıştır. Bir sonraki adım, `ROADMAP.md`'de belirtildiği gibi Faz 1'e geçmektir.
+*   **Karar:** Projenin başlangıç aşamasında, modülerlik, ölçeklenebilirlik, sorumlulukların netleştirilmesi, karmaşıklığın yönetilmesi ve gelecekteki üretim mimarisine hazırlanmak amacıyla, mimari dokümanlarda (`Architecture-Overview.md`, `Ecosystem-Repos.md`) tanımlanan **23 adet mikroservis/kütüphane deposunun GitHub organizasyonunda oluşturulmasına** karar verilmiştir. Bu repolar, `sentiric-sip-gateway`, `sentiric-messaging-gateway`, `sentiric-web-agent-ui`, `sentiric-embeddable-voice-widget`, `sentiric-infrastructure`, `sentiric-cli`, `sentiric-sdk-python`, `sentiric-sdk-javascript` ve `sentiric-marketplace` gibi vizyoner bileşenleri de içermektedir.
+*   **Gerekçe:** Bu adım, Sentiric'in "Tak-Çıkar Lego Seti" felsefesini somutlaştırmış ve her bir bileşenin bağımsız gelişiminin temelini atmıştır. Bu sayede:
+    *   **Sorumluluklar Netleşmiştir:** Her reponun kendine ait net bir görevi ve teknolojik odağı vardır.
+    *   **Ölçeklenebilirlik Sağlanmıştır:** Servisler bağımsız olarak geliştirilebilir, test edilebilir ve dağıtılabilir.
+    *   **Geliştirme Hızı Artmıştır:** Ekipler paralel çalışabilir, bağımlılıklar azalır.
+    *   **Uzun Vadeli Vizyon Güçlendirilmiştir:** Gelecekteki ürün (SDK, CLI, Marketplace, Omnichannel) ve altyapı (IaC) hedefleri şimdiden fiziksel olarak yerini bulmuştur.
+*   **Sonuç:** Sentiric projesi, tüm temel ve vizyoner repolarıyla birlikte sağlam bir fiziksel yapıya kavuşmuştur. Bir sonraki aşama, bu repoların içini doldurmak ve fonksiyonel hale getirmektir.
 
----
-
-### **2024-07-18: Faz 0 - Anayasanın Zırhlandırılması**
-
-*   **Karar:** Projenin temel `governance` dokümanları, farklı mühendislik perspektiflerinden (Backend, DevOps, Güvenlik) geçirilen titiz bir inceleme sonucunda detaylandırıldı ve güçlendirildi. `Core-Data-Structures.md` adında yeni bir doküman oluşturuldu ve `API-Design-Guide.md`, `Monitoring-and-Logging.md` gibi kritik belgeler önemli ölçüde güncellendi.
-*   **Gerekçe:** Koda başlamadan önce, servisler arası kontratları (`TaskResult`, `CallContext`), operasyonel protokolleri (Distributed Tracing) ve güvenlik mekanizmalarını (JWT Scopes) net bir şekilde tanımlamak, gelecekteki teknik borcu ve entegrasyon sorunlarını en aza indirmek için hayati önem taşımaktadır. Bu, projenin teorik plandan, uygulanabilir bir mühendislik planına geçişini sağlamıştır.
-*   **Karar:** Proje Sahibi ve AI Mimar arasındaki işbirliği modeli, "Stratejik Gözden Geçirme ve Eylem Döngüsü" adı altında standartlaştırılarak `AI-Collaboration-Guide.md`'ye eklendi.
-*   **Gerekçe:** Projenin kendisi kadar, geliştirme sürecinin de disiplinli, tutarlı ve belgelenmiş olmasını sağlamak.
-*   **Sonuç:** `sentiric-governance` reposu, tüm ekip için referans alınabilecek, detaylandırılmış ve sağlam bir temel haline getirilmiştir. Proje, Faz 1'e geçiş için tamamen hazırdır.
-
-
-*   **Karar:** Projenin temel mimarisi, gelen geri bildirimler doğrultusunda hız, dayanıklılık, güvenlik ve ürünleştirme odağında "zırhlandırıldı". Asenkron iletişim için RabbitMQ, veri modellemesi için SQLModel, diyalog akışı için Durum Makinesi ve bilgi bankası için RAG gibi temel teknolojiler ve desenler standart olarak kabul edildi.
-*   **Gerekçe:** Koda başlamadan önce bu temel mühendislik kararlarını netleştirmek ve belgelemek, gelecekteki teknik borcu önleyecek, geliştirme sürecini hızlandıracak ve projenin en başından itibaren ticari bir ürün olma potansiyelini destekleyecektir. Bu, teorik plandan, uygulanabilir ve sağlam bir mühendislik planına geçişin son adımıdır.
-
----
-
-### **2024-07-20: Faz 0 - Revizyon ve Bütünleştirme**
-*   **Karar:** Proje anayasası, Proje Sahibi'nden gelen kritik geri bildirimler doğrultusunda kapsamlı bir revizyondan geçirildi. Önceki "zırhlandırma" çabasında kaybolan değerli detaylar (Lego Mimarisi, detaylı akışlar) yeni mimariyle (RabbitMQ, SQLModel) bütünleştirilerek geri getirildi.
-*   **Gerekçe:** AI Mimar'ın ilk zırhlandırma denemesi, teknik optimizasyona odaklanırken projenin temel vizyonunu (gerçek zamanlı AI diyaloğu) ve dokümantasyon bütünlüğünü kısmen gözden kaçırmıştı. Bu revizyon, teknik sağlamlık ile vizyoner netliği tek bir tutarlı belgede birleştirmek için yapıldı. Hatalı `mermaid` şemaları düzeltildi, eksik bölümler eklendi ve MVP tanımı, projenin ruhuna uygun olarak yeniden şekillendirildi.
-*   **Karar:** `sentiric-knowledge-indexer`'ın başlangıçtan itibaren ayrı bir repo olarak yönetilmesine karar verildi.
-*   **Gerekçe:** RAG (Retrieval-Augmented Generation) mimarisinin projedeki stratejik önemini ve modüler yapıyı en başından itibaren vurgulamak.
-*   **Sonuç:** Proje anayasası, tüm paydaşların üzerinde anlaştığı, hem teknik olarak detaylı hem de vizyoner olarak net, sağlam ve bütünleşik bir yapıya kavuşturulmuştur. Proje, vizyonuna sadık bir MVP geliştirmek için hazırdır.
----
-
----
-### **2024-07-23: Faz 1 Adım 1 - MVP'de Lego Mimarisi Uygulaması**
-
-*   **Karar:** `sentiric-mvp-v1` prototipinde, projenin temel `Tak-Çıkar Lego Seti` ve `Varsayılan Olarak Harici, Stratejik Olarak Dahili` mimari felsefelerini somutlaştırmak amacıyla LLM ve TTS bileşenleri için adaptör tabanlı bir yapıya geçilmiştir. Piper TTS adaptörü, Coqui-TTS tabanlı özelleştirilmiş `Sentiric Voice Engine Adapter` olarak yeniden adlandırılarak, projenin kendi "in-house" ses motoru vizyonunun MVP'de somutlaştırılması sağlanmıştır.
-*   **Gerekçe:**
-    *   **Vizyonun Kanıtı:** Ana mimarideki temel prensiplerin (teknoloji bağımsızlığı, adaptör tabanlılık) en küçük prototip seviyesinde bile uygulanabilir ve çalışır durumda olduğunu göstermek.
-    *   **Esneklik:** LLM seçiminin (yerel Ollama veya harici Gemini) `.env` üzerinden dinamik hale getirilmesi, geliştiricilere farklı AI modelleriyle hızlıca deneme yapma imkanı sunar.
-    *   **Stratejik Uyum:** Kendi Coqui-TTS çatallanmasının "Sentiric Voice Engine" olarak isimlendirilmesi, `Roadmap.md`'deki Faz 3 hedefleriyle uyumu pekiştirir ve projenin "kendi motorunu entegre etme" yeteneğini şimdiden sergiler.
-    *   **Hızlı Geri Bildirim:** Bu tür temel mimari kararların MVP aşamasında denenmesi, ilerideki daha büyük entegrasyonlar için değerli öğrenimler sağlar ve potansiyel sorunları erken aşamada tespit eder.
-*   **Sonuç:** `sentiric-mvp-v1` artık `sentiric-governance`'daki mimari vizyonu yansıtan, dinamik olarak yapılandırılabilir LLM ve TTS adaptörlerine sahip, daha "akıllı" bir prototip haline gelmiştir. Bu, projenin sadece teoride değil, pratikte de sağlam temeller üzerinde ilerlediğini kanıtlamıştır.
----
-### **2024-07-23: Faz 1 Adım 1 - MVP Diyalog Akışı ve Anlama İyileştirmeleri**
-
-*   **Karar:** `sentiric-mvp-v1` prototipinin diyalog akışı ve kullanıcı girdilerini anlama yeteneği, LLM prompt'larının sıkılaştırılması, parametre doğrulama mekanizmalarının eklenmesi ve anlayamama durumlarının kullanıcı dostu bir şekilde yönetilmesiyle önemli ölçüde iyileştirilmiştir.
-*   **Gerekçe:**
-    *   **Kullanıcı Deneyimi:** LLM'in anlamsız değerler döndürmesi ve diyalogda takılı kalma sorunları giderilerek, kullanıcıların sistemle daha doğal ve akıcı bir şekilde etkileşime girmesi sağlanmıştır. "Anlayamadım" geri bildirimi ve tekrar deneme hakkı, platformun dayanıklılığını artırmıştır.
-    *   **LLM Kontrolü:** LLM'den beklenen JSON formatının ve içeriksel değerin (örn. `null` döndürme talimatı, sayısal değerler) daha katı bir şekilde talep edilmesi, modellerin güvenilirliğini artırmıştır.
-    *   **Veri Bütünlüğü:** Çıkarılan parametrelerin basit kurallarla (örn. konum için kelime sayısı, sayısal alanlar için sayısal doğrulama) doğrulanması, veritabanına yanlış veya anlamsız verilerin kaydedilmesini engellemiştir.
-    *   **Hata Dayanıklılığı:** Kod tabanındaki `TypeError` gibi kritik hatalar giderilerek sistemin kararlılığı sağlanmış, genel hata yakalama mekanizması iyileştirilmiştir.
-*   **Sonuç:** `sentiric-mvp-v1` artık "otel rezervasyonu" görevini çok daha güvenilir, hatasız ve kullanıcı dostu bir şekilde tamamlayabilen, pratik bir konuşma AI'sı haline gelmiştir. Bu gelişme, projenin "Konuşan İşlem Platformu" vizyonunun somut bir kanıtıdır.
----
-
-### **2024-07-23: Faz 1 Adım 1 - MVP'de Bilgi Talebi (RAG) ve Gelişmiş Diyalog**
-
-*   **Karar:** `sentiric-mvp-v1` prototipinde temel bir RAG (Retrieval-Augmented Generation) yeteneği ve daha gelişmiş diyalog akışı entegre edilmiştir. Bu, sistemin sadece belirli formları doldurmakla kalmayıp, statik bir bilgi bankasından genel soruları da yanıtlayabilmesini sağlamıştır.
-*   **Gerekçe:**
-    *   **Ürün Vizyonunun Genişletilmesi:** "Konuşan İşlem Platformu" vizyonunun temel bileşenlerinden olan bilgi erişimi (RAG) özelliğinin MVP'de somutlaştırılması, projenin kapsamını ve değer önerisini artırmıştır.
-    *   **Geliştirilmiş Anlama:** LLM prompt'larının daha da sıkılaştırılması (özellikle `null` değer döndürme talimatı ve sayısal değerler için özel prompt'lar), Ollama'nın yanıt kalitesini ve parametre çıkarma doğruluğunu önemli ölçüde artırmıştır. LLM'den kaynaklanan halüsinasyonlar ve hatalı bilgi atamaları minimize edilmiştir.
-    *   **Daha Akıcı Diyalog:** `worker` mantığındaki iyileştirmeler sayesinde, kullanıcı girişlerinin daha akıllıca işlenmesi, geçersiz veya eksik girdilerde daha nazik geri bildirimler verilmesi ve senaryolar arası dinamik geçişler (örn. otel rezervasyonundan bilgi talebine) sağlanmıştır.
-    *   **Kararlılık:** LLM'den sayısal değer döndüğünde ortaya çıkan `TypeError` gibi kritik hatalar giderilerek sistemin genel kararlılığı artırılmıştır.
-*   **Sonuç:** `sentiric-mvp-v1` artık hem görev odaklı (otel rezervasyonu gibi) hem de bilgi odaklı (çalışma saatleri sorma gibi) diyalogları başarılı bir şekilde yürütebilen, daha akıllı, esnek ve güvenilir bir prototip haline gelmiştir. Bu, projenin bir sonraki fazları için sağlam bir temel oluşturmaktadır.
----
-### **2024-07-23: Faz 1 Adım 1 - MVP'de Çoklu Parametre Çıkarımı ve Akışkan Diyalog**
-
-*   **Karar:** `sentiric-mvp-v1` prototipine, kullanıcının tek bir cümlede birden fazla bilgi vermesi durumunda bu bilgileri eş zamanlı olarak algılama ve işleme yeteneği (Çoklu Parametre Çıkarımı) entegre edilmiştir. Bu, sistemin diyalog akıcılığını ve doğal dil anlama kabiliyetini önemli ölçüde artırmıştır.
-*   **Gerekçe:**
-    *   **Akışkan Diyalog:** Kullanıcıların daha doğal konuşma alışkanlıklarına uyum sağlayarak, sistemin birden fazla soruyu tek seferde yanıtlaması, diyalogdaki tur sayısını azaltmış ve kullanıcı deneyimini iyileştirmiştir. Bu, "Gerçek Zamanlı AI Diyaloğu" felsefesinin somut bir çıktısıdır.
-    *   **Verimlilik:** Gerekli tüm parametrelerin daha erken aşamalarda toplanması, form doldurma sürecini hızlandırmış ve sistemin görevleri daha verimli tamamlamasına olanak tanımıştır.
-    *   **LLM Kullanımı Optimizasyonu:** LLM'e tek bir taleple birden fazla bilgi çıkarma görevi verilerek, her bilgi için ayrı bir LLM çağrısı yapma ihtiyacı azaltılmıştır (bilişsel yük).
-*   **Sonuç:** `sentiric-mvp-v1` artık hem tekil (soru-cevap) hem de çoklu (tek cümlede birden çok bilgi) parametre girişlerini başarılı bir şekilde işleyebilen, daha insana yakın bir diyalog deneyimi sunmaktadır. Bu gelişme, platformun "Konuşan İşlem Platformu" vizyonuna önemli bir katkı sağlamıştır.
----
-### **2024-07-23: Faz 1 Adım 1 - MVP'de Modüler Mimari, TTS Sağlık Kontrolü ve Mini-Dashboard**
-
-*   **Karar:** `sentiric-mvp-v1` prototipi, ana `sentiric-governance` reposunda tanımlanan kurumsal düzeydeki mimari prensipleri (modülerlik, gözlemlenebilirlik, hata yönetimi) ve ürün vizyonunu (operasyonel dashboard) daha fazla yansıtacak şekilde kapsamlı bir iyileştirmeden geçirilmiştir.
-*   **Gerekçe:**
-    *   **Mimari Bütünlük:** `worker.js`'in sorumlulukları `CallContextManager` ve `DialogOrchestrator` gibi ayrı modüllere taşınarak, kod organizasyonu ve "Tak-Çıkar Lego Seti" felsefesine uygunluk büyük ölçüde artırılmıştır. Bu, gelecekteki ölçeklenebilirlik ve Python'daki ana projeye aktarım için sağlam bir temel oluşturur.
-    *   **Dayanıklılık ve Gözlemlenebilirlik:** Sentiric Voice Engine (Coqui-TTS) sunucusuna eklenen sağlık kontrolü endpoint'i sayesinde, sistem TTS servisinin durumunu proaktif olarak izleyebilmekte ve sağlıksız durumlarda sesli yanıt denemek yerine metin tabanlı geri bildirim sağlayarak hatalı davranışı engellemektedir. Bu, `docs/operations/Monitoring-and-Logging.md`'deki hedeflerle uyumludur.
-    *   **Operasyonel Farkındalık:** Kullanıcı arayüzüne eklenen "Aktif Oturum Bilgisi" paneli ve "TTS Durumu" göstergesi, platformun iç işleyişine dair anlık görünürlük sağlayarak `docs/product/User-Persona-Guides.md`'deki Yönetici/Operatör perspektifinin temelini atmıştır.
-    *   **Kullanıcı Deneyimi:** Oturum yönetimi iyileştirilerek, bir görev tamamlandıktan sonra oturumun tamamen sıfırlanması yerine senaryo bağlamının sıfırlanması sağlanmış, böylece kullanıcıların aynı oturumda farklı görevlere geçiş yapması kolaylaştırılmıştır. UI'daki çeşitli `TypeError` ve `SyntaxError` hataları da giderilmiştir.
-*   **Sonuç:** `sentiric-mvp-v1` artık sadece temel bir prototip olmaktan çıkmış, gerçek bir "Konuşan İşlem Platformu"nun temel özelliklerini (modüler mimari, akıllı diyalog, sağlam hata yönetimi ve operasyonel görünürlük) sergileyen, son derece yetenekli ve etkileyici bir Minimal Değerli Ürün (MVP) haline gelmiştir. Faz 1'deki hedeflere büyük ölçüde ulaşılmıştır.
 ---
 ### **2024-07-24: Stratejik Yeniden Hizalanma ve Mimari Netleştirme (v4.0)**
 
@@ -196,4 +124,79 @@ Bu loglar, sistemin bizim yazdığımız **Durum Makinesi mantığıyla kusursuz
         *   Kapsam dışı sorular için (örn. "Dünyanın en yüksek dağı?"), LLM'in **"KESİNLİKLE nazikçe ve doğrudan reddetmesi"** ve ardından otel konularına yönlendirmesi kuralı daha netleştirilmiştir.
         *   Rezervasyon onay mesajında `checkin_date`'in insan dostu formatta (`GG Ay YYYY`) belirtilmesi gerektiği eklenmiştir.
 *   **Sonuç:** Sentiric MVP, artık çok daha akışkan, bağlam farkındalığına sahip ve insan benzeri bir diyalog kurabilmektedir. Görev akışındaki kritik bağlam kayıpları giderilmiş, LLM yanıt tutarlılığı artırılmış ve tarih/kişi sayısı algılama hassasiyeti yükseltilmiştir. Bu, projenin Faz 1 hedeflerine ulaşmasında büyük bir adımdır.
+---
+
+---
+### **2024-07-18: Faz 0 - Anayasanın Zırhlandırılması**
+
+*   **Karar:** Projenin temel `governance` dokümanları, farklı mühendislik perspektiflerinden (Backend, DevOps, Güvenlik) geçirilen titiz bir inceleme sonucunda detaylandırıldı ve güçlendirildi. `Core-Data-Structures.md` adında yeni bir doküman oluşturuldu ve `API-Design-Guide.md`, `Monitoring-and-Logging.md` gibi kritik belgeler önemli ölçüde güncellendi.
+*   **Gerekçe:** Koda başlamadan önce, servisler arası kontratları (`TaskResult`, `CallContext`), operasyonel protokolleri (Distributed Tracing) ve güvenlik mekanizmalarını (JWT Scopes) net bir şekilde tanımlamak, gelecekteki teknik borcu ve entegrasyon sorunlarını en aza indirmek için hayati önem taşımaktadır. Bu, projenin teorik plandan, uygulanabilir bir mühendislik planına geçişini sağlamıştır.
+*   **Karar:** Proje Sahibi ve AI Mimar arasındaki işbirliği modeli, "Stratejik Gözden Geçirme ve Eylem Döngüsü" adı altında standartlaştırılarak `AI-Collaboration-Guide.md`'ye eklendi.
+*   **Gerekçe:** Projenin kendisi kadar, geliştirme sürecinin de disiplinli, tutarlı ve belgelenmiş olmasını sağlamak.
+*   **Sonuç:** `sentiric-governance` reposu, tüm ekip için referans alınabilecek, detaylandırılmış ve sağlam bir temel haline getirilmiştir. Proje, Faz 1'e geçiş için tamamen hazırdır.
+
+
+*   **Karar:** Projenin temel mimarisi, gelen geri bildirimler doğrultusunda hız, dayanıklılık, güvenlik ve ürünleştirme odağında "zırhlandırıldı". Asenkron iletişim için RabbitMQ, veri modellemesi için SQLModel, diyalog akışı için Durum Makinesi ve bilgi bankası için RAG gibi temel teknolojiler ve desenler standart olarak kabul edildi.
+*   **Gerekçe:** Koda başlamadan önce bu temel mühendislik kararlarını netleştirmek ve belgelemek, gelecekteki teknik borcu önleyecek, geliştirme sürecini hızlandıracak ve projenin en başından itibaren ticari bir ürün olma potansiyelini destekleyecektir. Bu, teorik plandan, uygulanabilir ve sağlam bir mühendislik planına geçişin son adımıdır.
+
+---
+
+### **2024-07-20: Faz 0 - Revizyon ve Bütünleştirme**
+*   **Karar:** Proje anayasası, Proje Sahibi'nden gelen kritik geri bildirimler doğrultusunda kapsamlı bir revizyondan geçirildi. Önceki "zırhlandırma" çabasında kaybolan değerli detaylar (Lego Mimarisi, detaylı akışlar) yeni mimariyle (RabbitMQ, SQLModel) bütünleştirilerek geri getirildi.
+*   **Gerekçe:** AI Mimar'ın ilk zırhlandırma denemesi, teknik optimizasyona odaklanırken projenin temel vizyonunu (gerçek zamanlı AI diyaloğu) ve dokümantasyon bütünlüğünü kısmen gözden kaçırmıştı. Bu revizyon, teknik sağlamlık ile vizyoner netliği tek bir tutarlı belgede birleştirmek için yapıldı. Hatalı `mermaid` şemaları düzeltildi, eksik bölümler eklendi ve MVP tanımı, projenin ruhuna uygun olarak yeniden şekillendirildi.
+*   **Karar:** `sentiric-knowledge-indexer`'ın başlangıçtan itibaren ayrı bir repo olarak yönetilmesine karar verildi.
+*   **Gerekçe:** RAG (Retrieval-Augmented Generation) mimarisinin projedeki stratejik önemini ve modüler yapıyı en başından itibaren vurgulamak.
+*   **Sonuç:** Proje anayasası, tüm paydaşların üzerinde anlaştığı, hem teknik olarak detaylı hem de vizyoner olarak net, sağlam ve bütünleşik bir yapıya kavuşturulmuştur. Proje, vizyonuna sadık bir MVP geliştirmek için hazırdır.
+---
+
+---
+### **2024-07-23: Faz 1 Adım 1 - MVP'de Lego Mimarisi Uygulaması**
+
+*   **Karar:** `sentiric-mvp-v1` prototipinde, projenin temel `Tak-Çıkar Lego Seti` ve `Varsayılan Olarak Harici, Stratejik Olarak Dahili` mimari felsefelerini somutlaştırmak amacıyla LLM ve TTS bileşenleri için adaptör tabanlı bir yapıya geçilmiştir. Piper TTS adaptörü, Coqui-TTS tabanlı özelleştirilmiş `Sentiric Voice Engine Adapter` olarak yeniden adlandırılarak, projenin kendi "in-house" ses motoru vizyonunun MVP'de somutlaştırılması sağlanmıştır.
+*   **Gerekçe:**
+    *   **Vizyonun Kanıtı:** Ana mimarideki temel prensiplerin (teknoloji bağımsızlığı, adaptör tabanlılık) en küçük prototip seviyesinde bile uygulanabilir ve çalışır durumda olduğunu göstermek.
+    *   **Esneklik:** LLM seçiminin (yerel Ollama veya harici Gemini) `.env` üzerinden dinamik hale getirilmesi, geliştiricilere farklı AI modelleriyle hızlıca deneme yapma imkanı sunar.
+    *   **Stratejik Uyum:** Kendi Coqui-TTS çatallanmasının "Sentiric Voice Engine" olarak isimlendirilmesi, `Roadmap.md`'deki Faz 3 hedefleriyle uyumu pekiştirir ve projenin "kendi motorunu entegre etme" yeteneğini şimdiden sergiler.
+    *   **Hızlı Geri Bildirim:** Bu tür temel mimari kararların MVP aşamasında denenmesi, ilerideki daha büyük entegrasyonlar için değerli öğrenimler sağlar ve potansiyel sorunları erken aşamada tespit eder.
+*   **Sonuç:** `sentiric-mvp-v1` artık `sentiric-governance`'daki mimari vizyonu yansıtan, dinamik olarak yapılandırılabilir LLM ve TTS adaptörlerine sahip, daha "akıllı" bir prototip haline gelmiştir. Bu, projenin sadece teoride değil, pratikte de sağlam temeller üzerinde ilerlediğini kanıtlamıştır.
+---
+### **2024-07-23: Faz 1 Adım 1 - MVP Diyalog Akışı ve Anlama İyileştirmeleri**
+
+*   **Karar:** `sentiric-mvp-v1` prototipinin diyalog akışı ve kullanıcı girdilerini anlama yeteneği, LLM prompt'larının sıkılaştırılması, parametre doğrulama mekanizmalarının eklenmesi ve anlayamama durumlarının kullanıcı dostu bir şekilde yönetilmesiyle önemli ölçüde iyileştirilmiştir.
+*   **Gerekçe:**
+    *   **Kullanıcı Deneyimi:** LLM'in anlamsız değerler döndürmesi ve diyalogda takılı kalma sorunları giderilerek, kullanıcıların sistemle daha doğal ve akıcı bir şekilde etkileşime girmesi sağlanmıştır. "Anlayamadım" geri bildirimi ve tekrar deneme hakkı, platformun dayanıklılığını artırmıştır.
+    *   **LLM Kontrolü:** LLM'den beklenen JSON formatının ve içeriksel değerin (örn. `null` döndürme talimatı, sayısal değerler) daha katı bir şekilde talep edilmesi, modellerin güvenilirliğini artırmıştır.
+    *   **Veri Bütünlüğü:** Çıkarılan parametrelerin basit kurallarla (örn. konum için kelime sayısı, sayısal alanlar için sayısal doğrulama) doğrulanması, veritabanına yanlış veya anlamsız verilerin kaydedilmesini engellemiştir.
+    *   **Hata Dayanıklılığı:** Kod tabanındaki `TypeError` gibi kritik hatalar giderilerek sistemin kararlılığı sağlanmış, genel hata yakalama mekanizması iyileştirilmiştir.
+*   **Sonuç:** `sentiric-mvp-v1` artık "otel rezervasyonu" görevini çok daha güvenilir, hatasız ve kullanıcı dostu bir şekilde tamamlayabilen, pratik bir konuşma AI'sı haline gelmiştir. Bu gelişme, projenin "Konuşan İşlem Platformu" vizyonunun somut bir kanıtıdır.
+---
+
+### **2024-07-23: Faz 1 Adım 1 - MVP'de Bilgi Talebi (RAG) ve Gelişmiş Diyalog**
+
+*   **Karar:** `sentiric-mvp-v1` prototipinde temel bir RAG (Retrieval-Augmented Generation) yeteneği ve daha gelişmiş diyalog akışı entegre edilmiştir. Bu, sistemin sadece belirli formları doldurmakla kalmayıp, statik bir bilgi bankasından genel soruları da yanıtlayabilmesini sağlamıştır.
+*   **Gerekçe:**
+    *   **Ürün Vizyonunun Genişletilmesi:** "Konuşan İşlem Platformu" vizyonunun temel bileşenlerinden olan bilgi erişimi (RAG) özelliğinin MVP'de somutlaştırılması, projenin kapsamını ve değer önerisini artırmıştır.
+    *   **Geliştirilmiş Anlama:** LLM prompt'larının daha da sıkılaştırılması (özellikle `null` değer döndürme talimatı ve sayısal değerler için özel prompt'lar), Ollama'nın yanıt kalitesini ve parametre çıkarma doğruluğunu önemli ölçüde artırmıştır. LLM'den kaynaklanan halüsinasyonlar ve hatalı bilgi atamaları minimize edilmiştir.
+    *   **Daha Akıcı Diyalog:** `worker` mantığındaki iyileştirmeler sayesinde, kullanıcı girişlerinin daha akıllıca işlenmesi, geçersiz veya eksik girdilerde daha nazik geri bildirimler verilmesi ve senaryolar arası dinamik geçişler (örn. otel rezervasyonundan bilgi talebine) sağlanmıştır.
+    *   **Kararlılık:** LLM'den sayısal değer döndüğünde ortaya çıkan `TypeError` gibi kritik hatalar giderilerek sistemin genel kararlılığı artırılmıştır.
+*   **Sonuç:** `sentiric-mvp-v1` artık hem görev odaklı (otel rezervasyonu gibi) hem de bilgi odaklı (çalışma saatleri sorma gibi) diyalogları başarılı bir şekilde yürütebilen, daha akıllı, esnek ve güvenilir bir prototip haline gelmiştir. Bu, projenin bir sonraki fazları için sağlam bir temel oluşturmaktadır.
+---
+### **2024-07-23: Faz 1 Adım 1 - MVP'de Çoklu Parametre Çıkarımı ve Akışkan Diyalog**
+
+*   **Karar:** `sentiric-mvp-v1` prototipine, kullanıcının tek bir cümlede birden fazla bilgi vermesi durumunda bu bilgileri eş zamanlı olarak algılama ve işleme yeteneği (Çoklu Parametre Çıkarımı) entegre edilmiştir. Bu, sistemin diyalog akıcılığını ve doğal dil anlama kabiliyetini önemli ölçüde artırmıştır.
+*   **Gerekçe:**
+    *   **Akışkan Diyalog:** Kullanıcıların daha doğal konuşma alışkanlıklarına uyum sağlayarak, sistemin birden fazla soruyu tek seferde yanıtlaması, diyalogdaki tur sayısını azaltmış ve kullanıcı deneyimini iyileştirmiştir. Bu, "Gerçek Zamanlı AI Diyaloğu" felsefesinin somut bir çıktısıdır.
+    *   **Verimlilik:** Gerekli tüm parametrelerin daha erken aşamalarda toplanması, form doldurma sürecini hızlandırmış ve sistemin görevleri daha verimli tamamlamasına olanak tanımıştır.
+    *   **LLM Kullanımı Optimizasyonu:** LLM'e tek bir taleple birden fazla bilgi çıkarma görevi verilerek, her bilgi için ayrı bir LLM çağrısı yapma ihtiyacı azaltılmıştır (bilişsel yük).
+*   **Sonuç:** `sentiric-mvp-v1` artık hem tekil (soru-cevap) hem de çoklu (tek cümlede birden çok bilgi) parametre girişlerini başarılı bir şekilde işleyebilen, daha insana yakın bir diyalog deneyimi sunmaktadır. Bu gelişme, platformun "Konuşan İşlem Platformu" vizyonuna önemli bir katkı sağlamıştır.
+---
+### **2024-07-23: Faz 1 Adım 1 - MVP'de Modüler Mimari, TTS Sağlık Kontrolü ve Mini-Dashboard**
+
+*   **Karar:** `sentiric-mvp-v1` prototipi, ana `sentiric-governance` reposunda tanımlanan kurumsal düzeydeki mimari prensipleri (modülerlik, gözlemlenebilirlik, hata yönetimi) ve ürün vizyonunu (operasyonel dashboard) daha fazla yansıtacak şekilde kapsamlı bir iyileştirmeden geçirilmiştir.
+*   **Gerekçe:**
+    *   **Mimari Bütünlük:** `worker.js`'in sorumlulukları `CallContextManager` ve `DialogOrchestrator` gibi ayrı modüllere taşınarak, kod organizasyonu ve "Tak-Çıkar Lego Seti" felsefesine uygunluk büyük ölçüde artırılmıştır. Bu, gelecekteki ölçeklenebilirlik ve Python'daki ana projeye aktarım için sağlam bir temel oluşturur.
+    *   **Dayanıklılık ve Gözlemlenebilirlik:** Sentiric Voice Engine (Coqui-TTS) sunucusuna eklenen sağlık kontrolü endpoint'i sayesinde, sistem TTS servisinin durumunu proaktif olarak izleyebilmekte ve sağlıksız durumlarda sesli yanıt denemek yerine metin tabanlı geri bildirim sağlayarak hatalı davranışı engellemektedir. Bu, `docs/operations/Monitoring-and-Logging.md`'deki hedeflerle uyumludur.
+    *   **Operasyonel Farkındalık:** Kullanıcı arayüzüne eklenen "Aktif Oturum Bilgisi" paneli ve "TTS Durumu" göstergesi, platformun iç işleyişine dair anlık görünürlük sağlayarak `docs/product/User-Persona-Guides.md`'deki Yönetici/Operatör perspektifinin temelini atmıştır.
+    *   **Kullanıcı Deneyimi:** Oturum yönetimi iyileştirilerek, bir görev tamamlandıktan sonra oturumun tamamen sıfırlanması yerine senaryo bağlamının sıfırlanması sağlanmış, böylece kullanıcıların aynı oturumda farklı görevlere geçiş yapması kolaylaştırılmıştır. UI'daki çeşitli `TypeError` ve `SyntaxError` hataları da giderilmiştir.
+*   **Sonuç:** `sentiric-mvp-v1` artık sadece temel bir prototip olmaktan çıkmış, gerçek bir "Konuşan İşlem Platformu"nun temel özelliklerini (modüler mimari, akıllı diyalog, sağlam hata yönetimi ve operasyonel görünürlük) sergileyen, son derece yetenekli ve etkileyici bir Minimal Değerli Ürün (MVP) haline gelmiştir. Faz 1'deki hedeflere büyük ölçüde ulaşılmıştır.
 ---

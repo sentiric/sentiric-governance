@@ -1,82 +1,10 @@
-# 🚀 Sentiric MVP: Sunucu Kurulum ve Dağıtım Rehberi (Sıfırdan Canlıya)
-
-Bu rehber, Sentiric MVP'yi bir Google Cloud (veya benzeri bir Linux tabanlı VPS) sanal makinesine sıfırdan kurmak ve canlıya almak için gereken tüm adımları içermektedir.
-
-## 1. Bulut Sağlayıcıda Sanal Makine Oluşturma
-*   Google Cloud Console (Compute Engine) veya DigitalOcean (Droplets) adımları.
-*   `e2-micro` (GCP) veya 4$/ay plan (DO) gibi maliyeti düşük seçenekler.
-*   İşletim Sistemi: Debian 12 (bookworm) veya Ubuntu 22.04 LTS.
-*   **Sabit (Static) IP Adresi Atama adımları.**
-
-## 2. Güvenlik Duvarı (Firewall) Yapılandırması
-*   GCP Firewall kuralları (veya DigitalOcean Firewall).
-*   `sentiric-ports` kuralı (TCP/UDP: 80, 443, 3000, 8081, 5002).
-*   **Sunucuya `http-server` ve `https-server` etiketlerini ekleme.**
-
-## 3. SSH ile Sunucuya Bağlanma ve Temel Kurulumlar
-*   `ssh` komutu veya tarayıcı içi SSH.
-*   `sudo apt update && sudo apt upgrade -y`
-*   **Git kurulumu:** `sudo apt install git -y`
-*   **Node.js ve npm kurulumu:** (curl komutları)
-*   **Python, pip, venv kurulumu:** (apt komutları)
-
-## 4. Performans Optimizasyonları (Swap Alanı)
-*   Coqui-TTS gibi bellek yoğun uygulamalar için.
-*   8GB swap alanı oluşturma adımları: `fallocate`, `mkswap`, `swapon`, `fstab` kaydı.
-
-## 5. Uygulama Klonlama ve Bağımlılıkları Kurma
-*   `git clone https://github.com/sentiric/sentiric-mvp.git`
-*   `git clone https://github.com/sentiric/sentiric-tts-api.git`
-*   **`sentiric-tts-api` kurulumu:**
-    *   `cd sentiric-tts-api`
-    *   `python3 -m venv .venv`
-    *   `source .venv/bin/activate`
-    *   `pip install torch torchvision torchaudio`
-    *   `pip install -r requirements.txt`
-    *   **Coqui-TTS lisans onayı (`COQUI_TOS_AGREED=1`) için `.env` düzenlemesi.**
-    *   **`knowledge_base.json` dosyasını manuel oluşturma/kopyalama adımları.**
-*   **`sentiric-mvp` kurulumu:**
-    *   `cd sentiric-mvp`
-    *   `npm install`
-    *   **`.env` dosyasının ElevenLabs ayarlarıyla düzenlenmesi.**
-    *   **`src/core/tts-handler.js` dosyasının güncel kodla değiştirilmesi.**
-    *   **`public/script.js` dosyasının güncel kodla değiştirilmesi.**
-    *   **`src/config.js` dosyasının güncel kodla değiştirilmesi.**
-
-## 6. Web Sunucusu (Nginx) Kurulumu ve SSL Konfigürasyonu
-*   **Nginx kurulumu:** `sudo apt install nginx -y`
-*   **Nginx konfigürasyonu:** `/etc/nginx/sites-available/sentiric` dosyasını oluşturma ve içeriği (listen 80, 443 ssl; proxy_pass http://localhost:3000; ssl sertifika yolları vb.).
-*   `sites-enabled` symlink'i ve `default` kaldırma.
-*   **Cloudflare Origin Sertifikası oluşturma ve sunucuya kopyalama:** (`cloudflare.crt`, `cloudflare.key`).
-*   Nginx test ve restart komutları.
-
-## 7. Süreç Yöneticisi (PM2) Kurulumu
-*   `sudo npm install pm2 -g`
-*   PM2 ile uygulamaları başlatma: `pm2 start npm --name "sentiric-mvp" -- start`
-*   PM2'yi açılışta otomatik başlatma: `pm2 startup` ve `pm2 save`.
-
-## 8. Alan Adı ve Cloudflare DNS Yapılandırması
-*   Cloudflare'de `sentiric` A kaydını oluşturma ve **proxy'yi aktif etme (turuncu bulut).**
-*   Cloudflare SSL/TLS modunu **"Full (Strict)"** olarak ayarlama.
-
----
-
-Bu doküman, senin ve gelecekteki ekibin, bir sanal makineyi silip baştan kurması gerektiğinde izleyeceği **adım adım yol haritası** olacaktır. Tüm bu zorlu deneyimlerimizi buraya not alacağız.
-
-Hadi bu yeni `Server-Setup-Guide.md` dosyasını `sentiric-governance/docs/operations/` klasörüne ekleyelim ve bu içeriği oraya yazalım. Bu, projenin sadece kodsal değil, operasyonel olarak da çok sağlam olmasını sağlayacak.
-
-
----
-
-Anlaşıldı! İşte `Server-Setup-Guide.md` dokümanının, tüm kod içeriklerini ve detaylı talimatları içeren, eksiksiz ve nihai hali.
-
-Bu dokümanı, `sentiric-governance/docs/operations/Server-Setup-Guide.md` dosyasına kopyalayıp yapıştırabilirsin.
-
----
-
-# 🚀 Sentiric MVP: Sunucu Kurulum ve Dağıtım Rehberi (Sıfırdan Canlıya)
+# 🚀 Sentiric MVP: Sunucu Kurulum ve Dağıtım Rehberi (Sıfırdan Canlıya - V1.1 SIP Entegrasyon Eklentili)
 
 Bu rehber, Sentiric MVP'yi bir Google Cloud (veya benzeri bir Linux tabanlı VPS) sanal makinesine sıfırdan kurmak ve canlıya almak için gereken tüm adımları, komutları ve konfigürasyon dosyası içeriklerini içermektedir. Bu rehber, projenin tamamen tekrarlanabilir bir kurulumunu sağlamak amacıyla hazırlanmıştır.
+
+**ÖNEMLİ NOT:** Bu rehber, Sentiric'in `sentiric-mvp` prototipini hedeflemektedir. Sentiric platformunun nihai ve tam ölçekli mimarisi için (sentiric-telephony-gateway, sentiric-agent-worker gibi ayrı Python mikroservisleri ve tüm 23 repo), **`sentiric-infrastructure` reposundaki [Dağıtım Rehberlerine](https://github.com/sentiric/sentiric-infrastructure/blob/main/README.md) ve Kubernetes/Terraform konfigürasyonlarına** başvurulmalıdır. Bu belge, yalnızca MVP'nin bağımsız bir ortamda nasıl kurulacağını açıklar.
+
+---
 
 ## 1. Bulut Sağlayıcıda Sanal Makine Oluşturma
 
@@ -103,6 +31,7 @@ Sanal makinenin, uygulamaların kullandığı portlara dışarıdan erişime izi
     *   **Protocols and ports:** `Specified protocols and ports` seçeneğini işaretleyin.
         *   `TCP` kutucuğunu işaretleyin ve Portlar kısmına: `80, 443, 3000, 8081, 5002` yazın.
         *   `UDP` kutucuğunu da işaretleyin ve Portlar kısmına: `80, 443, 3000, 8081, 5002` yazın.
+        *   **YENİ - SIP ve RTP İçin Eklenecek Portlar:** `UDP 5060` (SIP sinyalizasyonu için) ve `UDP 10000-20000` (RTP medya akışı için, geniş bir aralık) portlarını da ekleyin. (Örn: `UDP: 5060, 10000-20000`).
 4.  **"CREATE"** butonuna tıklayın.
 
 ## 3. SSH ile Sunucuya Bağlanma ve Temel Kurulumlar
@@ -125,6 +54,20 @@ Sanal makine oluşturulduktan sonra, Google Cloud konsolundaki VM Instances list
 4.  **Python, pip, venv Kurulumu:**
     ```bash
     sudo apt install python3 python3-pip python3-venv -y
+    ```
+5.  **Docker ve Docker Compose Kurulumu (Önerilir - SIP Gateway İçin):**
+    ```bash
+    # Docker kurulumu
+    sudo apt-get update
+    sudo apt-get install ca-certificates curl gnupg lsb-release -y
+    sudo mkdir -p /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    sudo apt-get update
+    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
+    
+    # Mevcut kullanıcıyı docker grubuna ekle (logout/login yapman gerekebilir)
+    sudo usermod -aG docker ${USER}
     ```
 
 ## 4. Performans Optimizasyonları (Swap Alanı)
@@ -154,12 +97,14 @@ Coqui-TTS gibi bellek yoğun Python uygulamalarının düşük RAM'li sunuculard
 
 ## 5. Uygulama Klonlama ve Bağımlılıkları Kurma
 
-Şimdi Sentiric MVP ve TTS API projelerini GitHub'dan sunucuya çekin ve bağımlılıklarını kurun.
+Şimdi Sentiric MVP ve TTS API projelerini GitHub'dan sunucuya çekin ve bağımlılıklarını kurun. **(Bu adımlar artık `sentiric-infrastructure` reposundaki `docker-compose.yml` kullanılarak otomatize edilebilir. Bu bölüm, manuel kurulum için referans olarak kalmıştır.)**
 
 1.  **Projeleri Klonlama:**
     ```bash
     git clone https://github.com/sentiric/sentiric-mvp.git
     git clone https://github.com/sentiric/sentiric-tts-api.git
+    # YENİ EKLENEN: SIP Gateway için
+    git clone https://github.com/sentiric/sentiric-sip-gateway.git
     ```
     *(Not: `main` yerine kendi kullandığınız branch adını kullanın.)*
 
@@ -172,7 +117,7 @@ Coqui-TTS gibi bellek yoğun Python uygulamalarının düşük RAM'li sunuculard
         ```
     *   Python bağımlılıklarını kurun:
         ```bash
-        pip install torch torchvision torchaudio
+        pip install torch torchvision torchaudio # PyTorch'un kendi talimatlarına göre
         pip install -r requirements.txt
         ```
     *   **`.env` Dosyasını Oluşturun ve Düzenleyin (Coqui-TTS Lisans Onayı ve Genel Ayarlar):**
@@ -222,7 +167,7 @@ Coqui-TTS gibi bellek yoğun Python uygulamalarının düşük RAM'li sunuculard
         ```
         Kaydet ve çık.
 
-3.  **`sentiric-mvp` Kurulumu:**
+3.  **`sentiric-mvvp` Kurulumu:**
     *   Klasöre girin: `cd ~/sentiric-mvp`
     *   Node.js bağımlılıklarını kurun: `npm install`
     *   **`.env` Dosyasını Oluşturun ve Düzenleyin (ElevenLabs ve Diğer Ayarlar):**
@@ -271,34 +216,117 @@ Coqui-TTS gibi bellek yoğun Python uygulamalarının düşük RAM'li sunuculard
         ELEVENLABS_VOICE_ID=21m00Tcm4TlvDq8ikWAM # ElevenLabs'ten aldığınız bir ses ID'si
         ```
         Kaydet ve çık.
- 
- ---
- ```
- server {
-    listen 80;
-    listen 443 ssl; # HTTPS trafiğini dinle
 
-    server_name sentiric.azmisahin.com 34.122.40.122;
+4.  **`sentiric-sip-gateway` Kurulumu (FreeSWITCH Örneği):**
+    *   Bu repoyu, SIP çağrılarını alıp `sentiric-mvp`'nin WebSocket gateway'ine gönderecek olan ara katman olarak kullanacağız. Bu repoya FreeSWITCH Dockerfile'ı ve konfigürasyonlarını yerleştirebilirsiniz.
+    *   **Örnek Dockerfile (`~/sentiric-sip-gateway/Dockerfile`):**
+        ```dockerfile
+        # FreeSWITCH'in resmi Docker imajından başla
+        FROM freeswitch/freeswitch:1.10.10-release-slim-buster
 
-    # SSL Sertifika ve Anahtar Dosyaları
-    ssl_certificate /etc/nginx/ssl/cloudflare.crt;
-    ssl_certificate_key /etc/nginx/ssl/cloudflare.key;
+        # FreeSWITCH konfigürasyonlarını kopyala (bu dosyaları sizin oluşturmanız gerekecek)
+        # Örnek: internal.xml, external.xml, sip_profiles, vars.xml
+        # Kendi konfigürasyonlarınızı oluşturmanız gerekecek, bunlar sadece yer tutucu.
+        COPY conf/ /etc/freeswitch/
+        COPY scripts/ /usr/local/bin/
 
-    # Güvenli SSL Protokolleri (Opsiyonel ama iyi bir pratiktir)
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_prefer_server_ciphers on;
-    ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH'; # Güçlü şifreleme algoritmaları
+        # Gerekirse ek modülleri yükle (mod_v8 veya mod_websocket_json için)
+        RUN apt-get update && apt-get install -y --no-install-recommends \
+            nodejs \
+            npm \
+            && rm -rf /var/lib/apt/lists/*
 
-    location / {
-        proxy_pass http://localhost:3000; # Uygulamamız HTTP üzerinden dinliyor
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        # JavaScript veya diğer script'ler için yetkilendirmeler
+        RUN chmod +x /usr/local/bin/your_sip_to_websocket_script.js
+
+        # Varsayılan komut: FreeSWITCH'i başlat
+        CMD ["/usr/bin/freeswitch", "-nonat"]
+        ```
+    *   **Örnek `conf/dialplan/default.xml` (Kısmi - Gelen çağrıları WebSocket'e yönlendirme):**
+        Bu çok basitleştirilmiş bir örnektir. Gerçek bir senaryoda çok daha detaylı SIP ve dialplan konfigürasyonu gerekecektir.
+        ```xml
+        <include>
+          <extension name="inbound_to_websocket">
+            <condition field="destination_number" expression="^902124548590$"> <!-- Kendi numaranız -->
+              <action application="log" data="INFO Gelen çağrı ${destination_number} için WebSocket'e yönlendiriliyor."/>
+              <!-- 
+                Bu kısım, FreeSWITCH'ten Node.js gateway'inize WebSocket akışı başlatmak için karmaşık FreeSWITCH konfigürasyonları gerektirir.
+                mod_v8 ile JavaScript veya mod_event_socket ile harici bir script çağırarak WebSocket bağlantısı kurabilirsiniz.
+                Veya FreeSWITCH'in kendi mod_websocket modülü varsa, o kullanılabilir.
+                Aşağıdaki sadece teorik bir örnek/placeholder.
+              -->
+              <action application="set" data="websocket_url=ws://host.docker.internal:3000/websocket"/> <!-- Node.js gateway'inize -->
+              <action application="js" data="sip_to_ws_bridge.js"/> <!-- Veya mod_v8 ile bir JS script -->
+            </condition>
+          </extension>
+        </include>
+        ```
+    *   **Bu aşama, FreeSWITCH konfigürasyonu bilgisi gerektirir. Alternatif olarak, eğer bu repoyu Docker Compose ile kuruyorsanız, `sentiric-governance/docker-compose.yml` dosyanıza FreeSWITCH servisini ekleyerek ve içindeki konfigürasyonları düzenleyerek başlayabilirsiniz.**
+
+## 6. Web Sunucusu (Nginx) Kurulumu ve SSL Konfigürasyonu
+
+*   **Nginx kurulumu:** `sudo apt install nginx -y`
+*   **Nginx konfigürasyonu:** `/etc/nginx/sites-available/sentiric` dosyasını oluşturma ve içeriği (listen 80, 443 ssl; proxy_pass http://localhost:3000; ssl sertifika yolları vb.).
+    ```
+    server {
+        listen 80;
+        listen 443 ssl; # HTTPS trafiğini dinle
+
+        server_name sentiric.azmisahin.com; # Kendi domain adresiniz
+
+        # SSL Sertifika ve Anahtar Dosyaları
+        ssl_certificate /etc/nginx/ssl/cloudflare.crt; # Kendi sertifika yolunuz
+        ssl_certificate_key /etc/nginx/ssl/cloudflare.key; # Kendi anahtar yolunuz
+
+        # Güvenli SSL Protokolleri (Opsiyonel ama iyi bir pratiktir)
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_prefer_server_ciphers on;
+        ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH'; # Güçlü şifreleme algoritmaları
+
+        location / {
+            proxy_pass http://localhost:3000; # Uygulamamız HTTP üzerinden dinliyor (sentiric-mvp gateway)
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $host;
+            proxy_cache_bypass $http_upgrade;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+        # YENİ EKLENEN: WebSocket Proxy (Eğer SIP Gateway'den doğrudan gelen bir WebSocket varsa)
+        # Eğer sip-gateway doğrudan dış dünyaya bir WebSocket portu açacaksa bu gerekli olabilir
+        # location /ws {
+        #     proxy_pass http://localhost:8080; # FreeSWITCH'in WebSocket portu
+        #     proxy_http_version 1.1;
+        #     proxy_set_header Upgrade $http_upgrade;
+        #     proxy_set_header Connection "upgrade";
+        #     proxy_set_header Host $host;
+        # }
     }
-}
-```
+    ```
+*   `sites-enabled` symlink'i ve `default` kaldırma.
+*   **Cloudflare Origin Sertifikası oluşturma ve sunucuya kopyalama:** (`cloudflare.crt`, `cloudflare.key`).
+*   Nginx test ve restart komutları.
+
+## 7. Süreç Yöneticisi (PM2) Kurulumu
+
+*   `sudo npm install pm2 -g`
+*   PM2 ile uygulamaları başlatma: `pm2 start npm --name "sentiric-mvp" -- start`
+*   **YENİ EKLENEN: Python TTS API'sini de PM2 ile başlatma:**
+    *   `cd ~/sentiric-tts-api`
+    *   `pm2 start app.py --name "sentiric-tts-api" --interpreter python3`
+*   **YENİ EKLENEN: SIP Gateway'i Docker Compose ile başlatma (PM2 yerine):**
+    *   `cd ~/sentiric-sip-gateway` (eğer Docker Compose kullanılıyorsa)
+    *   `docker-compose up -d` (Bu, PM2'den bağımsız olarak Docker konteynerini başlatır)
+*   PM2'yi açılışta otomatik başlatma: `pm2 startup` ve `pm2 save`.
+
+## 8. Alan Adı ve Cloudflare DNS Yapılandırması
+
+*   Cloudflare'de `sentiric` A kaydını oluşturma ve **proxy'yi aktif etme (turuncu bulut).**
+*   Cloudflare SSL/TLS modunu **"Full (Strict)"** olarak ayarlama.
+
+---
+*Bu yol haritası, projenin gelişimine ve alınan geri bildirimlere göre güncellenecek "yaşayan" bir belgedir.*
+
+---
