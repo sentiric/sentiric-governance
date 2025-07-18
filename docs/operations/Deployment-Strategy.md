@@ -1,4 +1,4 @@
-# 🚀 Sentiric: Dağıtım (Deployment) Stratejisi (V2.1 - 23 Repo Desteğiyle)
+# 🚀 Sentiric: Dağıtım (Deployment) Stratejisi (V2.2 - 26 Repo Uyumlu)
 
 Bu doküman, Sentiric platformunun farklı ortamlara (geliştirme, test, üretim) nasıl dağıtılacağını ve sürüm yönetiminin nasıl yapılacağını tanımlar.
 
@@ -10,7 +10,7 @@ Bu doküman, Sentiric platformunun farklı ortamlara (geliştirme, test, üretim
 
 ## 2. Konteyner ve İmaj Yönetimi
 
-*   **Dockerfile Yapısı:** Tüm **23 ayrı mikroservis/kütüphane deposu**, kendi `Dockerfile`'ları ile paketlenecektir. Bu Dockerfile'lar, **çok aşamalı (multi-stage) Dockerfile'lar** kullanacaktır:
+*   **Dockerfile Yapısı:** Ekosistemdeki tüm **26 ayrı mikroservis/kütüphane deposu**, kendi `Dockerfile`'ları ile paketlenecektir. Bu Dockerfile'lar, **çok aşamalı (multi-stage) Dockerfile'lar** kullanacaktır:
     *   **`builder` Aşaması:** Geliştirme bağımlılıklarını kurar, kodu derler/hazırlar.
     *   **`final` Aşaması:** Sadece uygulamanın çalışması için gerekli olan runtime bağımlılıklarını ve derlenmiş kodları içeren, minimal ve güvenli bir imaj oluşturur.
 *   **İmaj Kayıt Merkezi (Registry):** Tüm Docker imajları, `GitHub Container Registry` (ghcr.io) veya `Docker Hub` gibi merkezi bir kayıt merkezinde versiyon etiketleriyle (örn: `sentiric/agent-worker:v1.1.0`) saklanacaktır.

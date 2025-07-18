@@ -200,3 +200,19 @@ Bu loglar, sistemin bizim yazdığımız **Durum Makinesi mantığıyla kusursuz
     *   **Kullanıcı Deneyimi:** Oturum yönetimi iyileştirilerek, bir görev tamamlandıktan sonra oturumun tamamen sıfırlanması yerine senaryo bağlamının sıfırlanması sağlanmış, böylece kullanıcıların aynı oturumda farklı görevlere geçiş yapması kolaylaştırılmıştır. UI'daki çeşitli `TypeError` ve `SyntaxError` hataları da giderilmiştir.
 *   **Sonuç:** `sentiric-mvp-v1` artık sadece temel bir prototip olmaktan çıkmış, gerçek bir "Konuşan İşlem Platformu"nun temel özelliklerini (modüler mimari, akıllı diyalog, sağlam hata yönetimi ve operasyonel görünürlük) sergileyen, son derece yetenekli ve etkileyici bir Minimal Değerli Ürün (MVP) haline gelmiştir. Faz 1'deki hedeflere büyük ölçüde ulaşılmıştır.
 ---
+### **2024-07-25: Faz 0 - Sentiric Ekosisteminin Fiziksel Olarak Şekillendirilmesi (26 Repo Oluşturuldu)**
+
+*   **Karar:** Projenin başlangıç aşamasında, modülerlik, ölçeklenebilirlik, sorumlulukların netleştirilmesi, karmaşıklığın yönetilmesi ve gelecekteki üretim mimarisine hazırlanmak amacıyla, mimari dokümanlarda (`Architecture-Overview.md`, `Ecosystem-Repos.md`) tanımlanan **26 adet mikroservis/kütüphane deposunun GitHub organizasyonunda oluşturulmasına** karar verilmiştir. Bu repolar, `sentiric-sip-gateway-service`, `sentiric-messaging-gateway-service`, `sentiric-web-agent-ui`, `sentiric-embeddable-voice-widget-sdk`, `sentiric-infrastructure`, `sentiric-cli`, `sentiric-api-sdk-python`, `sentiric-api-sdk-javascript` ve `sentiric-marketplace-service` gibi vizyoner bileşenleri de içermektedir.
+*   **Gerekçe:** Bu adım, Sentiric'in "Tak-Çıkar Lego Seti" felsefesini somutlaştırmış ve her bir bileşenin bağımsız gelişiminin temelini atmıştır. Bu sayede:
+    *   **Sorumluluklar Netleşmiştir:** Her reponun kendine ait net bir görevi ve teknolojik odağı vardır.
+    *   **Ölçeklenebilirlik Sağlanmıştır:** Servisler bağımsız olarak geliştirilebilir, test edilebilir ve dağıtılabilir.
+    *   **Geliştirme Hızı Artmıştır:** Ekipler paralel çalışabilir, bağımlılıklar azalır.
+    *   **Uzun Vadeli Vizyon Güçlendirilmiştir:** Gelecekteki ürün (SDK, CLI, Marketplace, Omnichannel) ve altyapı (IaC) hedefleri şimdiden fiziksel olarak yerini bulmuştur.
+*   **Sonuç:** Sentiric projesi, tüm temel ve vizyoner repolarıyla birlikte sağlam bir fiziksel yapıya kavuşmuştur. Bir sonraki aşama, bu repoların içini doldurmak ve fonksiyonel hale getirmektir.
+...
+### **2024-07-26: Stratejik Senkronizasyon ve Stabilizasyon (v4.2)**
+
+*   **Karar:** Projenin 26 repoluk genişletilmiş ekosistem vizyonu ile temel yönetim dokümanları (`Current-Priorities`, `Architecture-Overview`, `Development-Log` vb.) arasında tespit edilen tutarsızlıkların giderilmesine karar verilmiştir. Bu, projenin Faz 1 geliştirme çalışmalarına başlamadan önce tüm paydaşlar için tek ve tutarlı bir temel oluşturmayı amaçlamaktadır.
+*   **Gerekçe:** Ekosistem genişledikçe, dokümantasyonun senkronize kalması kritik önem taşır. Eski mimari şemaları, yanlış repo sayıları ve güncel olmayan öncelikler, kafa karışıklığına yol açarak geliştirme sürecini yavaşlatma riski taşıyordu. Bu senkronizasyon, projenin "belge odaklı geliştirme" felsefesinin bir gereğidir ve stabil bir başlangıç için zorunludur.
+*   **Sonuç:** Mimari şemalar, öncelikler ve kritik belgeler güncellenerek projenin anayasası en son haliyle uyumlu hale getirilmiştir. Proje, artık tüm birimleriyle aynı hedef doğrultusunda, net bir başlangıç noktasıyla ilerlemeye hazırdır.
+---

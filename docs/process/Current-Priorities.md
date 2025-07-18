@@ -2,26 +2,25 @@
 
 Bu belge, projenin "şimdi" neye odaklandığını gösteren yaşayan bir dokümandır. **Proje Sahibi** tarafından düzenli olarak güncellenir ve **AI Mimar** için bir sonraki görevin ne olduğunu belirtir.
 
-## 🎯 Mevcut Odak: Faz 0 - Kuruluş (Foundation)
+## 🎯 Mevcut Odak: Faz 1 - Çekirdek Platform Kurulumu
 
-*   **Açıklama:** Projenin anayasası olan merkezi yönetim reposunu oluşturmak ve temel dokümanlarla doldurmak.
-*   **Durum:** ✅ **Devam** (Bu dokümanların commit'lenmesiyle birlikte).
+*   **Açıklama:** Projenin canlıya alınabilmesi için gereken temel altyapının ve çekirdek iletişim servislerinin kurulması. Bu, platformun dış dünyadan (telefon hattı/SIP) gelen bir çağrıyı alıp işleyebilmesinin ilk adımıdır.
+*   **Durum:** ⬜ **Sıradaki**
 
 ## ⚡ Sıradaki Görev (Up Next)
 
-*   **Görev Adı:** Faz 1 Adım 1 - Ekosistem Repolarının İskeletini Oluşturma
-*   **Açıklama:** `ROADMAP.md`'de tanımlanan Faz 1 için gerekli olan tüm `sentiric-*` repolarını (`core-interfaces`, `connectors`, `task-framework`, `agent-worker` vb.) GitHub organizasyonunda oluşturmak.
+*   **Görev Adı:** Faz 1 Adım A - Temel Altyapı ve Dış Bağlantı Hazırlığı
+*   **Açıklama:** `Roadmap.md`'de tanımlanan "Faz 1 - A. Temel Altyapı ve Dış Bağlantı" bölümündeki ilk adımları tamamlamak. Bu, projenin somut olarak çalışır hale gelmesi için atılacak ilk adımdır.
 *   **Kabul Kriterleri:**
-    - [ ] Tüm repolar organizasyon altında oluşturuldu.
-    - [ ] Her repoda temel bir `README.md`, `.gitignore` ve `LICENSE` dosyası mevcut.
-    - [ ] Her Python reposunda temel bir `pyproject.toml` ve `setup.py` dosyası mevcut.
-    - [ ] Tüm repolar için temel CI/CD pipeline'ları (Linting) kuruldu.
+    - [ ] **Altyapı Hazırlığı:** `sentiric-infrastructure` reposu kullanılarak, temel bulut kaynaklarının (Kubernetes cluster, veritabanı, ağ kuralları vb.) Terraform veya eşdeğer bir IaC aracı ile oluşturulması.
+    - [ ] **API Gateway Dağıtımı:** `sentiric-api-gateway-service`'in derlenip, hazırlanan altyapıya dağıtılması. Bu, diğer tüm servisler için merkezi erişim noktası olacaktır.
+    - [ ] **SIP Servislerinin Dağıtımı:** `sentiric-sip-signaling-service` ve `sentiric-media-service`'in derlenip, hazırlanan altyapıya dağıtılması.
+    - [ ] **Temel Yönlendirme Servislerinin Dağıtımı:** `sentiric-user-service` ve `sentiric-dialplan-service`'in derlenip, altyapıya dağıtılması.
+    - [ ] **Doğrulama:** Dışarıdan yapılan bir SIP çağrısının, `sentiric-api-gateway`'den geçerek `sentiric-sip-signaling-service` tarafından alınıp, temel bir yanıtla (örn: "servis aktif") karşılanabildiğinin test edilmesi.
 
 ## 📚 Gelecek Planı (Backlog)
 
-*   **Görev:** `sentiric-core-interfaces` içindeki soyut sınıfları tanımlamak.
-*   **Görev:** `sentiric-connectors` için ilk adaptörleri (`Gemini`, `Twilio`) oluşturmak.
-*   **Görev:** `sentiric-task-framework` için `GenericReservationTask`'ı geliştirmek.
+*   **Görev:** Faz 1 Adım B - Çekirdek İş Akışı ve İlk Görev (`GenericReservationTask`).
+*   **Görev:** `sentiric-core-interfaces` içindeki soyut sınıfları ve API sözleşmelerini tanımlamak.
+*   **Görev:** `sentiric-agent-service`'in ilk versiyonunu dağıtmak.
 *   ...
-
----

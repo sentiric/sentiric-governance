@@ -8,68 +8,79 @@
 
 *   **İnsan Benzeri Akışkan Diyalog:** Amacımız, katı menü sunan bir IVR değil, `ChatGPT` gibi akışkan, bağlamı anlayan ve doğal bir diyalog kurabilen bir platform oluşturmaktır. Bu hedefe ulaşmak için, sadece metin değil, aynı zamanda konuşmanın tonunu, hızını ve duraklamalarını da yöneten **SSML (Speech Synthesis Markup Language)** kullanımı temel bir prensiptir.
 
-## 2. Genel Mimari Şeması
+## 2. Genel Mimari Şeması (Güncellenmiş v4.2 - 26 Repo Uyumlu)
 
-Bu şema, sistemin dayanıklılığını ve ölçeklenebilirliğini artıran Mesaj Kuyruğu (RabbitMQ) ve merkezi durum/konfigürasyon yönetimi (Redis) gibi kritik bileşenleri içermektedir.
+Bu şema, sistemin 26 repoluk granüler yapısını, servisler arası etkileşimi ve merkezi altyapı bileşenlerini yansıtmaktadır. `sentiric-api-gateway-service`, tüm UI ve harici istemci istekleri için merkezi giriş noktasıdır. Gerçek zamanlı ses trafiği ise doğrudan `sentiric-sip-signaling-service` ve `sentiric-media-service` tarafından yönetilir.
 
 ```mermaid
 graph TD
-    subgraph "Dış Dünya & Servisler"
+    subgraph "Dış Dünya & İstemciler"
         Kullanici("📞 Kullanıcı Telefonu")
-        TelefoniSaglayici("☎️ Telefoni Sağlayıcısı (VoIP/SIP)")
-        WebUygulama("🌐 Web Uygulaması / Demo Site")
-        AI("🧠 Harici AI Servisleri (LLM, STT, RAG)")
-        ExternalSystems("💼 Harici İş Sistemleri (Takvim, CRM)")
+        TelefoniSaglayici("☎️ Telefoni Sağlayıcısı (SIP Trunk)")
+        DashboardUI("[[sentiric-dashboard-ui]]")
+        WebAgentUI("[[sentiric-web-agent-ui]]")
+        CLI("[[sentiric-cli]]")
     end
 
-    subgraph "Sentiric Platformu (Google Cloud veya On-Premise)"
-        SIPGateway("[[sentiric-sip-gateway]]")
-        TelephonyGateway("[[sentiric-telephony-gateway]]")
-        AgentWorker("[[sentiric-agent-worker]]")
-        APIServer("[[sentiric-api-server]]")
-        Indexer("[[sentiric-knowledge-indexer]]")
-        Dashboard("[[sentiric-dashboard]]")
-        WebAgentUI("[[sentiric-web-agent-ui]]")
-        EmbeddableWidget("[[sentiric-embeddable-voice-widget]]")
-        MessagingGateway("[[sentiric-messaging-gateway]]")
-
+    subgraph "Sentiric Platformu (Bulut/On-Premise)"
+        APIGateway("[[sentiric-api-gateway-service]]")
+        SIPSignaling("[[sentiric-sip-signaling-service]]")
+        MediaService("[[sentiric-media-service]]")
+        AgentService("[[sentiric-agent-service]]")
+        
+        subgraph "Destekleyici Servisler"
+            UserService("[[sentiric-user-service]]")
+            DialplanService("[[sentiric-dialplan-service]]")
+            KnowledgeService("[[sentiric-knowledge-service]]")
+            Connectors("[[sentiric-connectors-service]]")
+            CDRService("[[sentiric-cdr-service]]")
+        end
 
         subgraph "Çekirdek Altyapı"
-            MQ("🐇 RabbitMQ (Mesaj Kuyruğu)")
-            DB("🗄️ PostgreSQL (SQLModel)")
+            MQ("🐇 RabbitMQ (Mesajlaşma & Olaylar)")
+            DB("🗄️ PostgreSQL (Kalıcı Veri)")
             Cache("⚡ Redis (Anlık Durum & Önbellek)")
+            VectorDB("🧠 Vector DB (Bilgi Bankası)")
         end
     end
 
+    subgraph "Harici Servisler"
+        AI_Services("🧠 Harici AI (LLM, STT, TTS)")
+        ExternalSystems("💼 Harici İş Sistemleri (CRM, Takvim)")
+    end
+
     %% Akışlar
-    Kullanici -->|SIP/RTP Arama| TelefoniSaglayici
-    TelefoniSaglayici -->|SIP/RTP| SIPGateway
-    SIPGateway -->|WebSocket Ses Akışı| TelephonyGateway
+    Kullanici -->|SIP/RTP Çağrı| TelefoniSaglayici
+    TelefoniSaglayici -->|SIP (Sinyal)| SIPSignaling
+    TelefoniSaglayici -->|RTP (Medya)| MediaService
 
-    WebUygulama -->|HTTP/JS Embed| EmbeddableWidget
-    EmbeddableWidget -->|WebSocket Ses/Metin| TelephonyGateway
-    
-    TelephonyGateway -->|NewCallEvent / AudioStream| MQ
-    MessagingGateway -->|NewMessageEvent| MQ
+    DashboardUI -->|REST API| APIGateway
+    WebAgentUI -->|REST API| APIGateway
+    CLI -->|REST API| APIGateway
 
-    MQ -->|İşi Tüketir| AgentWorker
-    
-    AgentWorker -->|Durum Oku/Yaz| Cache
-    AgentWorker -->|Akıllı Yönlendirme| AI
-    AgentWorker -->|Entegrasyon Çağrıları| ExternalSystems
-    AgentWorker -->|Veri Saklama| DB
-    AgentWorker -->|Ses Çalma Komutu SSML / Metin Yanıtı| MQ
-    MQ -->|Komutu Tüketir| TelephonyGateway
-    MQ -->|Komutu Tüketir| MessagingGateway
-    
-    TelephonyGateway -->|Sesi Sentezle & Oynat| SIPGateway
-    MessagingGateway -->|Mesaj Gönder| ExternalSystems
+    APIGateway -->|API Çağrıları| UserService
+    APIGateway -->|API Çağrıları| DialplanService
+    APIGateway -->|API Çağrıları| CDRService
+    APIGateway -->|API Çağrıları| AgentService
 
-    Indexer -->|Veriyi Vektörleştir| AI
-    Dashboard -->|REST API| APIServer
-    APIServer -->|Veri Erişimi| DB & Cache
-    WebAgentUI -->|REST API & WebSocket| APIServer
-    WebAgentUI -->|WebSocket Doğrudan| TelephonyGateway
+    SIPSignaling -->|Kimlik Doğrulama| UserService
+    SIPSignaling -->|Yönlendirme Kararı| DialplanService
+    SIPSignaling -->|Medya Oturumu Yönet| MediaService
+    SIPSignaling -->|CallStart/End Event| MQ
+    
+    MediaService -->|Audio Stream| AgentService
+    
+    AgentService -->|Diyalog Yönetimi| AI_Services
+    AgentService -->|Bilgi Sorgulama| KnowledgeService
+    AgentService -->|İş Sistemi Entegrasyonu| Connectors
+    AgentService -->|Durum Oku/Yaz| Cache
+    AgentService -->|Kalıcı Veri Yaz| DB
+    
+    KnowledgeService -->|Veri İndeksleme| VectorDB
+
+    Connectors -->|API Çağrıları| ExternalSystems
+    
+    MQ -->|Olayları Tüketir| CDRService
 ```
 
 ## 3. Genişletilmiş Lego Mimarisi (Arayüz & Adaptörler)
