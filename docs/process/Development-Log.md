@@ -216,3 +216,9 @@ Bu loglar, sistemin bizim yazdığımız **Durum Makinesi mantığıyla kusursuz
 *   **Gerekçe:** Ekosistem genişledikçe, dokümantasyonun senkronize kalması kritik önem taşır. Eski mimari şemaları, yanlış repo sayıları ve güncel olmayan öncelikler, kafa karışıklığına yol açarak geliştirme sürecini yavaşlatma riski taşıyordu. Bu senkronizasyon, projenin "belge odaklı geliştirme" felsefesinin bir gereğidir ve stabil bir başlangıç için zorunludur.
 *   **Sonuç:** Mimari şemalar, öncelikler ve kritik belgeler güncellenerek projenin anayasası en son haliyle uyumlu hale getirilmiştir. Proje, artık tüm birimleriyle aynı hedef doğrultusunda, net bir başlangıç noktasıyla ilerlemeye hazırdır.
 ---
+### **2024-07-27: Dokümantasyon Sağlamlığının Artırılması (Mermaid Hata Yönetimi)**
+
+*   **Karar:** Sık karşılaşılan `mermaid` şeması sözdizimi hatalarının proaktif olarak yönetilmesi için, hem mevcut bir şema hatasının düzeltilmesine hem de bu tür hataların nasıl çözüleceğine dair bir rehberin `Developer-Troubleshooting-Guide.md`'ye eklenmesine karar verilmiştir.
+*   **Gerekçe:** AI tarafından üretilen kodun, özellikle `mermaid` gibi hassas sözdizimlerinde, hatalara açık olabileceği kabul edilmiştir. Bu hataların sürekli olarak düzeltilmesi yerine, çözüm sürecinin belgelenmesi, projenin kendi kendini iyileştirme kapasitesini artırır ve insan-AI işbirliğini daha verimli hale getirir. Bu, değerli bir kullanıcı geri bildirimine dayalı bir süreç iyileştirmesidir.
+*   **Sonuç:** Proje dokümantasyonu artık sadece "ne" yapıldığını değil, "nasıl onarılacağını" da içerecek şekilde daha sağlam bir hale getirilmiştir. `Architecture-Overview.md`'deki kritik bir görselleştirme hatası giderilmiş ve gelecekteki benzer sorunlar için net bir çözüm yolu sunulmuştur.
+---

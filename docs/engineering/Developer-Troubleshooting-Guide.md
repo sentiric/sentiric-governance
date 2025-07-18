@@ -29,4 +29,15 @@ Bu belge, geliştirme sırasında karşılaşılan yaygın sorunları, nedenleri
         *   **ASR/TTS için:** Daha hızlı bir model veya "streaming" destekli bir API (örn: Deepgram) deneyin.
         *   **LLM için:** Daha küçük bir model (örn: Llama 3 8B yerine Phi-3-mini) veya daha hızlı bir sağlayıcı (örn: Groq) deneyin. Sunucu konumunuza en yakın API endpoint'ini kullanın.
 
----
+## Vaka 3: Mermaid Şeması Oluşturma/Görüntüleme Hataları (Parse Error)
+
+*   **Semptom:** `.md` dosyalarındaki Mermaid şemaları GitHub'da veya yerel editörde (VS Code) düzgün görüntülenmiyor. "Parse error on line X" gibi bir hata mesajı görünüyor.
+*   **Olası Nedenler:**
+    1.  **En Yaygın Neden: Node ID Tutarsızlığı:** Bir düğüm (node) şemanın başında `APIGateway` gibi bir ID ile tanımlanmış, ancak daha sonra `APIGatewa` veya `api-gateway` gibi farklı bir ID ile ona bağlanılmaya çalışılmış olabilir. ID'ler büyük/küçük harfe duyarlıdır ve birebir aynı olmalıdır.
+    2.  **Geçersiz Karakterler:** Tırnak (`"`) içine alınmamış node ID'lerinde boşluk, `-`, `.` gibi özel karakterlerin kullanılması.
+    3.  **Sözdizimi Hataları:** Eksik veya fazla parantezler, tırnak işaretleri, `-->` gibi okların yanlış yazılması.
+*   **Çözüm Adımları:**
+    1.  **Hata Satırını İnceleyin:** Hata mesajındaki satır numarasını ve belirtilen karakteri (`got 'PS'` gibi) kontrol edin. Bu, sorunun nerede olduğunu anlamak için ilk ipucudur.
+    2.  **Node ID'lerini Kontrol Edin:** Hatalı şemadaki **tüm** node ID'lerini gözden geçirin. Tanımlandıkları yer ile kullanıldıkları yerlerin birebir aynı olduğundan emin olun.
+    3.  **Tırnak ve Parantezleri Kontrol Edin:** Özellikle `subgraph` bloklarının veya karmaşık node metinlerinin (`"Metin içeren Node"`) tırnaklarının doğru kapatıldığından emin olun.
+    4.  **Online Editör Kullanın:** Şemayı kopyalayıp **[Mermaid Live Editor](https://mermaid.live)** gibi bir online araca yapıştırın. Bu araçlar, hataları anında gösterir ve şemayı canlı olarak düzelterek denemenizi sağlar. Bu, en hızlı hata ayıklama yöntemidir.

@@ -2,7 +2,7 @@
 
 ## 1. Mimari Vizyon ve Temel Prensipler
 
-*   **"Tak-Çıkar Lego Seti" Felsefesi:** Platform, belirli teknolojilere (örn: Gemini, Twilio) "kaynak" yapılmamıştır. Her harici veya dahili servis (LLM, TTS, Takvim, STT), soyut bir arayüz (`BaseLLM`) arkasında çalışan somut bir **"Adaptör"** (`GeminiAdapter`) ile sisteme bağlanır. Bu, teknoloji yığınını (stack) gelecekte kolayca ve güvenle değiştirmemizi sağlar. Platform, şu anda **23 farklı mikroservis ve kütüphane reposundan** oluşan geniş bir Lego setidir.
+*   **"Tak-Çıkar Lego Seti" Felsefesi:** Platform, belirli teknolojilere (örn: Gemini, Twilio) "kaynak" yapılmamıştır. Her harici veya dahili servis (LLM, TTS, Takvim, STT), soyut bir arayüz (`BaseLLM`) arkasında çalışan somut bir **"Adaptör"** (`GeminiAdapter`) ile sisteme bağlanır. Bu, teknoloji yığınını (stack) gelecekte kolayca ve güvenle değiştirmemizi sağlar. Platform, şu anda **26 farklı mikroservis ve kütüphane reposundan** oluşan geniş bir Lego setidir.
 
 *   **Asenkron ve Dayanıklı Mimari:** Sistem, telefon görüşmesinin gerçek zamanlı doğasına saygı duyar. Tüm kritik servisler, bir **Mesaj Kuyruğu (`RabbitMQ`)** üzerinden asenkron iletişim kurar. Bu, bir bileşenin yavaşlamasının veya çökmesinin, sistemin geri kalanını etkilemesini engeller ve platformu son derece dayanıklı hale getirir.
 
@@ -81,6 +81,7 @@ graph TD
     Connectors -->|API Çağrıları| ExternalSystems
     
     MQ -->|Olayları Tüketir| CDRService
+
 ```
 
 ## 3. Genişletilmiş Lego Mimarisi (Arayüz & Adaptörler)
