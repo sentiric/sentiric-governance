@@ -1,22 +1,75 @@
-# 🏗️ Sentiric: Kapsamlı Mimari Dokümanı (Anayasa v4.1)
+# 🏗️ Sentiric: Kapsamlı Mimari Dokümanı (Anayasa v5.0)
 
 ## 1. Mimari Vizyon ve Temel Prensipler
 
-*   **"Tak-Çıkar Lego Seti" Felsefesi:** Platform, belirli teknolojilere (örn: Gemini, Twilio) "kaynak" yapılmamıştır. Her harici veya dahili servis (LLM, TTS, Takvim, STT), soyut bir arayüz (`BaseLLM`) arkasında çalışan somut bir **"Adaptör"** (`GeminiAdapter`) ile sisteme bağlanır. Bu, teknoloji yığınını (stack) gelecekte kolayca ve güvenle değiştirmemizi sağlar. Platform, şu anda **26 farklı mikroservis ve kütüphane reposundan** oluşan geniş bir Lego setidir.
+Bu bölüm, Sentiric platformunun temelini oluşturan, değiştirilemez mühendislik ilkelerini tanımlar.
 
-*   **Asenkron ve Dayanıklı Mimari:** Sistem, telefon görüşmesinin gerçek zamanlı doğasına saygı duyar. Tüm kritik servisler, bir **Mesaj Kuyruğu (`RabbitMQ`)** üzerinden asenkron iletişim kurar. Bu, bir bileşenin yavaşlamasının veya çökmesinin, sistemin geri kalanını etkilemesini engeller ve platformu son derece dayanıklı hale getirir.
+### 1.1. Tak-Çıkar Modüler Mimarisi (Lego Felsefesi)
 
-*   **İnsan Benzeri Akışkan Diyalog:** Amacımız, katı menü sunan bir IVR değil, `ChatGPT` gibi akışkan, bağlamı anlayan ve doğal bir diyalog kurabilen bir platform oluşturmaktır. Bu hedefe ulaşmak için, sadece metin değil, aynı zamanda konuşmanın tonunu, hızını ve duraklamalarını da yöneten **SSML (Speech Synthesis Markup Language)** kullanımı temel bir prensiptir.
+Platform, belirli bir teknolojiye bağımlı değildir. Her işlev, soyut bir arayüz arkasında çalışan değiştirilebilir bir "Adaptör" ile sisteme bağlanır. Bu, teknoloji bağımsızlığı sağlar.
 
-## 2. Genel Mimari Şeması (Güncellenmiş v4.2 - 26 Repo Uyumlu)
+```mermaid
+flowchart TB
+    subgraph Adaptör Katmanı
+        direction LR
+        A(BaseLLM) --> B[GeminiAdapter]
+        A --> C[GPT4Adapter]
+        A --> D[...]
+        E(BaseSTT) --> F[DeepgramAdapter]
+        E --> G[WhisperAdapter]
+        E --> H[...]
+    end
+    
+    subgraph Çekirdek Sistem
+        Agent("[[sentiric-agent-service]]") -->|Soyut Bağımlılık| A
+        Agent -->|Soyut Bağımlılık| E
+    end
+```
 
-Bu şema, sistemin 26 repoluk granüler yapısını, servisler arası etkileşimi ve merkezi altyapı bileşenlerini yansıtmaktadır. `sentiric-api-gateway-service`, tüm UI ve harici istemci istekleri için merkezi giriş noktasıdır. Gerçek zamanlı ses trafiği ise doğrudan `sentiric-sip-signaling-service` ve `sentiric-media-service` tarafından yönetilir.
+### 1.2. Asenkron ve Dayanıklı İletişim
+
+Tüm kritik servisler arası iletişim, `RabbitMQ` mesaj kuyruğu üzerinden asenkron olarak gerçekleşir. Bu, sistemin bir bütün olarak dayanıklılığını ve ölçeklenebilirliğini garanti eder.
+
+| Bileşen / Olay Türü  | Örnek Kuyruk Adı       | Hedeflenen TPS | Maks. Gecikme |
+|----------------------|------------------------|----------------|---------------|
+| SIP Sinyalleşmesi    | `events.call.lifecycle`| 1000+          | < 50ms        |
+| Medya Akış Parçaları | `streams.audio.raw`    | 500+           | < 150ms       |
+| AI İstekleri         | `requests.ai.priority` | 2000+          | < 100ms       |
+
+### 1.3. İnsan Benzeri Diyalog Sanatı (SSML)
+
+Amacımız, robotik bir sesten ziyade, duyguyu ve tonlamayı yansıtan doğal bir diyalog deneyimi sunmaktır. Bu nedenle LLM'den SSML (Speech Synthesis Markup Language) formatında yanıtlar üretmesini bekleriz.
+
+```python
+# Örnek: Duyguya göre SSML üreten bir yardımcı sınıf
+class SSMLGenerator:
+    def generate_emotional_response(self, text: str, emotion: str = "neutral") -> str:
+        """Duygu durumuna göre konuşma hızını ve tonunu ayarlar."""
+        prosody = {
+            "happy": {'rate': 'fast', 'pitch': 'high'},
+            "sad": {'rate': 'slow', 'pitch': 'low'},
+            "neutral": {'rate': 'medium', 'pitch': 'medium'}
+        }
+        selected_prosody = prosody.get(emotion, prosody["neutral"])
+        
+        return f"""
+<speak>
+    <prosody rate="{selected_prosody['rate']}" pitch="{selected_prosody['pitch']}">
+        {text}
+    </prosody>
+</speak>
+"""
+```
+
+## 2. Genel Mimari Şeması (Doğrulanmış v5.0)
+
+Bu şema, bizim **`RabbitMQ` merkezli, 26 repoluk granüler ve asenkron mimarimizi** yansıtmaktadır. Bu yapı, platformun ölçeklenebilirlik ve dayanıklılık hedefleri için esastır.
 
 ```mermaid
 graph TD
     subgraph "Dış Dünya & İstemciler"
         Kullanici("📞 Kullanıcı Telefonu")
-        TelefoniSaglayici("☎️ Telefoni Sağlayıcısı (SIP Trunk)")
+        TelefoniSaglayici("☎️ Telefoni Sağlayıcısı (SIP Trunk v1.2)")
         DashboardUI("[[sentiric-dashboard-ui]]")
         WebAgentUI("[[sentiric-web-agent-ui]]")
         CLI("[[sentiric-cli]]")
@@ -24,9 +77,9 @@ graph TD
 
     subgraph "Sentiric Platformu (Bulut/On-Premise)"
         APIGateway("[[sentiric-api-gateway-service]]")
-        SIPSignaling("[[sentiric-sip-signaling-service]]")
-        MediaService("[[sentiric-media-service]]")
-        AgentService("[[sentiric-agent-service]]")
+        SIPSignaling("[[sentiric-sip-signaling-service v1.0]]")
+        MediaService("[[sentiric-media-service v1.0]]")
+        AgentService("[[sentiric-agent-service v1.0]]")
         
         subgraph "Destekleyici Servisler"
             UserService("[[sentiric-user-service]]")
@@ -37,10 +90,10 @@ graph TD
         end
 
         subgraph "Çekirdek Altyapı"
-            MQ("🐇 RabbitMQ (Mesajlaşma & Olaylar)")
-            DB("🗄️ PostgreSQL (Kalıcı Veri)")
-            Cache("⚡ Redis (Anlık Durum & Önbellek)")
-            VectorDB("🧠 Vector DB (Bilgi Bankası)")
+            MQ("🐇 RabbitMQ\n<size=8>Cluster Mode</size>")
+            DB("🗄️ PostgreSQL\n<size=8>TimescaleDB</size>")
+            Cache("⚡ Redis\n<size=8>Sentinel</size>")
+            VectorDB("🧠 Vector DB")
         end
     end
 
@@ -50,209 +103,176 @@ graph TD
     end
 
     %% Akışlar
-    Kullanici -->|SIP/RTP Çağrı| TelefoniSaglayici
-    TelefoniSaglayici -->|SIP (Sinyal)| SIPSignaling
-    TelefoniSaglayici -->|RTP (Medya)| MediaService
+    Kullanici -->|SIP/RTP| TelefoniSaglayici
+    TelefoniSaglayici -->|SIP:5060/TLS| SIPSignaling
+    TelefoniSaglayici -->|RTP:10000-20000| MediaService
 
-    DashboardUI -->|REST API| APIGateway
-    WebAgentUI -->|REST API| APIGateway
-    CLI -->|REST API| APIGateway
+    DashboardUI & WebAgentUI & CLI -->|REST/GraphQL| APIGateway
 
-    APIGateway -->|API Çağrıları| UserService
-    APIGateway -->|API Çağrıları| DialplanService
-    APIGateway -->|API Çağrıları| CDRService
-    APIGateway -->|API Çağrıları| AgentService
+    APIGateway -->|gRPC/REST| UserService
+    APIGateway -->|gRPC/REST| DialplanService
+    APIGateway -->|gRPC/REST| CDRService
+    APIGateway -->|gRPC/REST| AgentService
 
-    SIPSignaling -->|Kimlik Doğrulama| UserService
-    SIPSignaling -->|Yönlendirme Kararı| DialplanService
-    SIPSignaling -->|Medya Oturumu Yönet| MediaService
-    SIPSignaling -->|CallStart/End Event| MQ
+    SIPSignaling -->|API Çağrısı| UserService
+    SIPSignaling -->|API Çağrısı| DialplanService
+    SIPSignaling -->|API Çağrısı| MediaService
+    SIPSignaling -->|Olay Yayınla| MQ
     
-    MediaService -->|Audio Stream| AgentService
+    MediaService -->|Olay Yayınla| MQ
+    MediaService -.->|İşlenmiş Ses Akışı| AgentService
     
-    AgentService -->|Diyalog Yönetimi| AI_Services
-    AgentService -->|Bilgi Sorgulama| KnowledgeService
-    AgentService -->|İş Sistemi Entegrasyonu| Connectors
+    AgentService -->|API Çağrısı| AI_Services
+    AgentService -->|API Çağrısı| KnowledgeService
+    AgentService -->|API Çağrısı| Connectors
     AgentService -->|Durum Oku/Yaz| Cache
     AgentService -->|Kalıcı Veri Yaz| DB
     
-    KnowledgeService -->|Veri İndeksleme| VectorDB
-
-    Connectors -->|API Çağrıları| ExternalSystems
+    KnowledgeService -->|Veri İndeksle| VectorDB
+    Connectors -->|API Çağrısı| ExternalSystems
     
     MQ -->|Olayları Tüketir| CDRService
-
+    MQ -->|İşleri Tüketir| AgentService
 ```
 
-## 3. Genişletilmiş Lego Mimarisi (Arayüz & Adaptörler)
+## 3. Adaptör Mimarisi Sınıf Diyagramı
 
-Bu diyagram, platformun "Tak-Çıkar" felsefesinin kalbini gösterir. `AgentWorker`, somut implementasyonlardan değil, soyut arayüzlerden (interfaces) haberdardır.
+Bu diyagram, platformun "Tak-Çıkar" felsefesinin kod seviyesindeki yansımasıdır.
 
 ```mermaid
 classDiagram
-    direction LR
-
-    class BaseLLM { <<interface>> +generateText() }
-    class BaseSTT { <<interface>> +transcribe() }
-    class BaseTTS { <<interface>> +synthesize() }
-    class BaseTask { <<interface>> +execute() }
-    class BaseResourceAdapter { <<interface>> +call() }
-
-    class GeminiAdapter { +generateText() }
-    class DeepgramAdapter { +transcribe() }
-    class SentiricTTSAdapter { +synthesize() }
-    class ReservationTask { +execute() }
-    class GoogleCalendarAdapter { +call() }
-
-    class ServiceRouter {
-      <<utility>>
-      +get_best_service(type: str): object
+    class BaseLLM {
+        <<interface>>
+        +generate(prompt: str, config: dict) -> str
+        +get_usage_metrics() -> dict
     }
     
-    class AgentWorker {
-        -stt_router: ServiceRouter
-        -llm_router: ServiceRouter
-        -tts_router: ServiceRouter
-        -task_router: ServiceRouter
-        -resource_router: ServiceRouter
-        +handle_message()
+    class GeminiAdapter {
+        -api_key: str
+        -model: str = "gemini-1.5-pro"
+        +generate(prompt: str, config: dict) -> str
+        +get_usage_metrics() -> dict
     }
-
+    
+    class GPT4Adapter {
+        -endpoint: str = "https://api.openai.com/v1"
+        +generate(prompt: str, config: dict) -> str
+        +get_usage_metrics() -> dict
+    }
+    
     BaseLLM <|-- GeminiAdapter
-    BaseSTT <|-- DeepgramAdapter
-    BaseTTS <|-- SentiricTTSAdapter
-    BaseTask <|-- ReservationTask
-    BaseResourceAdapter <|-- GoogleCalendarAdapter
+    BaseLLM <|-- GPT4Adapter
     
-    AgentWorker o--> ServiceRouter
+    note for BaseLLM "Tüm adaptörlerin uygulaması gereken temel kontrat.\n• Thread-safe olmalı\n• Yeniden deneme (retry) mekanizması içermeli"
 ```
 
-## 4. Detaylı ve Akıllı Arama Akışı (SSML ve Yönlendirme ile)
-
-Bu akış, sistemin sadece bir dizi komutu değil, aynı zamanda akıllı yönlendirme ve doğal konuşma üretme yeteneklerini de nasıl kullandığını gösterir.
+## 4. Gelişmiş Çağrı Akışı Sıralı Diyagramı
 
 ```mermaid
 sequenceDiagram
-    autonumber
-    participant K as Kullanıcı
-    participant TS as Telefoni Sağlayıcısı
-    participant SG as "Sentiric SIP Gateway"
-    participant TG as "Sentiric Telephony Gateway"
-    participant MQ as RabbitMQ
-    participant W as "Agent Worker"
-    participant SR as "Akıllı Yönlendirici"
-    participant AI as "AI Servisleri"
-    participant EX as "Harici Sistemler"
+    box Mor Kullanıcı Tarafı
+        participant K as Kullanıcı
+        participant T as Telefon Cihazı
+    end
+    
+    box Mavi Sentiric Platformu
+        participant SG as SIP Signaling
+        participant MS as Media Service
+        participant MQ as RabbitMQ
+        participant AS as Agent Service
+    end
+    
+    K->>T: Arama Başlatır
+    T->>SG: SIP INVITE (Hedef: 5060)
+    SG->>MQ: publish(event: 'call.started')
+    MQ->>AS: consume(event: 'call.started')
+    
+    AS->>AS: Müşteriyi Tanı & Bağlam Oluştur
+    AS->>AS: Karşılama için SSML Üret
+    AS->>MS: play_audio(ssml_data)
+    
+    MS->>T: RTP Akışı (Port: 10000-20000)
+    T-->>K: Karşılama sesi oynatılır
 
-    K->>TS: Arama başlatır (+90 212 454 85 90)
-    TS->>SG: SIP/RTP ses akışı
-    SG->>TG: WebSocket/UDP ses akışı başlatır
-    TG->>MQ: publish(NewCallEvent)
-    
-    MQ-->>W: consume(NewCallEvent)
-    W->>SR: En iyi LLM'i ve TTS'i bul
-    SR-->>W: GeminiAdapter ve SentiricTTSAdapter'ı ver
-    
-    W->>AI: (Gemini) Kişiselleştirilmiş karşılama metni (SSML formatında) üret
-    AI-->>W: "<speak>Merhaba Ahmet Bey, <break time='400ms'/> size nasıl yardımcı olabilirim?</speak>"
-    
-    W->>AI: (SentiricTTS) Bu SSML'i sese çevir
-    AI-->>W: welcome_audio.wav
-    
-    W->>MQ: publish(PlayAudioCommand, audio_data)
-    MQ-->>TG: consume(PlayAudioCommand)
-    TG->>SG: Sesi WebSocket ile gönder
-    SG-->>TS: Sesi RTP ile kullanıcıya oynat
-    TS-->>K: (Doğal duraklamalı karşılama sesi)
-
-    loop Etkileşim Döngüsü
-        K->>TS: Sesli yanıt ("Randevu almak istiyorum")
-        TS->>SG: Ses paketleri
-        SG->>TG: Ses paketleri
-        TG->>MQ: publish(AudioChunk)
+    loop Diyalog Yönetimi
+        K->>T: Sesli Yanıt ("Randevu...")
+        T->>MS: RTP Paketleri
+        MS->>AS: İşlenmiş Ses Akışı
         
-        MQ-->>W: consume(AudioChunk)
-        W->>SR: En iyi STT servisini bul (hız öncelikli)
-        SR-->>W: DeepgramAdapter'ı ver
-        W->>AI: (Deepgram) Sesi metne çevir
-        AI-->>W: "Randevu almak istiyorum"
+        AS->>AS: STT ile Metne Çevir
+        AS->>AS: Niyet Analizi & Görev Yönlendirme
+        AS->>AS: Yanıt için SSML Üret
         
-        W->>W: Görev Yönlendirme (ReservationTask seçilir)
-        
-        W->>SR: En iyi LLM'i bul (doğruluk öncelikli)
-        SR-->>W: GeminiAdapter'ı ver
-        W->>AI: (Gemini) Sonraki soruyu SSML olarak üret
-        AI-->>W: "<speak>Elbette, hangi tarih için?</speak>"
-        
-        W->>AI: (SentiricTTS) Bu SSML'i sese çevir
-        AI-->>W: prompt_audio.wav
-        
-        W->>MQ: publish(PlayAudioCommand, audio_data)
-        MQ-->>TG: consume(PlayAudioCommand)
-        TG->>SG: Sesi WebSocket ile gönder
-        SG-->>TS: Sesli yanıt
-        TS-->>K: "Elbette, hangi tarih için?"
+        AS->>MS: play_audio(ssml_response)
+        MS->>T: RTP Akışı
+        T-->>K: AI yanıtı oynatılır
     end
 ```
 
-## 5. Akış Tanımlama ve Servis Orkestrasyonu
+## 5. Güvenlik, Performans ve Operasyonlar
 
-Platformun esnekliği ve zekası, iş mantığının koddan ayrıştırılması ve servis çağrılarının dinamik olarak yönetilmesine dayanır.
+### 5.1. Güvenlik Mimarisi
 
-### 5.1. Sentiric Reçeteleri (YAML)
+Platform, "Derinlemesine Savunma" (Defense in Depth) prensibini benimser.
 
-Bir "Kiracı" (Tenant) için tüm diyalog akışı ve kullanılacak görevler, **"Reçete" (Recipe)** adını verdiğimiz basit YAML dosyaları ile tanımlanır. Bu, platformun davranışını kod değişikliği yapmadan özelleştirmeyi sağlar.
-
-**Örnek `tenant_recipe.yaml`:**
-```yaml
-# ACME Şirketi'ne özel Reçete
-recipe_name: "Standart Müşteri Hizmetleri Akışı"
-version: 1.0
-
-enabled_tasks:
-  - "AppointmentReservationTask"
-  - "InformationRequestTask"
-
-task_routing:
-  - intent: "randevu_al"
-    task: "AppointmentReservationTask"
-  - intent: "bilgi_iste"
-    task: "InformationRequestTask"
+```mermaid
+graph LR
+    A[İstemci] -->|mTLS 1.3| B[API Gateway]
+    B -->|JWT Auth| C[İç Servisler]
+    C -->|Vault| D[Şifreleme Anahtarları]
+    D --> E[Veritabanı]
+    D --> F[Redis]
 ```
 
-### 5.2. Akıllı Servis Yönlendirme: Kademeli Fallback
+### 5.2. Performans Optimizasyon Stratejileri
 
-Sentiric, tek bir servis endpoint'ine bağımlı kalmak yerine, her servis türü (TTS, STT, LLM) için ayrı bir **"Servis Reçetesi"** kullanır. Bu reçete, kullanılacak servislerin bir öncelik listesini, zaman aşımlarını ve stratejilerini içerir. Bu, platformun otonom olarak en iyi performans/maliyet dengesini bulmasını ve bir servisin çökmesi durumunda bile diyalogun kesintisiz devam etmesini garanti altına alır.
+Gecikme (latency), projenin en kritik metriğidir. Aşağıdaki stratejilerle yönetilecektir.
 
-**Örnek `stt_recipe.yaml`:**
-```yaml
-# STT Servisleri için Yönlendirme Reçetesi
-# Strateji: En hızlıdan başla, kalite için gerekirse yedeğe geç.
+| Senaryo                     | Çözüm Stratejisi                 | Hedeflenen Kazanım |
+|-----------------------------|----------------------------------|--------------------|
+| Yüksek CPU'lu Medya İşleme  | WebAssembly (Wasm) DSP Filtreleri| %30-40 CPU Azalması|
+| STT Gecikmesi (İlk Yanıt)   | Streaming STT & Ön İşlemeli Buffer| 200ms+ İyileşme    |
+| LLM Maliyet ve Gecikmesi    | Akıllı Adaptif Model Yönlendirme | %35 Tasarruf       |
 
-services:
-  - name: "Deepgram_Streaming_API"
-    adapter: "DeepgramAdapter"
-    priority: 1
-    timeout_ms: 1500
-    enabled: true
+### 5.3. Akıllı Ölçeklendirme ve Dayanıklılık
 
-  - name: "Google_Speech_API_Enhanced"
-    adapter: "GoogleSTTAdapter"
-    priority: 2
-    timeout_ms: 3000
-    enabled: true
-    config:
-      model: "telephony"
+Sistem, KEDA (Kubernetes Event-driven Autoscaling) gibi araçlarla kuyruk uzunluğuna ve CPU kullanımına göre otonom olarak ölçeklenecektir.
 
-  - name: "Sentiric_Inhouse_Whisper"
-    adapter: "WhisperAdapter"
-    endpoint: "http://localhost:5003/api/stt"
-    priority: 3
-    timeout_ms: 5000
-    enabled: false
+```python
+# KEDA'ya ilham verecek otonom ölçeklendirme mantığı (Teorik)
+async def auto_scale_logic():
+    while True:
+        # Prometheus'tan metrikleri al
+        cpu_load = get_metric("cpu.agent_service.avg")
+        queue_depth = get_metric("rabbitmq.requests_ai_priority.depth")
+        
+        if cpu_load > 0.8 and queue_depth > 1000:
+            # Agent Service pod sayısını artır
+            scale_up("agent-service", count=2)
+        elif cpu_load < 0.3 and queue_depth < 50:
+            # Agent Service pod sayısını azalt
+            scale_down("agent-service", count=1)
+        
+        await asyncio.sleep(60)
 ```
-`Agent-Worker` içerisindeki **Akıllı Yönlendirici (ServiceRouter)**, bir STT isteği geldiğinde bu listeyi okur ve `priority` sırasına göre, `timeout_ms` sürelerini göz önünde bulundurarak servisleri dener.
 
-## 6. Bileşen Detayları ve Sorumlu Repolar
+### 5.4. Gelişmiş Hata Ayıklama (Debugging)
 
-Sentiric ekosistemindeki tüm repoların detaylı listesi ve sorumlulukları için lütfen **[Sentiric Ekosistem ve Repolar Dokümanına](./Ecosystem-Repos.md)** başvurun.
+Üretim ortamındaki sorunları çözmek için, çağrı bazında dinamik olarak etkinleştirilebilen hata ayıklama özellikleri olacaktır.
+
+```yaml
+# Örnek: Belirli bir çağrı için debug yapılandırması (Redis'te tutulur)
+# call_id: CA123456789
+features:
+  call_recording: true
+  realtime_logs: 
+    enabled: true
+    level: DEBUG
+  trace_injection:
+    enabled: true
+    sample_rate: 1.0 # Bu çağrıyı kesinlikle izle
+```
+
+## 6. Sonuç ve Doküman Yönetimi
+
+Bu doküman, Sentiric platformunun yaşayan anayasasıdır ve **v5.0** olarak kabul edilmiştir. Tüm geliştirme faaliyetleri bu belgeye referansla yapılmalıdır. Bu belge, projenin `sentiric-governance` reposunda `docs/blueprint/Architecture-Overview.md` olarak yer alacaktır.

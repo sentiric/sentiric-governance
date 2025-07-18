@@ -222,3 +222,9 @@ Bu loglar, sistemin bizim yazdığımız **Durum Makinesi mantığıyla kusursuz
 *   **Gerekçe:** AI tarafından üretilen kodun, özellikle `mermaid` gibi hassas sözdizimlerinde, hatalara açık olabileceği kabul edilmiştir. Bu hataların sürekli olarak düzeltilmesi yerine, çözüm sürecinin belgelenmesi, projenin kendi kendini iyileştirme kapasitesini artırır ve insan-AI işbirliğini daha verimli hale getirir. Bu, değerli bir kullanıcı geri bildirimine dayalı bir süreç iyileştirmesidir.
 *   **Sonuç:** Proje dokümantasyonu artık sadece "ne" yapıldığını değil, "nasıl onarılacağını" da içerecek şekilde daha sağlam bir hale getirilmiştir. `Architecture-Overview.md`'deki kritik bir görselleştirme hatası giderilmiş ve gelecekteki benzer sorunlar için net bir çözüm yolu sunulmuştur.
 ---
+### **2024-07-28: Mimari Anayasanın Nihai Hale Getirilmesi (v5.0 - Sentez)**
+
+*   **Karar:** Harici bir AI'dan gelen öneriler ve kendi temel mimari felsefemiz, titiz bir analiz ve sentez süreciyle birleştirilerek projenin nihai mimari anayasası olan **v5.0** oluşturulmuştur. Bu, geliştirme öncesi son ve en kapsamlı planlama adımıdır.
+*   **Gerekçe:** Harici öneriler, dokümanı somut örnekler (SSML), performans hedefleri (TPS tabloları) ve yeni bölümlerle (Güvenlik, Performans) zenginleştirirken, projenin kalbi olan `RabbitMQ` merkezli, dayanıklı ve asenkron mimarinin korunması kritikti. Bu sentez, hem yenilikçi fikirleri benimsememizi hem de projenin temel sağlamlığından ödün vermememizi sağlamıştır.
+*   **Sonuç:** Sentiric platformu, tüm paydaşların üzerinde anlaştığı, teknik olarak derin, görsel olarak anlaşılır ve geleceğe dönük, bugüne kadarki en olgun mimari belgeye kavuşmuştur. Bu, planlama aşamasını sonlandıran ve geliştirme aşamasına geçiş için sağlam bir temel oluşturan kilit bir adımdır.
+---
