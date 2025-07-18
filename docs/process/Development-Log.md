@@ -246,3 +246,9 @@ Bu loglar, sistemin bizim yazdığımız **Durum Makinesi mantığıyla kusursuz
 *   **Gerekçe:** Eski ve yeni sistemlerin aynı anda çalışması, port çakışmaları, kaynak israfı ve yönetim karmaşası gibi ciddi riskler taşıyordu. Projenin sağlıklı ilerlemesi için temiz ve tek bir "doğruluk kaynağı" (Docker Compose) ile çalışmak esastır. Bu temizlik, teknik borcu ortadan kaldırmış ve stabil bir zemin hazırlamıştır.
 *   **Sonuç:** Sunucu tamamen temizlenmiş, `sentiric-infrastructure` ve `sentiric-sip-signaling-service`'in en son versiyonları ile `docker compose up --build` komutu çalıştırılmıştır. Milestone 1'in hedefi olan temel altyapı ve SIP sinyalleşme servisinin iskeleti, artık sunucuda canlı ve çalışır durumdadır. Proje, ilk somut ve fonksiyonel adımını başarıyla tamamlamıştır.
 ---
+### **2024-08-02: Milestone 3 Tamamlandı - İlk Otomatize Uçtan Uca Çağrı**
+
+*   **Karar:** Manuel SIP testlerinin verimsiz olacağı öngörülerek, projenin test ve otomasyon yeteneklerini artırmak amacıyla `sentiric-cli` reposu hayata geçirilmiştir. Python tabanlı basit bir test script'i (`test_call.py`) ile ilk otomatize test çağrısı gerçekleştirilmiştir.
+*   **Gerekçe:** Tekrarlanabilir ve güvenilir testler, projenin kalitesini ve geliştirme hızını artırmak için esastır. `sentiric-cli`, hem bu ihtiyacı karşılamış hem de gelecekteki platform yönetim araçları için bir temel oluşturmuştur.
+*   **Sonuç:** `test_call.py` script'i ile yapılan test, **tüm sistemin (cli -> sip-signaling -> user-service -> dialplan-service -> media-service)** bir bütün olarak, planlandığı gibi çalıştığını başarıyla kanıtlamıştır. Sistem, gelen bir `INVITE` isteğini almış, diğer mikroservislere danışarak doğrulamış, bir medya kanalı ayırmış ve SDP içeren geçerli bir `200 OK` yanıtı dönmüştür. Bu, **Milestone 3'ün başarıyla tamamlandığını** ve projenin artık gerçek zamanlı sesli iletişim için teknik olarak hazır olduğunu doğrulamaktadır.
+---
