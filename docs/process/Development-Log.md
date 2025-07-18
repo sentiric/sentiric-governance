@@ -240,3 +240,9 @@ Bu loglar, sistemin bizim yazdığımız **Durum Makinesi mantığıyla kusursuz
 *   **Gerekçe:** `Architecture-Overview.md` nihai hedefi gösterirken, bu hedefe nasıl ulaşılacağını gösteren taktiksel bir plana ihtiyaç duyuluyordu. Bu yeni strateji, geliştirme sürecini öngörülebilir, test edilebilir ve dikey dilimler halinde yönetilebilir kılmaktadır.
 *   **Sonuç:** İnşa planı, `docs/blueprint/Build-Strategy.md` adıyla projenin anayasasına eklenmiştir. `Current-Priorities.md` de bu yeni plana göre güncellenerek, bir sonraki somut görev netleştirilmiştir. Proje, planlama aşamasından uygulama aşamasına geçmek için tam bir hizalanma sağlamıştır.
 ---
+### **2024-07-31: Sunucu Migrasyonu ve Milestone 1'in Canlıya Alınması**
+
+*   **Karar:** Yeni Docker Compose tabanlı mimariye geçişin bir parçası olarak, sunucudaki tüm eski, PM2 ile yönetilen MVP servislerinin ve ilgili kod klasörlerinin kalıcı olarak kaldırılmasına karar verilmiştir.
+*   **Gerekçe:** Eski ve yeni sistemlerin aynı anda çalışması, port çakışmaları, kaynak israfı ve yönetim karmaşası gibi ciddi riskler taşıyordu. Projenin sağlıklı ilerlemesi için temiz ve tek bir "doğruluk kaynağı" (Docker Compose) ile çalışmak esastır. Bu temizlik, teknik borcu ortadan kaldırmış ve stabil bir zemin hazırlamıştır.
+*   **Sonuç:** Sunucu tamamen temizlenmiş, `sentiric-infrastructure` ve `sentiric-sip-signaling-service`'in en son versiyonları ile `docker compose up --build` komutu çalıştırılmıştır. Milestone 1'in hedefi olan temel altyapı ve SIP sinyalleşme servisinin iskeleti, artık sunucuda canlı ve çalışır durumdadır. Proje, ilk somut ve fonksiyonel adımını başarıyla tamamlamıştır.
+---
