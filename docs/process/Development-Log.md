@@ -234,3 +234,9 @@ Bu loglar, sistemin bizim yazdığımız **Durum Makinesi mantığıyla kusursuz
 *   **Gerekçe:** Kubernetes'in başlangıç aşamasındaki karmaşıklığı ve maliyeti yerine, projenin "Pragmatik Başlangıç" felsefesine uygun olarak, daha basit, yönetilebilir ve maliyet-etkin bir çözüm olan Docker Compose tercih edilmiştir. Bu, projenin somut altyapısının ilk adımını oluşturmaktadır.
 *   **Sonuç:** Platformun temel altyapı servisleri, artık tek bir komutla (`docker-compose up -d`) herhangi bir Docker ortamında ayağa kaldırılabilir hale gelmiştir. Bu, uygulama servislerini geliştirmeye ve dağıtmaya başlamak için gereken sağlam ve tekrarlanabilir zemini oluşturmuştur.
 ---
+### **2024-07-30: İnşa Stratejisinin Belgelenmesi ve Standardizasyonu**
+
+*   **Karar:** Projenin Faz 1'inin nasıl inşa edileceğine dair belirsizliği ortadan kaldırmak için, "İlk Telefon Aramasının Yolculuğu" adında, kilometre taşlarına (Milestones) dayalı, detaylı bir inşa planı oluşturulmuştur.
+*   **Gerekçe:** `Architecture-Overview.md` nihai hedefi gösterirken, bu hedefe nasıl ulaşılacağını gösteren taktiksel bir plana ihtiyaç duyuluyordu. Bu yeni strateji, geliştirme sürecini öngörülebilir, test edilebilir ve dikey dilimler halinde yönetilebilir kılmaktadır.
+*   **Sonuç:** İnşa planı, `docs/blueprint/Build-Strategy.md` adıyla projenin anayasasına eklenmiştir. `Current-Priorities.md` de bu yeni plana göre güncellenerek, bir sonraki somut görev netleştirilmiştir. Proje, planlama aşamasından uygulama aşamasına geçmek için tam bir hizalanma sağlamıştır.
+---

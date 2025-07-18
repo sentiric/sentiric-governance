@@ -1,26 +1,22 @@
 # 🚀 Sentiric: Anlık Öncelikler ve Sonraki Adımlar
 
-Bu belge, projenin "şimdi" neye odaklandığını gösteren yaşayan bir dokümandır. **Proje Sahibi** tarafından düzenli olarak güncellenir ve **AI Mimar** için bir sonraki görevin ne olduğunu belirtir.
+Bu belge, projenin "şimdi" neye odaklandığını gösteren yaşayan bir dokümandır ve **AI Mimar** için bir sonraki görevin ne olduğunu belirtir.
 
-## 🎯 Mevcut Odak: Faz 1 - Çekirdek Platform Kurulumu
+## 🎯 Mevcut Odak: Milestone 1 - Arama Sinyalinin Alınması
 
-*   **Açıklama:** Projenin canlıya alınabilmesi için gereken temel altyapının ve çekirdek iletişim servislerinin kurulması. Bu, platformun dış dünyadan (telefon hattı/SIP) gelen bir çağrıyı alıp işleyebilmesinin ilk adımıdır.
+*   **Açıklama:** Projemizin ilk fonksiyonel parçasını inşa etmek. Amacımız, dış dünyadan gelen bir SIP çağrısını alıp, temel bir yanıtla karşılayabilen `sentiric-sip-signaling-service`'i ayağa kaldırmak.
+*   **Referans Belge:** `docs/blueprint/Build-Strategy.md`
 *   **Durum:** ⬜ **Sıradaki**
 
 ## ⚡ Sıradaki Görev (Up Next)
 
-*   **Görev Adı:** Faz 1 Adım A - Temel Altyapı ve Dış Bağlantı Hazırlığı
-*   **Açıklama:** `Roadmap.md`'de tanımlanan "Faz 1 - A. Temel Altyapı ve Dış Bağlantı" bölümündeki ilk adımları tamamlamak. Bu, projenin somut olarak çalışır hale gelmesi için atılacak ilk adımdır.
+*   **Görev Adı:** `sentiric-sip-signaling-service` İskeletinin Oluşturulması
+*   **Açıklama:** `Build-Strategy.md` belgesindeki **Milestone 1**'i tamamlamak üzere, `sentiric-sip-signaling-service`'in ilk, temel versiyonunu oluşturmak ve mevcut `Docker Compose` altyapısına entegre etmek.
 *   **Kabul Kriterleri:**
-    - [ ] **Altyapı Hazırlığı:** `sentiric-infrastructure` reposu kullanılarak, temel bulut kaynaklarının (Kubernetes cluster, veritabanı, ağ kuralları vb.) Terraform veya eşdeğer bir IaC aracı ile oluşturulması.
-    - [ ] **API Gateway Dağıtımı:** `sentiric-api-gateway-service`'in derlenip, hazırlanan altyapıya dağıtılması. Bu, diğer tüm servisler için merkezi erişim noktası olacaktır.
-    - [ ] **SIP Servislerinin Dağıtımı:** `sentiric-sip-signaling-service` ve `sentiric-media-service`'in derlenip, hazırlanan altyapıya dağıtılması.
-    - [ ] **Temel Yönlendirme Servislerinin Dağıtımı:** `sentiric-user-service` ve `sentiric-dialplan-service`'in derlenip, altyapıya dağıtılması.
-    - [ ] **Doğrulama:** Dışarıdan yapılan bir SIP çağrısının, `sentiric-api-gateway`'den geçerek `sentiric-sip-signaling-service` tarafından alınıp, temel bir yanıtla (örn: "servis aktif") karşılanabildiğinin test edilmesi.
-
-## 📚 Gelecek Planı (Backlog)
-
-*   **Görev:** Faz 1 Adım B - Çekirdek İş Akışı ve İlk Görev (`GenericReservationTask`).
-*   **Görev:** `sentiric-core-interfaces` içindeki soyut sınıfları ve API sözleşmelerini tanımlamak.
-*   **Görev:** `sentiric-agent-service`'in ilk versiyonunu dağıtmak.
-*   ...
+    - [ ] `sentiric-sip-signaling-service` için temel bir Node.js proje iskeleti oluşturuldu.
+    - [ ] Servis, gelen SIP `INVITE` isteklerini dinleyebiliyor ve konsola log basabiliyor.
+    - [ ] Servis, gelen çağrıya `200 OK` yanıtı dönebiliyor.
+    - [ ] Servis için bir `Dockerfile` oluşturuldu.
+    - [ ] `sentiric-infrastructure` reposundaki `docker-compose.yml`'ye `sip-signaling-service` eklendi ve `5060/udp` portu map edildi.
+    - [ ] Tüm altyapı (`docker compose up -d`) çalıştırıldığında, `sip-signaling-service`'in de başarılı bir şekilde başladığı `docker compose ps` ile doğrulanabiliyor.
+```
