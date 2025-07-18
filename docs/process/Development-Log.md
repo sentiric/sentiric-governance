@@ -228,3 +228,9 @@ Bu loglar, sistemin bizim yazdığımız **Durum Makinesi mantığıyla kusursuz
 *   **Gerekçe:** Harici öneriler, dokümanı somut örnekler (SSML), performans hedefleri (TPS tabloları) ve yeni bölümlerle (Güvenlik, Performans) zenginleştirirken, projenin kalbi olan `RabbitMQ` merkezli, dayanıklı ve asenkron mimarinin korunması kritikti. Bu sentez, hem yenilikçi fikirleri benimsememizi hem de projenin temel sağlamlığından ödün vermememizi sağlamıştır.
 *   **Sonuç:** Sentiric platformu, tüm paydaşların üzerinde anlaştığı, teknik olarak derin, görsel olarak anlaşılır ve geleceğe dönük, bugüne kadarki en olgun mimari belgeye kavuşmuştur. Bu, planlama aşamasını sonlandıran ve geliştirme aşamasına geçiş için sağlam bir temel oluşturan kilit bir adımdır.
 ---
+### **2024-07-29: Faz 1 - Altyapı Temelinin Atılması (Docker Compose)**
+
+*   **Karar:** `sentiric-infrastructure` reposu, projenin temel altyapı servislerini (PostgreSQL, Redis, RabbitMQ) Docker Compose ile yönetecek şekilde oluşturulmuş ve ilk commit'i atılmıştır.
+*   **Gerekçe:** Kubernetes'in başlangıç aşamasındaki karmaşıklığı ve maliyeti yerine, projenin "Pragmatik Başlangıç" felsefesine uygun olarak, daha basit, yönetilebilir ve maliyet-etkin bir çözüm olan Docker Compose tercih edilmiştir. Bu, projenin somut altyapısının ilk adımını oluşturmaktadır.
+*   **Sonuç:** Platformun temel altyapı servisleri, artık tek bir komutla (`docker-compose up -d`) herhangi bir Docker ortamında ayağa kaldırılabilir hale gelmiştir. Bu, uygulama servislerini geliştirmeye ve dağıtmaya başlamak için gereken sağlam ve tekrarlanabilir zemini oluşturmuştur.
+---
