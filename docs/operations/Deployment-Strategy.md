@@ -29,4 +29,33 @@ Bu doküman, Sentiric platformunun farklı ortamlara (geliştirme, test, üretim
 
 Bu akış, hem hızlı ve sürekli entegrasyonu (CI) hem de kontrollü ve güvenli dağıtımı (CD) bir arada sunar.
 
----
+## 4. Dağıtım Otomasyonu Vizyonu (CI/CD)
+
+Mevcut manuel `git pull` ve `docker compose up --build` süreci, geliştirme ve ilk kurulum aşamaları için yeterlidir. Ancak, platform olgunlaştıkça ve güncellemeler sıklaştıkça, bu sürecin otomatize edilmesi kritik öneme sahip olacaktır.
+
+**Hedef:** Herhangi bir servis reposunun `main` branch'ine bir commit atıldığında, bu değişikliğin **otomatik olarak** sunucuya dağıtılmasını sağlayan bir CI/CD pipeline'ı kurmak.
+
+### Örnek CI/CD Akışı (GitHub Actions ile)
+
+1.  **Tetikleyici (Trigger):** Geliştirici, `sentiric-agent-service` reposunun `main` branch'ine yeni bir commit gönderir.
+
+2.  **GitHub Actions Başlar:**
+    a. **İnşa (Build):** GitHub'ın kendi sanal sunucusu üzerinde, `sentiric-agent-service`'in Dockerfile'ı kullanılarak yeni bir Docker imajı oluşturulur.
+    b. **Etiketleme (Tagging):** Bu imaj, commit hash'i veya sürüm numarası ile etiketlenir (örn: `ghcr.io/sentiric/sentiric-agent-service:v0.1.3`).
+    c. **Yayınlama (Push):** Etiketlenen imaj, `GitHub Container Registry` (ghcr.io) gibi merkezi bir Docker kayıt merkezine gönderilir.
+
+3.  **Sunucuyu Bilgilendirme (Webhook/SSH):**
+    a. **Webhook Yöntemi:** GitHub Actions, sunucumuzda çalışan küçük bir "webhook dinleyici" servisine (örn: `webhookd`) "Yeni bir `agent-service` imajı var!" diye bir sinyal gönderir.
+    b. **SSH Yöntemi:** GitHub Actions, sunucumuza güvenli bir şekilde SSH ile bağlanır.
+
+4.  **Sunucuda Otomatik Güncelleme:**
+    a. Webhook dinleyicisi veya SSH komutu, sunucuda basit bir `update.sh` script'ini tetikler.
+    b. Bu script, `sentiric-infrastructure` klasörüne gider ve şu komutları çalıştırır:
+       ```bash
+       # En son imajı çek
+       docker compose pull sentiric-agent-service
+       # Sadece değişen servisi yeniden başlat
+       docker compose up -d --no-deps sentiric-agent-service
+       ```
+
+Bu otomasyon, güncellemeleri saniyeler içinde, hatasız ve insan müdahalesi olmadan canlıya almamızı sağlayacaktır. Bu, projemizin **Faz 2 - Platformlaşma ve Geliştirici Deneyimi (DX)** hedeflerinin bir parçası olarak ele alınacaktır.
