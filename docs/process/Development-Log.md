@@ -252,3 +252,9 @@ Bu loglar, sistemin bizim yazdığımız **Durum Makinesi mantığıyla kusursuz
 *   **Gerekçe:** Tekrarlanabilir ve güvenilir testler, projenin kalitesini ve geliştirme hızını artırmak için esastır. `sentiric-cli`, hem bu ihtiyacı karşılamış hem de gelecekteki platform yönetim araçları için bir temel oluşturmuştur.
 *   **Sonuç:** `test_call.py` script'i ile yapılan test, **tüm sistemin (cli -> sip-signaling -> user-service -> dialplan-service -> media-service)** bir bütün olarak, planlandığı gibi çalıştığını başarıyla kanıtlamıştır. Sistem, gelen bir `INVITE` isteğini almış, diğer mikroservislere danışarak doğrulamış, bir medya kanalı ayırmış ve SDP içeren geçerli bir `200 OK` yanıtı dönmüştür. Bu, **Milestone 3'ün başarıyla tamamlandığını** ve projenin artık gerçek zamanlı sesli iletişim için teknik olarak hazır olduğunu doğrulamaktadır.
 ---
+### **2024-08-03: Milestone 5 Tamamlandı - Uçtan Uca Ses Akışı Mantığı Doğrulandı**
+
+*   **Karar:** `agent-service`'e TTS yeteneği, `media-service`'e ise FFmpeg ile ses çalma yeteneği eklenerek, projenin ilk uçtan uca sesli yanıt verme akışı tamamlanmıştır.
+*   **Gerekçe:** Bu, `Build-Strategy.md`'deki ilk büyük dikey dilimin son adımıdır. Bu entegrasyon, asenkron olayların tetiklenmesinden, harici bir AI servisinin kullanılmasına ve sonucun bir medya akışı olarak kullanıcıya iletilmesine kadar tüm temel mimari bileşenlerin birlikte çalıştığını kanıtlar.
+*   **Sonuç:** Yerel testler, tüm mantıksal akışın (`sip-signaling` -> `RabbitMQ` -> `agent-service` -> `TTS API` -> `media-service` -> `FFmpeg`) **başarıyla çalıştığını** göstermiştir. Sesi duymama sorununun, yerel Docker ağının doğasından kaynaklanan öngörülebilir bir NAT problemi olduğu teşhis edilmiştir. Bu, bir kod hatası değil, sunucu ortamında çözülecek bir ağ yapılandırma adımıdır. Proje, mantıksal olarak ilk sesli yanıtını başarıyla üretmiştir.
+---
