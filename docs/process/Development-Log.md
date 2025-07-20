@@ -258,3 +258,9 @@ Bu loglar, sistemin bizim yazdığımız **Durum Makinesi mantığıyla kusursuz
 *   **Gerekçe:** Bu, `Build-Strategy.md`'deki ilk büyük dikey dilimin son adımıdır. Bu entegrasyon, asenkron olayların tetiklenmesinden, harici bir AI servisinin kullanılmasına ve sonucun bir medya akışı olarak kullanıcıya iletilmesine kadar tüm temel mimari bileşenlerin birlikte çalıştığını kanıtlar.
 *   **Sonuç:** Yerel testler, tüm mantıksal akışın (`sip-signaling` -> `RabbitMQ` -> `agent-service` -> `TTS API` -> `media-service` -> `FFmpeg`) **başarıyla çalıştığını** göstermiştir. Sesi duymama sorununun, yerel Docker ağının doğasından kaynaklanan öngörülebilir bir NAT problemi olduğu teşhis edilmiştir. Bu, bir kod hatası değil, sunucu ortamında çözülecek bir ağ yapılandırma adımıdır. Proje, mantıksal olarak ilk sesli yanıtını başarıyla üretmiştir.
 ---
+### **2024-08-05: Milestone 5 Tamamlandı - İlk Uçtan Uca Sesli Yanıt ("Hello, World!")**
+
+*   **Karar:** Projenin ilk büyük dikey dilimi, `sentiric-media-service`'in Go diline geçirilmesi, CI/CD pipeline'larının kurulması ve sunucu üzerindeki ağ (NAT) ve kaynak (CPU/RAM) sorunlarının çözülmesinin ardından, gerçek bir telefon çağrısıyla test edilerek tamamlanmıştır.
+*   **Gerekçe:** Bu, `Build-Strategy.md`'de tanımlanan tüm temel altyapı ve uygulama iskeletlerinin (Milestone 1'den 5'e) birbiriyle uyum içinde çalıştığını kanıtlayan nihai adımdır.
+*   **Sonuç:** Gerçek bir telefonla yapılan testte, sistem çağrıyı başarıyla karşılamış, tüm mikroservisler görevlerini yerine getirmiş ve `agent-service` tarafından üretilen "Merhaba, Sentiric platformuna hoş geldiniz." sesli yanıtı arayan tarafından **başarıyla duyulmuştur.** Bu, projenin en temel ve en karmaşık teknik zorlukları aştığını ve artık daha gelişmiş AI yetenekleri eklemeye hazır, sağlam bir temele sahip olduğunu doğrulamaktadır. Platformumuz artık "konuşuyor". [ Tekrar kontrol edilecek]
+---
