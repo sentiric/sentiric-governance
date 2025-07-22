@@ -5,7 +5,71 @@
 Bu doküman, Sentiric platformunun, üzerinde çalıştığı altyapıdan veya uygulanan iş modelinden bağımsız, **evrensel ve değişmez teknik mimarisini** tanımlar. Platform, "Tak-Çıkar Lego Seti" felsefesini temel alan, asenkron, dayanıklı ve modüler bir mikroservis ekosistemidir. Temel amaç, her türlü iletişim protokolünü ve yapay zeka motorunu entegre edebilen, esnek ve ölçeklenebilir bir "Konuşan İşlem Platformu" (Conversational Workflow Platform) için sağlam bir mavi kopya (blueprint) sunmaktır.
 
 Bu anayasa, projenin teknik "NEDEN"ini ve "NASIL"ını tanımlar.
+### 1.1. Tak-Çıkar Modüler Mimarisi (Lego Felsefesi)
 
+Platform, belirli bir teknolojiye bağımlı değildir. Her işlev, soyut bir arayüz arkasında çalışan değiştirilebilir bir "Adaptör" ile sisteme bağlanır. Bu, teknoloji bağımsızlığı sağlar.
+
+```mermaid
+flowchart TB
+    subgraph Adaptör Katmanı
+        direction LR
+        A(BaseLLM) --> B[GeminiAdapter]
+        A --> C[GPT4Adapter]
+        A --> D[...]
+        E(BaseSTT) --> F[DeepgramAdapter]
+        E --> G[WhisperAdapter]
+        E --> H[...]
+    end
+    
+    subgraph Çekirdek Sistem
+        Agent("[[sentiric-agent-service]]") -->|Soyut Bağımlılık| A
+        Agent -->|Soyut Bağımlılık| E
+    end
+```
+
+### 1.2. Asenkron ve Dayanıklı İletişim
+
+Tüm kritik servisler arası iletişim, `RabbitMQ` mesaj kuyruğu üzerinden asenkron olarak gerçekleşir. Bu, sistemin bir bütün olarak dayanıklılığını ve ölçeklenebilirliğini garanti eder.
+
+| Bileşen / Olay Türü  | Örnek Kuyruk Adı       | Hedeflenen TPS | Maks. Gecikme |
+|----------------------|------------------------|----------------|---------------|
+| SIP Sinyalleşmesi    | `events.call.lifecycle`| 1000+          | < 50ms        |
+| Medya Akış Parçaları | `streams.audio.raw`    | 500+           | < 150ms       |
+| AI İstekleri         | `requests.ai.priority` | 2000+          | < 100ms       |
+
+### 1.3. Evrimsel Teknoloji Stratejisi (Pragmatizm ve Performans)
+
+Platformumuzun teknoloji seçimi, **"Önce Çalıştır, Sonra Uçur"** (Crawl, Walk, Run) felsefesine dayanır.
+
+*   **Faz 1 (Crawl/Walk - Mevcut):** Fikirleri en hızlı şekilde hayata geçirmek ve pazara girmek için `Node.js`, `Go` ve `Python` gibi olgun, hızlı geliştirme imkanı sunan, geniş ekosistemlere sahip dilleri kullanırız. Bu, bize esneklik ve hız kazandırır.
+*   **Faz 2 ve Ötesi (Run - Hedef):** Platform olgunlaştıkça ve performans kritik hale geldikçe, darboğaz oluşturan çekirdek servisleri (`sip-signaling`, `media-service`, `stt-service` vb.) `Rust`, `Go` ve `C++` gibi sisteme daha yakın dillerle yeniden yazarak "Hyper-Performance" hedefine ulaşırız.
+
+Bu evrimsel yaklaşım, projenin hem başlangıçtaki çevikliğini korumasını hem de uzun vadede dünya standartlarında bir teknik mükemmelliğe ulaşmasını sağlar.
+
+### 1.3. İnsan Benzeri Diyalog Sanatı (SSML)
+
+Amacımız, robotik bir sesten ziyade, duyguyu ve tonlamayı yansıtan doğal bir diyalog deneyimi sunmaktır. Bu nedenle LLM'den SSML (Speech Synthesis Markup Language) formatında yanıtlar üretmesini bekleriz.
+
+```python
+# Örnek: Duyguya göre SSML üreten bir yardımcı sınıf
+class SSMLGenerator:
+    def generate_emotional_response(self, text: str, emotion: str = "neutral") -> str:
+        """Duygu durumuna göre konuşma hızını ve tonunu ayarlar."""
+        prosody = {
+            "happy": {'rate': 'fast', 'pitch': 'high'},
+            "sad": {'rate': 'slow', 'pitch': 'low'},
+            "neutral": {'rate': 'medium', 'pitch': 'medium'}
+        }
+        selected_prosody = prosody.get(emotion, prosody["neutral"])
+        
+        return f"""
+<speak>
+    <prosody rate="{selected_prosody['rate']}" pitch="{selected_prosody['pitch']}">
+        {text}
+    </prosody>
+</speak>
+"""
+```
 ---
 
 ## 2. Mimari Prensipleri: Platformun DNA'sı

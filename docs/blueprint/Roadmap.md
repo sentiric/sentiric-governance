@@ -96,7 +96,16 @@ Bu doküman, Sentiric platformunun geliştirme sürecini fazlara ayırarak, hede
     *   **`sentiric-api-sdk-python`** ve **`sentiric-api-sdk-javascript`** için ilk versiyonlar.
     *   **`sentiric-sip-client-sdk`:** Sentiric SIP Server'a bağlanan, SIP iletişimini (softphone, mobil, WebRTC) sağlayan istemci SDK'sının geliştirilmesi ve yayınlanması.
 
-### Faz 3 - Zeka ve Optimizasyon
+### Faz 3 - "Hyper-Performance" Çekirdek Yükseltmesi
+
+*   **Durum:** ⬜ **Vizyon**
+*   **Hedef:** Platformun temel "motorunu", pazarda rakipsiz bir performans, verimlilik ve kontrol seviyesine ulaşmak için sisteme daha yakın diller ve optimize edilmiş teknolojilerle yeniden inşa etmek. Bu, Sentiric'i standart bir platformdan, "carrier-grade" (telekom operatörü seviyesinde) bir çözüme dönüştürecek stratejik adımdır.
+*   **Temel Stratejiler (Deepseek Vizyonu Entegrasyonu):**
+    1.  **Telekom Katmanının Güçlendirilmesi:** Gecikmeye en duyarlı olan `sentiric-sip-signaling-service` ve `sentiric-media-service`'i, Garbage Collector (Çöp Toplayıcı) gecikmelerini ortadan kaldırmak ve maksimum kontrol sağlamak için **Go veya Rust** gibi dillerle yeniden yazmak.
+    2.  **AI Pipeline Optimizasyonu:** `sentiric-stt-service` ve `sentiric-tts-service`'i, Python'un GIL (Global Interpreter Lock) kısıtlamalarını aşmak için **C++ tabanlı AI motorları (örn: ONNX Runtime, Whisper.cpp, Coqui-TTS Engine)** ile doğrudan entegre etmek. Bu, aynı donanımda çok daha fazla eş zamanlı AI işlemini mümkün kılacaktır.
+    3.  **ARM Mimarisi Optimizasyonu:** Tüm altyapıyı, Oracle Cloud ARM gibi platformların sunduğu "sıfır maliyet" ve yüksek verimlilikten tam olarak yararlanacak şekilde optimize etmek. Bu, quantize edilmiş AI modelleri ve ARM için özel derlenmiş kütüphanelerin kullanımını içerir.
+    
+### Faz 4 - Zeka ve Optimizasyon
 
 *   **Durum:** ⬜ **Planlandı**
 *   **Hedef:** Platformun AI yeteneklerini derinleştirmek ve operasyonel verimliliği artırmak.
@@ -105,8 +114,12 @@ Bu doküman, Sentiric platformunun geliştirme sürecini fazlara ayırarak, hede
     *   **Akıllı Yönlendirme:** Basit görevler için daha küçük/ucuz LLM'leri, karmaşık görevler için büyük LLM'leri kullanan "Model Kademelendirme" (Model Cascading).
     *   **Analitikler:** Dashboard'da arama süreleri, başarılı/başarısız görev oranları gibi metrikleri gösterme.
     *   **`sentiric-knowledge-service`:** AI ajanları için yapılandırılmış bilgi tabanı entegrasyonu.
+*   **Hedef:** Platformun AI yeteneklerini derinleştirmek ve operasyonel verimliliği artırmak.
+*   **Potansiyel Özellikler:**
+    *   **Akıllı Yönlendirme:** Basit görevler için daha küçük/ucuz LLM'leri, karmaşık görevler için büyük LLM'leri kullanan "Model Kademelendirme" (Model Cascading).
+    *   **`sentiric-knowledge-service`:** AI ajanları için yapılandırılmış bilgi tabanı entegrasyonu.    
 
-### Faz 4 - Çoklu Kanal (Omnichannel) Genişlemesi
+### Faz 5 - Çoklu Kanal (Omnichannel) Genişlemesi
 
 *   **Durum:** ⬜ **Vizyon**
 *   **Hedef:** Sentiric'in diyalog yeteneklerini sesin ötesine taşıyarak, metin tabanlı ve görsel kanalları da destekleyen bütünleşik bir platform haline getirmek.
