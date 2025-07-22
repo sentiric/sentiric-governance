@@ -1,61 +1,96 @@
-# 🚀 Sentiric: Dağıtım (Deployment) Stratejisi (V2.2 - 26 Repo Uyumlu)
+# 🚀 Sentiric: Dağıtım Modelleri ve Uygulama Senaryoları
 
-Bu doküman, Sentiric platformunun farklı ortamlara (geliştirme, test, üretim) nasıl dağıtılacağını ve sürüm yönetiminin nasıl yapılacağını tanımlar.
+Bu doküman, Sentiric platformunun evrensel mimarisinin (`Architecture-Overview.md`), farklı operasyonel ve ticari ihtiyaçlara göre nasıl hayata geçirilebileceğini gösteren somut dağıtım modellerini tanımlar.
 
-## 1. Ortamlar
+---
 
-*   **Geliştirme (Development):** Geliştiricilerin yerel makinelerinde `sentiric-governance` reposundaki `docker-compose.yml` ile çalıştırdığı ortam. Hızlı iterasyon için tasarlanmıştır.
-*   **Staging (Test):** Üretim ortamının birebir kopyası olan, ancak gerçek kullanıcı trafiği almayan ortam. Yeni sürümler, üretime geçmeden önce burada test edilir. Bu ortamın altyapı konfigürasyonları `sentiric-infrastructure` reposunda yer alır.
-*   **Üretim (Production):** Müşterilere hizmet veren canlı sistem. Bu ortamın altyapı konfigürasyonları `sentiric-infrastructure` reposunda yer alır.
+## Model A: Minimalist Hibrit Başlangıç (Faz 1 Uygulaması)
 
-## 2. Konteyner ve İmaj Yönetimi
+Bu model, **sıfır maliyet** hedefine ulaşmak için mevcut veya düşük maliyetli kaynakları (örn: 2 Oracle + 1 GCP sunucusu) en verimli şekilde kullanır. Bu, anayasadaki mimarinin en temel ve kaynak-optimize edilmiş uygulamasıdır.
 
-*   **Dockerfile Yapısı:** Ekosistemdeki tüm **26 ayrı mikroservis/kütüphane deposu**, kendi `Dockerfile`'ları ile paketlenecektir. Bu Dockerfile'lar, **çok aşamalı (multi-stage) Dockerfile'lar** kullanacaktır:
-    *   **`builder` Aşaması:** Geliştirme bağımlılıklarını kurar, kodu derler/hazırlar.
-    *   **`final` Aşaması:** Sadece uygulamanın çalışması için gerekli olan runtime bağımlılıklarını ve derlenmiş kodları içeren, minimal ve güvenli bir imaj oluşturur.
-*   **İmaj Kayıt Merkezi (Registry):** Tüm Docker imajları, `GitHub Container Registry` (ghcr.io) veya `Docker Hub` gibi merkezi bir kayıt merkezinde versiyon etiketleriyle (örn: `sentiric/agent-worker:v1.1.0`) saklanacaktır.
+*   **Altyapı:** 2-3 adet düşük kaynaklı sanal makine (VM).
+*   **Odak Noktası:** Maliyet minimizasyonu, temel fonksiyonellik, dayanıklılık.
+*   **Kullanım Alanı:** Start-up'lar, geliştiriciler, KOBİ'ler için ilk kurulum, MVP (Minimum Değerli Ürün) aşaması.
 
-## 3. Sürüm ve Dağıtım Akışı (GitFlow'dan ilhamla)
+```mermaid
+graph TD
+    subgraph "Sunucu 1: Telekom Ağ Geçidi (Oracle - Statik IP)"
+        style S1 fill:#f9f
+        Repo1("[[sentiric-sip-signaling-service]]")
+        Repo2("[[sentiric-media-service]]")
+    end
 
-1.  **Özellik Geliştirme:** Her yeni özellik veya hata düzeltmesi, `develop` branch'inden açılan kendi `feature/...` veya `fix/...` branch'inde geliştirilir. Her bir mikroservis reposunda bağımsız olarak çalışılır.
-2.  **Pull Request (PR):** Geliştirme tamamlandığında, ilgili mikroservis reposunun `develop` branch'ine bir PR açılır. Kendi CI testleri (Birim, Entegrasyon) otomatik olarak çalışır ve Docker imajı oluşturulup kayıt merkezine push edilir.
-3.  **`develop` Branch'i:** Onaylanan PR'lar `develop` branch'ine birleştirilir. Bu branch, her zaman en son geliştirilen ama henüz yayınlanmamış özellikleri içerir. `develop` branch'ine yapılan her birleştirme, ilgili mikroservisin Docker imajının yenilenmesini tetikler ve otomatik olarak **Staging** ortamına dağıtılır. Bu dağıtım, `sentiric-infrastructure` reposundaki staging konfigürasyonları (Kubernetes YAML'ları veya Docker Compose dosyaları) tarafından yönetilir.
-4.  **Sürüm Hazırlığı:** Yeni bir platform sürümü yayınlanmaya karar verildiğinde, tüm ilgili mikroservis repolarının `develop` branch'lerinden `release/v1.1.0` gibi bir sürüm branch'i oluşturulur. Bu branch üzerinde sadece son dakika hata düzeltmeleri yapılır.
-5.  **Sürüm Yayınlama:** `release` branch'i stabil olduğunda:
-    a. Tüm ilgili mikroservis repolarının `main` branch'lerine birleştirilir.
-    b. **`semantic-release`** bu birleştirmeyi algılar, `main` branch'lerine `v1.1.0` gibi bir Git etiketi atar. Bu aynı zamanda Docker imajlarının "release" etiketleriyle de işaretlenmesini sağlar.
-    c. Bu etiket, **Üretim** ortamına dağıtımı tetikleyen bir CI/CD işini (job) başlatır. Bu dağıtım, **`sentiric-infrastructure`** reposundaki üretim konfigürasyonları (Kubernetes YAML'ları veya Terraform scriptleri) tarafından yönetilir.
-    d. `release` branch'i, `develop` branch'ine de geri birleştirilerek yapılan son düzeltmelerin geliştirme ortamına aktarılması sağlanır.
+    subgraph "Sunucu 2: Uygulama & AI Sunucusu (Oracle - Özel IP)"
+        style S2 fill:#ccf
+        Repo3("[[sentiric-agent-service]]")
+        Repo4("[[sentiric-user-service]]")
+        Repo5("[[sentiric-dialplan-service]]")
+        Repo6("[[sentiric-stt-service]]")
+        Repo7("[[sentiric-tts-service]]")
+    end
 
-Bu akış, hem hızlı ve sürekli entegrasyonu (CI) hem de kontrollü ve güvenli dağıtımı (CD) bir arada sunar.
+    subgraph "Sunucu 3: Veri Katmanı (GCP - Özel IP)"
+        style S3 fill:#cfc
+        Infra1("🐇 RabbitMQ")
+        Infra2("🗄️ PostgreSQL")
+        Infra3("⚡ Redis")
+    end
+```
+*   **Limitleri:** `API Gateway`, `CDR Service` gibi bazı ileri düzey servisler bu minimalist modelde henüz aktif değildir.
 
-## 4. Dağıtım Otomasyonu Vizyonu (CI/CD)
+---
 
-Mevcut manuel `git pull` ve `docker compose up --build` süreci, geliştirme ve ilk kurulum aşamaları için yeterlidir. Ancak, platform olgunlaştıkça ve güncellemeler sıklaştıkça, bu sürecin otomatize edilmesi kritik öneme sahip olacaktır.
+## Model B: Tek Sağlayıcıda Kurumsal Dağıtım
 
-**Hedef:** Herhangi bir servis reposunun `main` branch'ine bir commit atıldığında, bu değişikliğin **otomatik olarak** sunucuya dağıtılmasını sağlayan bir CI/CD pipeline'ı kurmak.
+Bu model, platformun tüm 26 reposunun hayata geçirildiği, daha fazla bütçeye sahip kurumsal bir müşterinin veya kendi SaaS hizmetimizin ideal dağıtım senaryosunu temsil eder.
 
-### Örnek CI/CD Akışı (GitHub Actions ile)
+*   **Altyapı:** Kubernetes (K8s) Cluster ve Yönetilen Veritabanı Servisleri.
+*   **Odak Noktası:** Yüksek erişilebilirlik, otomatik ölçeklendirme, tam fonksiyonellik.
+*   **Kullanım Alanı:** Sentiric'in SaaS hizmeti, yüksek çağrı hacmine sahip büyük kurumsal müşteriler.
 
-1.  **Tetikleyici (Trigger):** Geliştirici, `sentiric-agent-service` reposunun `main` branch'ine yeni bir commit gönderir.
+```mermaid
+graph TD
+    subgraph "Bulut Sağlayıcı (örn: Oracle Cloud Kubernetes Engine - OKE)"
+        
+        subgraph "Ağ Katmanı"
+            IngressController["🌐 Yük Dengeleyici"]
+        end
 
-2.  **GitHub Actions Başlar:**
-    a. **İnşa (Build):** GitHub'ın kendi sanal sunucusu üzerinde, `sentiric-agent-service`'in Dockerfile'ı kullanılarak yeni bir Docker imajı oluşturulur.
-    b. **Etiketleme (Tagging):** Bu imaj, commit hash'i veya sürüm numarası ile etiketlenir (örn: `ghcr.io/sentiric/sentiric-agent-service:v0.1.3`).
-    c. **Yayınlama (Push):** Etiketlenen imaj, `GitHub Container Registry` (ghcr.io) gibi merkezi bir Docker kayıt merkezine gönderilir.
+        subgraph "Kubernetes Cluster"
+            
+            subgraph "Telekom Pod'ları"
+                style Telekom fill:#f9f
+                SIPSignaling("[[sentiric-sip-signaling-service]]")
+                MediaService("[[sentiric-media-service]]")
+            end
 
-3.  **Sunucuyu Bilgilendirme (Webhook/SSH):**
-    a. **Webhook Yöntemi:** GitHub Actions, sunucumuzda çalışan küçük bir "webhook dinleyici" servisine (örn: `webhookd`) "Yeni bir `agent-service` imajı var!" diye bir sinyal gönderir.
-    b. **SSH Yöntemi:** GitHub Actions, sunucumuza güvenli bir şekilde SSH ile bağlanır.
+            subgraph "Uygulama & AI Pod'ları (Otomatik Ölçeklenir)"
+                style AppAI fill:#ccf
+                APIGateway("[[sentiric-api-gateway-service]]")
+                AgentService("[[sentiric-agent-service]]")
+                CDRService("[[sentiric-cdr-service]]")
+                KnowledgeService("[[sentiric-knowledge-service]]")
+                % Diğer tüm uygulama servisleri
+            end
+            
+            subgraph "Yönetilen Altyapı Servisleri"
+                 style Managed fill:#cfc
+                 MQ("🐇 RabbitMQ Cluster")
+                 DB("🗄️ Yönetilen PostgreSQL")
+                 Cache("⚡ Yönetilen Redis")
+            end
+        end
+    end
+```
 
-4.  **Sunucuda Otomatik Güncelleme:**
-    a. Webhook dinleyicisi veya SSH komutu, sunucuda basit bir `update.sh` script'ini tetikler.
-    b. Bu script, `sentiric-infrastructure` klasörüne gider ve şu komutları çalıştırır:
-       ```bash
-       # En son imajı çek
-       docker compose pull sentiric-agent-service
-       # Sadece değişen servisi yeniden başlat
-       docker compose up -d --no-deps sentiric-agent-service
-       ```
+---
 
-Bu otomasyon, güncellemeleri saniyeler içinde, hatasız ve insan müdahalesi olmadan canlıya almamızı sağlayacaktır. Bu, projemizin **Faz 2 - Platformlaşma ve Geliştirici Deneyimi (DX)** hedeflerinin bir parçası olarak ele alınacaktır.
+## Model C: %100 On-Premise Egemen Model
+
+Bu model, bir bankanın, hastanenin veya devlet kurumunun Sentiric'i tamamen kendi veri merkezine kurduğu, internete minimum bağımlılığı olan senaryoyu temsil eder.
+
+*   **Altyapı:** Müşterinin kendi donanımı (Bare-metal veya özel sanal sunucular).
+*   **Odak Noktası:** Maksimum veri güvenliği, tam kontrol, veri egemenliği, regülasyonlara uyum.
+*   **Kullanım Alanı:** Veri gizliliğinin kritik olduğu finans, sağlık ve kamu sektörleri.
+
+Bu model, mimari olarak **Model B**'ye benzer, ancak tüm altyapı bileşenleri (`Kubernetes`, `PostgreSQL` vb.) müşterinin kendi donanımı üzerinde çalışır.

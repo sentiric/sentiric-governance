@@ -1,278 +1,138 @@
-# 🏗️ Sentiric: Kapsamlı Mimari Dokümanı (Anayasa v5.0)
+# 🏗️ Sentiric: Kapsamlı Teknik Mimari Dokümanı (Anayasa v8.1)
 
-## 1. Mimari Vizyon ve Temel Prensipler
+## 1. Yönetici Özeti (Executive Summary)
 
-Bu bölüm, Sentiric platformunun temelini oluşturan, değiştirilemez mühendislik ilkelerini tanımlar.
+Bu doküman, Sentiric platformunun, üzerinde çalıştığı altyapıdan veya uygulanan iş modelinden bağımsız, **evrensel ve değişmez teknik mimarisini** tanımlar. Platform, "Tak-Çıkar Lego Seti" felsefesini temel alan, asenkron, dayanıklı ve modüler bir mikroservis ekosistemidir. Temel amaç, her türlü iletişim protokolünü ve yapay zeka motorunu entegre edebilen, esnek ve ölçeklenebilir bir "Konuşan İşlem Platformu" (Conversational Workflow Platform) için sağlam bir mavi kopya (blueprint) sunmaktır.
 
-### 1.1. Tak-Çıkar Modüler Mimarisi (Lego Felsefesi)
+Bu anayasa, projenin teknik "NEDEN"ini ve "NASIL"ını tanımlar.
 
-Platform, belirli bir teknolojiye bağımlı değildir. Her işlev, soyut bir arayüz arkasında çalışan değiştirilebilir bir "Adaptör" ile sisteme bağlanır. Bu, teknoloji bağımsızlığı sağlar.
+---
 
-```mermaid
-flowchart TB
-    subgraph Adaptör Katmanı
-        direction LR
-        A(BaseLLM) --> B[GeminiAdapter]
-        A --> C[GPT4Adapter]
-        A --> D[...]
-        E(BaseSTT) --> F[DeepgramAdapter]
-        E --> G[WhisperAdapter]
-        E --> H[...]
-    end
-    
-    subgraph Çekirdek Sistem
-        Agent("[[sentiric-agent-service]]") -->|Soyut Bağımlılık| A
-        Agent -->|Soyut Bağımlılık| E
-    end
-```
+## 2. Mimari Prensipleri: Platformun DNA'sı
 
-### 1.2. Asenkron ve Dayanıklı İletişim
+Platformumuzun tüm mühendislik kararlarına yön veren dört temel prensip vardır:
 
-Tüm kritik servisler arası iletişim, `RabbitMQ` mesaj kuyruğu üzerinden asenkron olarak gerçekleşir. Bu, sistemin bir bütün olarak dayanıklılığını ve ölçeklenebilirliğini garanti eder.
+1.  **Soyutlama ve Bağımsızlık (Lego Felsefesi):** Her kritik işlev (örn: LLM, STT, Telekom) soyut bir arayüz (`BaseLLM`, `BaseTelephony`) arkasında çalışır. Bu, belirli bir teknolojiye (örn: Google Gemini) veya sağlayıcıya (örn: Telkotürk) olan bağımlılığı ortadan kaldırır. Bir teknolojiyi değiştirmek, sadece yeni bir "adaptör" takmaktır.
+2.  **Asenkron Olay Yönelimli İletişim:** Servisler arasındaki kritik ve anlık yanıt gerektirmeyen iletişim, `RabbitMQ` gibi bir mesaj kuyruğu üzerinden olay (event) bazlı olarak gerçekleşir. Bu, sistemin bileşenlerinin çökmesine karşı dayanıklılığını (resilience) ve ölçeklenebilirliğini garanti eder.
+3.  **Sorumlulukların Net Ayrımı (Single Responsibility):** Her mikroservis (`sentiric-user-service`, `sentiric-media-service` vb.) sadece tek bir işi, en iyi şekilde yapmakla sorumludur. Bu, geliştirmeyi, testi ve bakımı basitleştirir.
+4.  **Durum Yönetimi Ayrımı:** Çağrıların anlık durumu (session data) gibi geçici ve yüksek hız gerektiren veriler `Redis`'te tutulurken, kullanıcı bilgileri ve çağrı kayıtları gibi kalıcı veriler `PostgreSQL`'de saklanır.
 
-| Bileşen / Olay Türü  | Örnek Kuyruk Adı       | Hedeflenen TPS | Maks. Gecikme |
-|----------------------|------------------------|----------------|---------------|
-| SIP Sinyalleşmesi    | `events.call.lifecycle`| 1000+          | < 50ms        |
-| Medya Akış Parçaları | `streams.audio.raw`    | 500+           | < 150ms       |
-| AI İstekleri         | `requests.ai.priority` | 2000+          | < 100ms       |
+---
 
-### 1.3. İnsan Benzeri Diyalog Sanatı (SSML)
+## 3. Evrensel Sistem Mimarisi: Tam Potansiyel
 
-Amacımız, robotik bir sesten ziyade, duyguyu ve tonlamayı yansıtan doğal bir diyalog deneyimi sunmaktır. Bu nedenle LLM'den SSML (Speech Synthesis Markup Language) formatında yanıtlar üretmesini bekleriz.
-
-```python
-# Örnek: Duyguya göre SSML üreten bir yardımcı sınıf
-class SSMLGenerator:
-    def generate_emotional_response(self, text: str, emotion: str = "neutral") -> str:
-        """Duygu durumuna göre konuşma hızını ve tonunu ayarlar."""
-        prosody = {
-            "happy": {'rate': 'fast', 'pitch': 'high'},
-            "sad": {'rate': 'slow', 'pitch': 'low'},
-            "neutral": {'rate': 'medium', 'pitch': 'medium'}
-        }
-        selected_prosody = prosody.get(emotion, prosody["neutral"])
-        
-        return f"""
-<speak>
-    <prosody rate="{selected_prosody['rate']}" pitch="{selected_prosody['pitch']}">
-        {text}
-    </prosody>
-</speak>
-"""
-```
-
-## 2. Genel Mimari Şeması (Doğrulanmış v5.0)
-
-Bu şema, bizim **`RabbitMQ` merkezli, 26 repoluk granüler ve asenkron mimarimizi** yansıtmaktadır. Bu yapı, platformun ölçeklenebilirlik ve dayanıklılık hedefleri için esastır.
+Bu şema, Sentiric platformunun **tüm 26 ekosistem reposunun hayata geçirildiği, ideal ve tam kapsamlı yapıyı** gösterir. Bu, ulaşmaya çalıştığımız nihai hedeftir.
 
 ```mermaid
 graph TD
     subgraph "Dış Dünya & İstemciler"
-        Kullanici("📞 Kullanıcı Telefonu")
-        TelefoniSaglayici("☎️ Telefoni Sağlayıcısı (SIP Trunk v1.2)")
-        DashboardUI("[[sentiric-dashboard-ui]]")
-        WebAgentUI("[[sentiric-web-agent-ui]]")
-        CLI("[[sentiric-cli]]")
+        Kullanici("📞 Kullanıcı (Telefon/Web/Mobil)")
+        TelefoniSaglayici("☎️ Telekom Sağlayıcısı (SIP/PSTN)")
+        DashboardUI("💻 Yönetici Paneli <br> [[sentiric-dashboard-ui]]")
+        CLI("⌨️ Geliştirici CLI <br> [[sentiric-cli]]")
     end
 
-    subgraph "Sentiric Platformu (Bulut/On-Premise)"
-        APIGateway("[[sentiric-api-gateway-service]]")
-        SIPSignaling("[[sentiric-sip-signaling-service v1.0]]")
-        MediaService("[[sentiric-media-service v1.0]]")
-        AgentService("[[sentiric-agent-service v1.0]]")
+    subgraph "Sentiric Platformu (Soyut Katman)"
+        APIGateway("API Gateway <br> [[sentiric-api-gateway-service]]")
+        SIPSignaling("SIP Sinyalleşme <br> [[sentiric-sip-signaling-service]]")
+        MediaService("Medya Servisi <br> [[sentiric-media-service]]")
+        AgentService("Akıllı Agent <br> [[sentiric-agent-service]]")
         
         subgraph "Destekleyici Servisler"
-            UserService("[[sentiric-user-service]]")
-            DialplanService("[[sentiric-dialplan-service]]")
-            KnowledgeService("[[sentiric-knowledge-service]]")
-            Connectors("[[sentiric-connectors-service]]")
-            CDRService("[[sentiric-cdr-service]]")
+            UserService("Kullanıcı Servisi <br> [[sentiric-user-service]]")
+            DialplanService("Yönlendirme Planı <br> [[sentiric-dialplan-service]]")
+            KnowledgeService("Bilgi Bankası <br> [[sentiric-knowledge-service]]")
+            Connectors("Harici Bağlantılar <br> [[sentiric-connectors-service]]")
+            CDRService("Çağrı Kayıt Servisi <br> [[sentiric-cdr-service]]")
         end
 
-        subgraph "Çekirdek Altyapı"
-            MQ("🐇 RabbitMQ\n<size=8>Cluster Mode</size>")
-            DB("🗄️ PostgreSQL\n<size=8>TimescaleDB</size>")
-            Cache("⚡ Redis\n<size=8>Sentinel</size>")
-            VectorDB("🧠 Vector DB")
+        subgraph "Çekdek Altyapı Bileşenleri"
+            MQ("🐇 Mesaj Kuyruğu (RabbitMQ)")
+            DB("🗄️ Kalıcı Veritabanı (PostgreSQL)")
+            Cache("⚡ Anlık Durum Deposu (Redis)")
+            VectorDB("🧠 Vektör Veritabanı")
         end
     end
 
-    subgraph "Harici Servisler"
-        AI_Services("🧠 Harici AI (LLM, STT, TTS)")
-        ExternalSystems("💼 Harici İş Sistemleri (CRM, Takvim)")
+    subgraph "Entegrasyon Katmanı (Adaptörler)"
+        AI_Services("🧠 AI Motorları <br> [[sentiric-stt-service]] <br> [[sentiric-tts-service]]")
+        ExternalSystems("💼 Harici İş Sistemleri (CRM, Takvim vb.)")
     end
 
     %% Akışlar
-    Kullanici -->|SIP/RTP| TelefoniSaglayici
-    TelefoniSaglayici -->|SIP:5060/TLS| SIPSignaling
-    TelefoniSaglayici -->|RTP:10000-20000| MediaService
-
-    DashboardUI & WebAgentUI & CLI -->|REST/GraphQL| APIGateway
-
-    APIGateway -->|gRPC/REST| UserService
-    APIGateway -->|gRPC/REST| DialplanService
-    APIGateway -->|gRPC/REST| CDRService
-    APIGateway -->|gRPC/REST| AgentService
-
-    SIPSignaling -->|API Çağrısı| UserService
-    SIPSignaling -->|API Çağrısı| DialplanService
-    SIPSignaling -->|API Çağrısı| MediaService
+    Kullanici -->|İletişim Protokolleri| TelefoniSaglayici -->|SIP/RTP| SIPSignaling
+    SIPSignaling -->|Medya Yönetimi| MediaService
+    DashboardUI & CLI -->|REST/GraphQL| APIGateway
+    APIGateway -->|gRPC/REST| UserService & DialplanService & CDRService & AgentService
+    SIPSignaling -->|API Çağrısı| UserService & DialplanService & MediaService
     SIPSignaling -->|Olay Yayınla| MQ
-    
-    MediaService -->|Olay Yayınla| MQ
-    MediaService -.->|İşlenmiş Ses Akışı| AgentService
-    
-    AgentService -->|API Çağrısı| AI_Services
-    AgentService -->|API Çağrısı| KnowledgeService
-    AgentService -->|API Çağrısı| Connectors
-    AgentService -->|Durum Oku/Yaz| Cache
-    AgentService -->|Kalıcı Veri Yaz| DB
-    
-    KnowledgeService -->|Veri İndeksle| VectorDB
-    Connectors -->|API Çağrısı| ExternalSystems
-    
-    MQ -->|Olayları Tüketir| CDRService
-    MQ -->|İşleri Tüketir| AgentService
+    AgentService -->|API Çağrısı| AI_Services & KnowledgeService & Connectors
+    AgentService -->|Durum Yönetimi| Cache & DB
+    MQ -->|Olayları Tüketir| CDRService & AgentService
 ```
 
-## 3. Adaptör Mimarisi Sınıf Diyagramı
+---
 
-Bu diyagram, platformun "Tak-Çıkar" felsefesinin kod seviyesindeki yansımasıdır.
+## 4. Kritik İş Akışları
 
-```mermaid
-classDiagram
-    class BaseLLM {
-        <<interface>>
-        +generate(prompt: str, config: dict) -> str
-        +get_usage_metrics() -> dict
-    }
-    
-    class GeminiAdapter {
-        -api_key: str
-        -model: str = "gemini-1.5-pro"
-        +generate(prompt: str, config: dict) -> str
-        +get_usage_metrics() -> dict
-    }
-    
-    class GPT4Adapter {
-        -endpoint: str = "https://api.openai.com/v1"
-        +generate(prompt: str, config: dict) -> str
-        +get_usage_metrics() -> dict
-    }
-    
-    BaseLLM <|-- GeminiAdapter
-    BaseLLM <|-- GPT4Adapter
-    
-    note for BaseLLM "Tüm adaptörlerin uygulaması gereken temel kontrat.\n• Thread-safe olmalı\n• Yeniden deneme (retry) mekanizması içermeli"
-```
+### 4.1. Bir Telefon Çağrısının Anatomisi (Yazılı Akış)
 
-## 4. Gelişmiş Çağrı Akışı Sıralı Diyagramı
+1.  **Giriş (Ingress):** Telekom sağlayıcısı, bir `INVITE` isteğini `sentiric-sip-signaling-service`'e gönderir.
+2.  **Orkestrasyon (Senkron):** `sip-signaling` servisi, anında yanıt alması gereken işlemleri gerçekleştirir:
+    *   `sentiric-user-service`'e API çağrısı ile kullanıcıyı doğrular.
+    *   `sentiric-dialplan-service`'e API çağrısı ile yönlendirme planını alır.
+    *   `sentiric-media-service`'e API çağrısı ile medya (RTP) oturumu açar.
+3.  **Olay Tetikleme (Asenkron):** Çağrı başarıyla kurulduğunda, `sip-signaling` bir `call.started` olayını `RabbitMQ`'ya yayınlar ve kendi anlık görevini tamamlar.
+4.  **Diyalog Yönetimi (Asenkron):** `sentiric-agent-service`, bu olayı `RabbitMQ`'dan tüketir ve çağrının "beyni" olarak kontrolü devralır. Kullanıcıyla olan tüm diyalog döngüsünü (STT -> LLM -> TTS) yönetir.
+5.  **Veri Toplama (Asenkron):** `sentiric-cdr-service` de `RabbitMQ`'daki `call.started` ve `call.ended` gibi olayları dinleyerek, arka planda çağrı detay kaydını oluşturur ve `PostgreSQL`'e yazar.
+
+### 4.2. Tam Diyalog Döngüsü (Sekans Diyagramı)
 
 ```mermaid
 sequenceDiagram
-    box Mor Kullanıcı Tarafı
-        participant K as Kullanıcı
-        participant T as Telefon Cihazı
-    end
-    
-    box Mavi Sentiric Platformu
-        participant SG as SIP Signaling
-        participant MS as Media Service
-        participant MQ as RabbitMQ
-        participant AS as Agent Service
-    end
-    
-    K->>T: Arama Başlatır
-    T->>SG: SIP INVITE (Hedef: 5060)
-    SG->>MQ: publish(event: 'call.started')
-    MQ->>AS: consume(event: 'call.started')
-    
-    AS->>AS: Müşteriyi Tanı & Bağlam Oluştur
-    AS->>AS: Karşılama için SSML Üret
-    AS->>MS: play_audio(ssml_data)
-    
-    MS->>T: RTP Akışı (Port: 10000-20000)
-    T-->>K: Karşılama sesi oynatılır
+    participant User as Kullanıcı
+    participant SipService as SIP Signaling
+    participant RabbitMQ as Olay Kuyruğu
+    participant AgentService as Akıllı Agent
+    participant AI_Services as AI Motorları
 
-    loop Diyalog Yönetimi
-        K->>T: Sesli Yanıt ("Randevu...")
-        T->>MS: RTP Paketleri
-        MS->>AS: İşlenmiş Ses Akışı
-        
-        AS->>AS: STT ile Metne Çevir
-        AS->>AS: Niyet Analizi & Görev Yönlendirme
-        AS->>AS: Yanıt için SSML Üret
-        
-        AS->>MS: play_audio(ssml_response)
-        MS->>T: RTP Akışı
-        T-->>K: AI yanıtı oynatılır
+    User->>SipService: Arama Başlatır (SIP INVITE)
+    SipService->>RabbitMQ: Olay Yayınla (call.started)
+    note right of SipService: Görevim bitti, kontrol Agent'ta.
+
+    RabbitMQ-->>AgentService: Olayı Tüket
+    AgentService->>AI_Services: Karşılama Metni Üret (LLM)
+    AI_Services-->>AgentService: Metin Yanıtı
+    AgentService->>AI_Services: Sese Çevir (TTS)
+    AI_Services-->>AgentService: Ses Verisi
+    AgentService->>User: Sesi Oynat (Media Service aracılığıyla)
+    
+    loop Etkileşim
+        User->>AgentService: Sesli Yanıt (Media Service aracılığıyla)
+        AgentService->>AI_Services: Metne Çevir (STT)
+        AI_Services-->>AgentService: "Randevu istiyorum"
+        AgentService->>AI_Services: Yanıt Üret (LLM)
+        AI_Services-->>AgentService: "Elbette, hangi tarih için?"
+        AgentService->>User: AI Yanıtını Oynat (Media Service aracılığıyla)
+        note over User, AgentService: Kullanıcı telefonu kapatana kadar döngü devam eder.
     end
 ```
 
-## 5. Güvenlik, Performans ve Operasyonlar
+---
 
-### 5.1. Güvenlik Mimarisi
+## 5. Uygulama ve Dağıtım Modelleri
 
-Platform, "Derinlemesine Savunma" (Defense in Depth) prensibini benimser.
+Bu evrensel mimari anayasası, farklı operasyonel, ticari ve güvenlik ihtiyaçlarına göre çeşitli somut şekillerde hayata geçirilebilir. Her model, aynı temel mimari prensiplerini farklı bir altyapı üzerinde uygular.
 
-```mermaid
-graph LR
-    A[İstemci] -->|mTLS 1.3| B[API Gateway]
-    B -->|JWT Auth| C[İç Servisler]
-    C -->|Vault| D[Şifreleme Anahtarları]
-    D --> E[Veritabanı]
-    D --> F[Redis]
-```
+Platformun temel dağıtım senaryoları ve uygulama detayları için lütfen aşağıdaki özel dokümana başvurun:
 
-### 5.2. Performans Optimizasyon Stratejileri
+**➡️ [Dağıtım Modelleri ve Uygulama Senaryoları](../operations/Deployment-Models.md)**
 
-Gecikme (latency), projenin en kritik metriğidir. Aşağıdaki stratejilerle yönetilecektir.
+## 6. Referans Dokümanlar
 
-| Senaryo                     | Çözüm Stratejisi                 | Hedeflenen Kazanım |
-|-----------------------------|----------------------------------|--------------------|
-| Yüksek CPU'lu Medya İşleme  | WebAssembly (Wasm) DSP Filtreleri| %30-40 CPU Azalması|
-| STT Gecikmesi (İlk Yanıt)   | Streaming STT & Ön İşlemeli Buffer| 200ms+ İyileşme    |
-| LLM Maliyet ve Gecikmesi    | Akıllı Adaptif Model Yönlendirme | %35 Tasarruf       |
+Bu anayasa, projenin en üst düzey teknik belgesidir. Daha detaylı bilgi için aşağıdaki belgelere başvurulmalıdır:
 
-### 5.3. Akıllı Ölçeklendirme ve Dayanıklılık
-
-Sistem, KEDA (Kubernetes Event-driven Autoscaling) gibi araçlarla kuyruk uzunluğuna ve CPU kullanımına göre otonom olarak ölçeklenecektir.
-
-```python
-# KEDA'ya ilham verecek otonom ölçeklendirme mantığı (Teorik)
-async def auto_scale_logic():
-    while True:
-        # Prometheus'tan metrikleri al
-        cpu_load = get_metric("cpu.agent_service.avg")
-        queue_depth = get_metric("rabbitmq.requests_ai_priority.depth")
-        
-        if cpu_load > 0.8 and queue_depth > 1000:
-            # Agent Service pod sayısını artır
-            scale_up("agent-service", count=2)
-        elif cpu_load < 0.3 and queue_depth < 50:
-            # Agent Service pod sayısını azalt
-            scale_down("agent-service", count=1)
-        
-        await asyncio.sleep(60)
-```
-
-### 5.4. Gelişmiş Hata Ayıklama (Debugging)
-
-Üretim ortamındaki sorunları çözmek için, çağrı bazında dinamik olarak etkinleştirilebilen hata ayıklama özellikleri olacaktır.
-
-```yaml
-# Örnek: Belirli bir çağrı için debug yapılandırması (Redis'te tutulur)
-# call_id: CA123456789
-features:
-  call_recording: true
-  realtime_logs: 
-    enabled: true
-    level: DEBUG
-  trace_injection:
-    enabled: true
-    sample_rate: 1.0 # Bu çağrıyı kesinlikle izle
-```
-
-## 6. Sonuç ve Doküman Yönetimi
-
-Bu doküman, Sentiric platformunun yaşayan anayasasıdır ve **v5.0** olarak kabul edilmiştir. Tüm geliştirme faaliyetleri bu belgeye referansla yapılmalıdır. Bu belge, projenin `sentiric-governance` reposunda `docs/blueprint/Architecture-Overview.md` olarak yer alacaktır.
+*   **Servislerin Birbiriyle Nasıl Konuştuğu:** `docs/engineering/Service-Communication-Architecture.md`
+*   **İş Modeli ve Ürün Paketleri:** `docs/product/Business-Model.md`
+*   **Uygulama Geliştirme Yol Haritası:** `docs/blueprint/Build-Strategy.md`
+*   **Repo ve Sorumluluk Listesi:** `docs/blueprint/Ecosystem-Repos.md`
