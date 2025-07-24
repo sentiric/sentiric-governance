@@ -32,17 +32,21 @@ Bu belge, projenin geliştirilmesi, dağıtımı ve bakımı için **tek ve değ
 
 ## 2. Mimari Prensipleri: Platformun DNA'sı
 
-Platformumuzun tüm mühendislik kararlarına yön veren dört temel prensip vardır:
+Platformumuzun tüm mühendislik kararlarına yön veren **beş** temel prensip vardır:
 
 1.  **Hibrit İletişim Modeli (Performans ve Dayanıklılık):**
-    *   **gRPC (Senkron):** Anında ve düşük gecikmeli yanıt gerektiren tüm servis-içi komutlar için (örn: `signal` -> `media` port talebi). Bu, sistemin **hızlı** olmasını sağlar.
-    *   **RabbitMQ (Asenkron):** Ana iş akışlarını tetikleyen, anında yanıt gerektirmeyen olaylar için (örn: `call.started`). Bu, sistemin **dayanıklı** olmasını sağlar.
+    *   **gRPC (Senkron):** Anında ve düşük gecikmeli yanıt gerektiren tüm servis-içi komutlar için.
+    *   **RabbitMQ (Asenkron):** Ana iş akışlarını tetikleyen, dayanıklılık ve ölçeklenebilirlik sağlayan olaylar için.
 
-2.  **Soyutlama ve Bağımsızlık (Tak-Çıkar Lego Seti):** Her kritik işlev (`BaseLLM`, `BaseTelephony`) soyut bir "Adaptör" arkasında çalışır. Belirli bir teknolojiye (örn: Google Gemini) olan bağımlılığı ortadan kaldırır.
+2.  **Soyutlama ve Bağımsızlık (Tak-Çıkar Lego Seti):** Her kritik işlev, soyut bir "Adaptör" arkasında çalışır.
 
-3.  **Merkezi Kontrat Yönetimi (Tutarlılık):** Tüm servisler arası API sözleşmeleri (`.proto` ve `OpenAPI` dosyaları), `sentiric-core-interfaces` reposunda merkezi olarak yönetilir.
+3.  **Merkezi Kontrat Yönetimi (Tutarlılık):** Tüm servisler arası API sözleşmeleri (`.proto` ve `OpenAPI`), `sentiric-core-interfaces` reposunda merkezi olarak yönetilir.
 
-4.  **Tek Sorumluluk Prensibi (Sadelik):** Her mikroservis, sadece tek bir işi en iyi şekilde yapmakla sorumludur. Bu, geliştirmeyi, testi ve bakımı basitleştirir.
+4.  **Tek Sorumluluk Prensibi (Sadelik):** Her mikroservis, sadece tek bir işi en iyi şekilde yapmakla sorumludur.
+
+5.  **Merkezi Bağlam Yönetimi (Platformun Hafızası - SMCP):**
+    *   **Tanım:** Platform, bir diyalog boyunca tüm bilgiyi (kullanıcı kimliği, konuşma geçmişi, aktif görev durumu, telekom meta verileri vb.) **"Sentiric Model Context Protocol (SMCP)"** adını verdiğimiz, standartlaştırılmış bir veri yapısı (`CallContext`) içinde yönetir.
+    *   **Amaç:** Bu merkezi bağlam nesnesi, platformun "hafızası" olarak görev yapar. Farklı AI modelleri ve iş mantığı servisleri arasında tutarlı, kayıpsız ve güvenli bir şekilde aktarılarak, akışkan ve bağlam farkındalığına sahip diyalogların temelini oluşturur. Bu, bizim özel ve platforma özgü MCP implementasyonumuzdur.
 
 ---
 
