@@ -2,9 +2,17 @@
 
 Bu doküman, hem çalışma zamanı (Redis) hem de kalıcı (PostgreSQL) veri yapılarımızı tanımlar. **`SQLModel`**, `Pydantic`'in veri doğrulama gücünü `SQLAlchemy`'nin ORM yetenekleriyle birleştirir.
 
-## 1. Çalışma Zamanı Veri Yapıları (Pydantic - Redis için)
+# 🧬 Sentiric: Çekirdek Veri Yapıları ve SMCP
 
-Bu modeller, bir çağrının yaşam döngüsü boyunca Redis'te tutulan anlık durumu temsil eder.
+Bu doküman, Sentiric platformunun "hafızası" olarak görev yapan temel veri yapılarını tanımlar. Mimarimizin kalbinde, **Sentiric Model Context Protocol (SMCP)** adını verdiğimiz merkezi bağlam yönetimi prensibi yer alır. Bu protokolün somut uygulaması olan `CallContext` ve diğer kalıcı veri modelleri aşağıda detaylandırılmıştır.
+
+Tüm modeller, `SQLModel` kullanılarak tanımlanmıştır. Bu, `Pydantic`'in veri doğrulama gücünü `SQLAlchemy`'nin ORM yetenekleriyle birleştirir.
+
+---
+
+## 1. SMCP Uygulaması: `CallContext` (Çalışma Zamanı - Redis)
+
+`CallContext` nesnesi, bizim özel ve platforma özgü **Model Context Protocol (MCP)** implementasyonumuzdur. Bir çağrının yaşam döngüsü boyunca Redis'te tutulan anlık durumu temsil eder ve tüm AI/iş mantığı servisleri arasında standart bir "hafıza paketi" olarak taşınır.
 
 ```python
 from pydantic import BaseModel, Field
@@ -17,6 +25,14 @@ class TaskState(BaseModel):
     start_time: datetime = Field(default_factory=datetime.utcnow)
 
 class CallContext(BaseModel):
+    """
+    Bir çağrının yaşam döngüsü boyunca durumunu tutan ve
+    SMCP'yi (Sentiric Model Context Protocol) uygulayan ana nesne.
+    """
+    call_sid: str  # Telekomünikasyon katmanından gelen benzersiz ID
+    trace_id: str  # Dağıtık izleme için benzersiz ID
+    tenant_id: str # Platformu kullanan müşteri ID'si
+
     """Bir çağrının yaşam döngüsü boyunca durumunu tutan nesne."""
     call_sid: str
     trace_id: str
