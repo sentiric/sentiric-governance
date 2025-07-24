@@ -209,17 +209,15 @@ sequenceDiagram
     Signal (Rust)-->>-Arayan: 200 OK (SDP ile)
     
     %% Faz 2: Asenkron Devir (Dayanıklı Tetikleme)
-    Signal (Rust)- H>RabbitMQ: Olay Yayınla: call.started
-    deactivate Signal (Rust)
-
+    Signal (Rust)->>RabbitMQ: Olay Yayınla: call.started
+    
     %% Faz 3: Asenkron İşleme (Zeka)
-    RabbitMQ-->>Agent (Python): Olayı Tüket
-    activate Agent (Python)
+    RabbitMQ-->>+Agent (Python): Olayı Tüket
     Note over Agent (Python): Diyalog döngüsü başlar. <br> LLM ve TTS'e API çağrıları yapılır.
     Agent (Python)->>+Media (Rust): API: playAudio(port: 18050, audio_data)
     Media (Rust)-->>Arayan: Karşılama Sesi (RTP)
-    deactivate Agent (Python)
-    deactivate Media (Rust)
+    Media (Rust)-->>-Agent (Python): 
+    Agent (Python)-->>-RabbitMQ: 
 ```
 
 ---
