@@ -40,7 +40,7 @@ Bu komut, projenin ana çalışma alanını (`../`) tarar ve varsayılan ayarlar
 
 ```bash
 # .../sentric-governance/ dizinindeyken:
-python tools/snapshot_tool.py collect ../project_snapshot.txt --base-dir ../
+python tools/snapshot_tool.py collect ../sentric.txt --base-dir ../
 ```
 *   **Sonuç:** `.../sentric-governance/project_snapshot.txt` dosyası oluşturulur.
 

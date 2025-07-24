@@ -28,7 +28,18 @@ DEFAULT_INCLUDE_EXTENSIONS = [
     "Procfile",
     ".env",
     ".gitignore",
-    ".dockerignore"
+    ".dockerignore",
+    ".proto",
+    ".go",
+    ".mod",
+    ".sum",
+    ".rs",
+    ".cpp",
+    ".c",
+    ".h",
+    ".ts",
+    ".tsx"
+
 ]
 DEFAULT_EXCLUDE_PATTERNS = [    
     "__pycache__",
