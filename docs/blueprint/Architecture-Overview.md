@@ -1,202 +1,242 @@
-# 🏗️ Sentiric: Kapsamlı Teknik Mimari Dokümanı (Anayasa v8.1)
+# 🏛️ Sentiric: Platform Anayasası ve Bütünleşik Ekosistem Mimarisi (Nihai Sürüm v8.0)
 
-## 1. Yönetici Özeti (Executive Summary)
+**Belge Durumu:** **AKTİF VE BAĞLAYICI**
+**Son Güncelleme:** 2024-08-10
 
-Bu doküman, Sentiric platformunun, üzerinde çalıştığı altyapıdan veya uygulanan iş modelinden bağımsız, **evrensel ve değişmez teknik mimarisini** tanımlar. Platform, "Tak-Çıkar Lego Seti" felsefesini temel alan, asenkron, dayanıklı ve modüler bir mikroservis ekosistemidir. Temel amaç, her türlü iletişim protokolünü ve yapay zeka motorunu entegre edebilen, esnek ve ölçeklenebilir bir "Konuşan İşlem Platformu" (Conversational Workflow Platform) için sağlam bir mavi kopya (blueprint) sunmaktır.
+## **İçindekiler**
 
-Bu anayasa, projenin teknik "NEDEN"ini ve "NASIL"ını tanımlar.
-### 1.1. Tak-Çıkar Modüler Mimarisi (Lego Felsefesi)
+1.  [Yönetici Özeti ve Proje Manifestosu](#1-yönetici-özeti-ve-proje-manifestosu)
+2.  [Mimari Prensipleri: Platformun DNA'sı](#2-mimari-prensipleri-platformun-dnası)
+3.  [Ekosistemin Bütünleşik Mimarisi (Büyük Resim)](#3-ekosistemin-bütünleşik-mimarisi-büyük-resim)
+4.  [Servislerin Detaylı Dökümü ve Sorumluluk Matrisi](#4-servislerin-detaylı-dökümü-ve-sorumluluk-matrisi)
+    *   [Kategori A: Ağ Geçitleri (Edge Layer)](#kategori-a-ağ-geçitleri-edge-layer)
+    *   [Kategori B: Zeka ve İş Akışı (Asenkron Beyin)](#kategori-b-zeka-ve-iş-akışı-asenkron-beyin)
+    *   [Kategori C: Destekleyici Çekirdek Servisler (Senkron Uzmanlar)](#kategori-c-destekleyici-çekirdek-servisler-senkron-uzmanlar)
+    *   [Kategori D: Yapay Zeka Motorları](#kategori-d-yapay-zeka-motorları)
+    *   [Kategori E: Altyapı ve Paylaşılan Kaynaklar](#kategori-e-altyapı-ve-paylaşılan-kaynaklar)
+5.  [Uçtan Uca Veri Akışı: Bir Telefon Çağrısının Anatomisi](#5-uçtan-uca-veri-akışı-bir-telefon-çağrısının-anatomisi)
+6.  [Platform Port ve Protokol Referans Haritası](#6-platform-port-ve-protokol-referans-haritası)
+7.  [Yaşayan Belge Olarak Anayasa](#7-yaşayan-belge-olarak-anayasa)
 
-Platform, belirli bir teknolojiye bağımlı değildir. Her işlev, soyut bir arayüz arkasında çalışan değiştirilebilir bir "Adaptör" ile sisteme bağlanır. Bu, teknoloji bağımsızlığı sağlar.
+---
 
-```mermaid
-flowchart TB
-    subgraph Adaptör Katmanı
-        direction LR
-        A(BaseLLM) --> B[GeminiAdapter]
-        A --> C[GPT4Adapter]
-        A --> D[...]
-        E(BaseSTT) --> F[DeepgramAdapter]
-        E --> G[WhisperAdapter]
-        E --> H[...]
-    end
-    
-    subgraph Çekirdek Sistem
-        Agent("[[sentiric-agent-service]]") -->|Soyut Bağımlılık| A
-        Agent -->|Soyut Bağımlılık| E
-    end
-```
+## 1. Yönetici Özeti ve Proje Manifestosu
 
-### 1.2. Asenkron ve Dayanıklı İletişim
+Bu doküman, Sentiric platformunun **tüm 26 deposunu** kapsayan, bütünleşik ve nihai teknik anayasasıdır. Sentiric, insan-makine sesli etkileşimini, akışkan, bağlam farkındalığına sahip ve geliştiriciler tarafından kolayca özelleştirilebilen bir **"Konuşan İşlem Platformu"na** dönüştürmeyi hedefler.
 
-Tüm kritik servisler arası iletişim, `RabbitMQ` mesaj kuyruğu üzerinden asenkron olarak gerçekleşir. Bu, sistemin bir bütün olarak dayanıklılığını ve ölçeklenebilirliğini garanti eder.
+**Manifestomuz:** Müşteri etkileşimini bir maliyet merkezinden, veri üreten ve verimlilik sağlayan stratejik bir varlığa dönüştürmek.
 
-| Bileşen / Olay Türü  | Örnek Kuyruk Adı       | Hedeflenen TPS | Maks. Gecikme |
-|----------------------|------------------------|----------------|---------------|
-| SIP Sinyalleşmesi    | `events.call.lifecycle`| 1000+          | < 50ms        |
-| Medya Akış Parçaları | `streams.audio.raw`    | 500+           | < 150ms       |
-| AI İstekleri         | `requests.ai.priority` | 2000+          | < 100ms       |
+Bu belge, projenin geliştirilmesi, dağıtımı ve bakımı için **tek ve değişmez referans noktasıdır.**
 
-### 1.3. Evrimsel Teknoloji Stratejisi (Pragmatizm ve Performans)
-
-Platformumuzun teknoloji seçimi, **"Önce Çalıştır, Sonra Uçur"** (Crawl, Walk, Run) felsefesine dayanır.
-
-*   **Faz 1 (Crawl/Walk - Mevcut):** Fikirleri en hızlı şekilde hayata geçirmek ve pazara girmek için `Node.js`, `Go` ve `Python` gibi olgun, hızlı geliştirme imkanı sunan, geniş ekosistemlere sahip dilleri kullanırız. Bu, bize esneklik ve hız kazandırır.
-*   **Faz 2 ve Ötesi (Run - Hedef):** Platform olgunlaştıkça ve performans kritik hale geldikçe, darboğaz oluşturan çekirdek servisleri (`sip-signaling`, `media-service`, `stt-service` vb.) `Rust`, `Go` ve `C++` gibi sisteme daha yakın dillerle yeniden yazarak "Hyper-Performance" hedefine ulaşırız.
-
-Bu evrimsel yaklaşım, projenin hem başlangıçtaki çevikliğini korumasını hem de uzun vadede dünya standartlarında bir teknik mükemmelliğe ulaşmasını sağlar.
-
-### 1.3. İnsan Benzeri Diyalog Sanatı (SSML)
-
-Amacımız, robotik bir sesten ziyade, duyguyu ve tonlamayı yansıtan doğal bir diyalog deneyimi sunmaktır. Bu nedenle LLM'den SSML (Speech Synthesis Markup Language) formatında yanıtlar üretmesini bekleriz.
-
-```python
-# Örnek: Duyguya göre SSML üreten bir yardımcı sınıf
-class SSMLGenerator:
-    def generate_emotional_response(self, text: str, emotion: str = "neutral") -> str:
-        """Duygu durumuna göre konuşma hızını ve tonunu ayarlar."""
-        prosody = {
-            "happy": {'rate': 'fast', 'pitch': 'high'},
-            "sad": {'rate': 'slow', 'pitch': 'low'},
-            "neutral": {'rate': 'medium', 'pitch': 'medium'}
-        }
-        selected_prosody = prosody.get(emotion, prosody["neutral"])
-        
-        return f"""
-<speak>
-    <prosody rate="{selected_prosody['rate']}" pitch="{selected_prosody['pitch']}">
-        {text}
-    </prosody>
-</speak>
-"""
-```
 ---
 
 ## 2. Mimari Prensipleri: Platformun DNA'sı
 
 Platformumuzun tüm mühendislik kararlarına yön veren dört temel prensip vardır:
 
-1.  **Soyutlama ve Bağımsızlık (Lego Felsefesi):** Her kritik işlev (örn: LLM, STT, Telekom) soyut bir arayüz (`BaseLLM`, `BaseTelephony`) arkasında çalışır. Bu, belirli bir teknolojiye (örn: Google Gemini) veya sağlayıcıya (örn: Telkotürk) olan bağımlılığı ortadan kaldırır. Bir teknolojiyi değiştirmek, sadece yeni bir "adaptör" takmaktır.
-2.  **Asenkron Olay Yönelimli İletişim:** Servisler arasındaki kritik ve anlık yanıt gerektirmeyen iletişim, `RabbitMQ` gibi bir mesaj kuyruğu üzerinden olay (event) bazlı olarak gerçekleşir. Bu, sistemin bileşenlerinin çökmesine karşı dayanıklılığını (resilience) ve ölçeklenebilirliğini garanti eder.
-3.  **Sorumlulukların Net Ayrımı (Single Responsibility):** Her mikroservis (`sentiric-user-service`, `sentiric-media-service` vb.) sadece tek bir işi, en iyi şekilde yapmakla sorumludur. Bu, geliştirmeyi, testi ve bakımı basitleştirir.
-4.  **Durum Yönetimi Ayrımı:** Çağrıların anlık durumu (session data) gibi geçici ve yüksek hız gerektiren veriler `Redis`'te tutulurken, kullanıcı bilgileri ve çağrı kayıtları gibi kalıcı veriler `PostgreSQL`'de saklanır.
+1.  **Hibrit İletişim Modeli (Performans ve Dayanıklılık):**
+    *   **gRPC (Senkron):** Anında ve düşük gecikmeli yanıt gerektiren tüm servis-içi komutlar için (örn: `signal` -> `media` port talebi). Bu, sistemin **hızlı** olmasını sağlar.
+    *   **RabbitMQ (Asenkron):** Ana iş akışlarını tetikleyen, anında yanıt gerektirmeyen olaylar için (örn: `call.started`). Bu, sistemin **dayanıklı** olmasını sağlar.
+
+2.  **Soyutlama ve Bağımsızlık (Tak-Çıkar Lego Seti):** Her kritik işlev (`BaseLLM`, `BaseTelephony`) soyut bir "Adaptör" arkasında çalışır. Belirli bir teknolojiye (örn: Google Gemini) olan bağımlılığı ortadan kaldırır.
+
+3.  **Merkezi Kontrat Yönetimi (Tutarlılık):** Tüm servisler arası API sözleşmeleri (`.proto` ve `OpenAPI` dosyaları), `sentiric-core-interfaces` reposunda merkezi olarak yönetilir.
+
+4.  **Tek Sorumluluk Prensibi (Sadelik):** Her mikroservis, sadece tek bir işi en iyi şekilde yapmakla sorumludur. Bu, geliştirmeyi, testi ve bakımı basitleştirir.
 
 ---
 
-## 3. Evrensel Sistem Mimarisi: Tam Potansiyel
+## 3. Ekosistemin Bütünleşik Mimarisi (Büyük Resim)
 
-Bu şema, Sentiric platformunun **tüm 26 ekosistem reposunun hayata geçirildiği, ideal ve tam kapsamlı yapıyı** gösterir. Bu, ulaşmaya çalıştığımız nihai hedeftir.
+Bu şema, platformun tüm servislerinin ve destekleyici bileşenlerinin birbiriyle nasıl etkileşimde bulunduğunu gösteren nihai haritadır.
 
 ```mermaid
 graph TD
-    subgraph "Dış Dünya & İstemciler"
-        Kullanici("📞 Kullanıcı (Telefon/Web/Mobil)")
-        TelefoniSaglayici("☎️ Telekom Sağlayıcısı (SIP/PSTN)")
-        DashboardUI("💻 Yönetici Paneli <br> [[sentiric-dashboard-ui]]")
-        CLI("⌨️ Geliştirici CLI <br> [[sentiric-cli]]")
+    subgraph "🌍 Dış Dünya & Kullanıcılar"
+        A1("☎️ Telekom Sağlayıcısı / SIP Proxy")
+        A2("📱 Mesajlaşma Platformları <br> (WhatsApp, Telegram vb.)")
+        A3("💼 Harici İş Sistemleri <br> (CRM, Takvim vb.)")
+        A4("💻 Yönetici <br> via [[sentiric-dashboard-ui]]")
+        A5("⌨️ Geliştirici <br> via [[sentiric-cli]]")
+        A6("🌐 Son Kullanıcı <br> via [[sentiric-embeddable-voice-widget-sdk]]")
     end
 
-    subgraph "Sentiric Platformu (Soyut Katman)"
-        APIGateway("API Gateway <br> [[sentiric-api-gateway-service]]")
-        SIPSignaling("SIP Sinyalleşme <br> [[sentiric-sip-signaling-service]]")
-        MediaService("Medya Servisi <br> [[sentiric-media-service]]")
-        AgentService("Akıllı Agent <br> [[sentiric-agent-service]]")
-        
-        subgraph "Destekleyici Servisler"
-            UserService("Kullanıcı Servisi <br> [[sentiric-user-service]]")
-            DialplanService("Yönlendirme Planı <br> [[sentiric-dialplan-service]]")
-            KnowledgeService("Bilgi Bankası <br> [[sentiric-knowledge-service]]")
-            Connectors("Harici Bağlantılar <br> [[sentiric-connectors-service]]")
-            CDRService("Çağrı Kayıt Servisi <br> [[sentiric-cdr-service]]")
+    subgraph "🚀 Sentiric Platformu"
+        subgraph "🔌 1. Ağ Geçitleri Katmanı (Edge Layer)"
+            style EdgeLayer fill:#e7f5ff,stroke:#228be6
+            B1("[[sentiric-sip-signaling-service]] <br> **Rust**")
+            B2("[[sentiric-messaging-gateway-service]] <br> **Node.js**")
+            B3("[[sentiric-api-gateway-service]] <br> **Go/Node.js**")
         end
 
-        subgraph "Çekdek Altyapı Bileşenleri"
-            MQ("🐇 Mesaj Kuyruğu (RabbitMQ)")
-            DB("🗄️ Kalıcı Veritabanı (PostgreSQL)")
-            Cache("⚡ Anlık Durum Deposu (Redis)")
-            VectorDB("🧠 Vektör Veritabanı")
+        subgraph "🧠 2. Zeka ve İş Akışı Katmanı (Asenkron)"
+             style IntelligenceLayer fill:#ebfbee,stroke:#40c057
+            C1("[[sentiric-agent-service]] <br> **Python**")
+            C2("[[sentiric-task-service]] <br> **Python**")
+        end
+
+        subgraph "🛠️ 3. Destekleyici Çekirdek Servisler (Senkron - gRPC)"
+            style CoreServices fill:#fff4e6,stroke:#fd7e14
+            D1("[[sentiric-user-service]] <br> **Go**")
+            D2("[[sentiric-dialplan-service]] <br> **Go**")
+            D3("[[sentiric-media-service]] <br> **Rust**")
+            D4("[[sentiric-knowledge-service]] <br> **Python**")
+            D5("[[sentiric-connectors-service]] <br> **Python**")
+            D6("[[sentiric-cdr-service]] <br> **Go/Python**")
+        end
+
+        subgraph "🤖 4. AI Motorları (Dahili/Harici)"
+            style AIEngines fill:#ffebee,stroke:#e53935
+            E1("[[sentiric-stt-service]] <br> **Python**")
+            E2("[[sentiric-tts-service]] <br> **Python**")
         end
     end
 
-    subgraph "Entegrasyon Katmanı (Adaptörler)"
-        AI_Services("🧠 AI Motorları <br> [[sentiric-stt-service]] <br> [[sentiric-tts-service]]")
-        ExternalSystems("💼 Harici İş Sistemleri (CRM, Takvim vb.)")
+    subgraph "🏗️ 5. Altyapı ve Paylaşılan Kaynaklar"
+        style Infra fill:#f8f9fa,stroke:#6c757d
+        F1("🐇 RabbitMQ")
+        F2("🗄️ PostgreSQL")
+        F3("⚡ Redis")
+        F4("[[sentiric-core-interfaces]] <br> **.proto / OpenAPI**")
+        F5("[[sentiric-db-models]] <br> **SQLModel / Prisma**")
+        F6("[[sentiric-assets]] <br> **Ses, İkonlar**")
+        F7("[[sentiric-infrastructure]] <br> **Docker Compose**")
     end
 
-    %% Akışlar
-    Kullanici -->|İletişim Protokolleri| TelefoniSaglayici -->|SIP/RTP| SIPSignaling
-    SIPSignaling -->|Medya Yönetimi| MediaService
-    DashboardUI & CLI -->|REST/GraphQL| APIGateway
-    APIGateway -->|gRPC/REST| UserService & DialplanService & CDRService & AgentService
-    SIPSignaling -->|API Çağrısı| UserService & DialplanService & MediaService
-    SIPSignaling -->|Olay Yayınla| MQ
-    AgentService -->|API Çağrısı| AI_Services & KnowledgeService & Connectors
-    AgentService -->|Durum Yönetimi| Cache & DB
-    MQ -->|Olayları Tüketir| CDRService & AgentService
+    %% --- Akışlar ---
+    A1 -- "SIP/RTP" --> B1
+    A2 -- "Webhook/API" --> B2
+    A4 & A5 & A6 -- "HTTPS/WSS" --> B3
+    A3 -- "API" --> D5
+
+    B1 -- "gRPC (Hızlı Komut)" --> D1 & D2 & D3
+    B1 -.-> |"Olay (Dayanıklı)"| F1
+    B2 -.-> |"Olay (Dayanıklı)"| F1
+    B3 -- "gRPC/REST" --> D1 & D2 & D6 & C1
+    
+    F1 -- "Olayları Tüketir" --> C1 & C2 & D6
+
+    C1 -- "gRPC/REST" --> E1 & E2 & D3 & D4 & D5
+    C1 -- "Durum Yönetimi" --> F3
+    C1 -- "Kalıcı Veri" --> F2
+
+    D1 & D2 & D6 -- "Veri Saklar" --> F2
+    D4 -- "Veri Saklar" --> F2
+    D5 -- "Harici API Çağrısı" --> A3
+
+    subgraph " "
+    direction LR
+    F4 & F5 -.-> |"Kod Üretimi / Bağımlılık Olarak Kullanılır"| B1 & C1 & D1 & D2 & D3 & D4 & D5 & D6
+    end
 ```
+---
+
+## 4. Servislerin Detaylı Dökümü ve Sorumluluk Matrisi
+
+### Kategori A: Ağ Geçitleri (Edge Layer)
+*Dış dünyadan gelen "ham" trafiği alıp platformun iç diline çeviren sınır muhafızları.*
+
+| Repo Adı | Sorumluluk | **Nihai Teknoloji** | Giden İletişim |
+| :--- | :--- | :--- | :--- |
+| `sip-signaling-service` | SIP Sinyal Kalkanı | **Rust** | `user`, `dialplan`, `media` (gRPC ile); `RabbitMQ` (Olay ile) |
+| `messaging-gateway-service` | Mesajlaşma Kanalı | **Node.js** | `RabbitMQ` (Olay ile) |
+| `api-gateway-service` | Yönetim & UI Kapısı | **Go/Node.js** | Çoğu destekleyici servis (gRPC/REST ile) |
+| `telephony-gateway-service` | PSTN/TDM Köprüsü | **Go/C++** | `sip-signaling-service` (SIP ile) |
+
+### Kategori B: Zeka ve İş Akışı (Asenkron Beyin)
+*`RabbitMQ`'dan gelen olayları dinleyerek platformun asıl "düşünme" ve "eyleme geçme" işini yapan servisler.*
+
+| Repo Adı | Sorumluluk | **Nihai Teknoloji** | Giden İletişim |
+| :--- | :--- | :--- | :--- |
+| `agent-service` | Akıllı Agent | **Python (FastAPI)** | `stt`, `tts`, `media`, `knowledge`, `connectors` (API ile); `Redis`, `PostgreSQL` |
+| `task-service` | Asenkron Görev Yöneticisi | **Python (Celery)** | `RabbitMQ`, `PostgreSQL` |
+
+### Kategori C: Destekleyici Çekirdek Servisler (Senkron Uzmanlar)
+*Belirli bir işi çok iyi yapan ve diğer servisler tarafından **gRPC** ile anlık olarak çağrılan uzman birimler.*
+
+| Repo Adı | Sorumluluk | **Nihai Teknoloji** | Giden İletişim |
+| :--- | :--- | :--- | :--- |
+| `user-service` | Kullanıcı Yönetimi | **Go** | `PostgreSQL` |
+| `dialplan-service` | Çağrı Yönlendirme | **Go** | `PostgreSQL` |
+| `media-service` | Ses İşleme ve Akış | **Rust** | Dış dünya (RTP ile) |
+| `knowledge-service` | Bilgi Bankası (RAG) | **Python** | `PostgreSQL` / Vektör DB |
+| `connectors-service` | Harici Entegrasyonlar | **Python** | Harici API'ler (CRM, Takvim vb.) |
+| `cdr-service` | Çağrı Detay Kaydı | **Go/Python** | `RabbitMQ` (Gelen), `PostgreSQL` (Giden) |
+
+### Kategori D: Yapay Zeka Motorları
+*Platforma konuşma ve anlama yeteneklerini kazandıran, değiştirilebilir AI servisleri.*
+
+| Repo Adı | Sorumluluk | **Nihai Teknoloji** | Giden İletişim |
+| :--- | :--- | :--- | :--- |
+| `stt-service` | Konuşma-Metin | **Python** | Yok |
+| `tts-service` | Metin-Konuşma | **Python** | Yok |
+
+### Kategori E: Altyapı ve Paylaşılan Kaynaklar
+*Platformun üzerinde durduğu temel ve tüm servislerin ortak kullandığı yapı taşları.*
+
+| Repo Adı | Tür | Sorumluluk |
+| :--- | :--- | :--- |
+| `infrastructure` | Orkestrasyon | `Docker Compose` ile tüm platformu bir araya getirir. |
+| `core-interfaces` | Kütüphane | Tüm `.proto` ve `OpenAPI` dosyalarını barındırır. |
+| `db-models` | Kütüphane | Paylaşılan veritabanı şemalarını ve ORM modellerini içerir. |
+| `assets` | Depo | Anons sesleri, UI ikonları gibi statik dosyaları depolar. |
+| `governance` | Yönetim | Projenin anayasası; vizyon, mimari, standartlar. **(Bu repo)** |
+| *(Diğer UI, SDK, CLI repoları)* | Araçlar/Arayüzler| İlgili kullanıcı personalarına hizmet eder. |
 
 ---
 
-## 4. Kritik İş Akışları
+## 5. Uçtan Uca Veri Akışı: Bir Telefon Çağrısının Anatomisi
 
-### 4.1. Bir Telefon Çağrısının Anatomisi (Yazılı Akış)
-
-1.  **Giriş (Ingress):** Telekom sağlayıcısı, bir `INVITE` isteğini `sentiric-sip-signaling-service`'e gönderir.
-2.  **Orkestrasyon (Senkron):** `sip-signaling` servisi, anında yanıt alması gereken işlemleri gerçekleştirir:
-    *   `sentiric-user-service`'e API çağrısı ile kullanıcıyı doğrular.
-    *   `sentiric-dialplan-service`'e API çağrısı ile yönlendirme planını alır.
-    *   `sentiric-media-service`'e API çağrısı ile medya (RTP) oturumu açar.
-3.  **Olay Tetikleme (Asenkron):** Çağrı başarıyla kurulduğunda, `sip-signaling` bir `call.started` olayını `RabbitMQ`'ya yayınlar ve kendi anlık görevini tamamlar.
-4.  **Diyalog Yönetimi (Asenkron):** `sentiric-agent-service`, bu olayı `RabbitMQ`'dan tüketir ve çağrının "beyni" olarak kontrolü devralır. Kullanıcıyla olan tüm diyalog döngüsünü (STT -> LLM -> TTS) yönetir.
-5.  **Veri Toplama (Asenkron):** `sentiric-cdr-service` de `RabbitMQ`'daki `call.started` ve `call.ended` gibi olayları dinleyerek, arka planda çağrı detay kaydını oluşturur ve `PostgreSQL`'e yazar.
-
-### 4.2. Tam Diyalog Döngüsü (Sekans Diyagramı)
+Bu akış, sistemin hibrit iletişim modelinin nasıl çalıştığını somut bir örnekle gösterir.
 
 ```mermaid
 sequenceDiagram
-    participant User as Kullanıcı
-    participant SipService as SIP Signaling
-    participant RabbitMQ as Olay Kuyruğu
-    participant AgentService as Akıllı Agent
-    participant AI_Services as AI Motorları
+    participant Arayan
+    participant Signal (Rust)
+    participant Media (Rust)
+    participant RabbitMQ
+    participant Agent (Python)
 
-    User->>SipService: Arama Başlatır (SIP INVITE)
-    SipService->>RabbitMQ: Olay Yayınla (call.started)
-    note right of SipService: Görevim bitti, kontrol Agent'ta.
-
-    RabbitMQ-->>AgentService: Olayı Tüket
-    AgentService->>AI_Services: Karşılama Metni Üret (LLM)
-    AI_Services-->>AgentService: Metin Yanıtı
-    AgentService->>AI_Services: Sese Çevir (TTS)
-    AI_Services-->>AgentService: Ses Verisi
-    AgentService->>User: Sesi Oynat (Media Service aracılığıyla)
+    %% Faz 1: Senkron Kurulum (Hızlı Yanıt)
+    Arayan->>+Signal (Rust): INVITE
+    Note right of Signal (Rust): Anlık gRPC çağrıları <br> (User, Dialplan)
+    Signal (Rust)->>+Media (Rust): gRPC: AllocatePort()
+    Media (Rust)-->>-Signal (Rust): gRPC: port: 18050
+    Signal (Rust)-->>-Arayan: 200 OK (SDP ile)
     
-    loop Etkileşim
-        User->>AgentService: Sesli Yanıt (Media Service aracılığıyla)
-        AgentService->>AI_Services: Metne Çevir (STT)
-        AI_Services-->>AgentService: "Randevu istiyorum"
-        AgentService->>AI_Services: Yanıt Üret (LLM)
-        AI_Services-->>AgentService: "Elbette, hangi tarih için?"
-        AgentService->>User: AI Yanıtını Oynat (Media Service aracılığıyla)
-        note over User, AgentService: Kullanıcı telefonu kapatana kadar döngü devam eder.
-    end
+    %% Faz 2: Asenkron Devir (Dayanıklı Tetikleme)
+    Signal (Rust)- H>RabbitMQ: Olay Yayınla: call.started
+    deactivate Signal (Rust)
+
+    %% Faz 3: Asenkron İşleme (Zeka)
+    RabbitMQ-->>Agent (Python): Olayı Tüket
+    activate Agent (Python)
+    Note over Agent (Python): Diyalog döngüsü başlar. <br> LLM ve TTS'e API çağrıları yapılır.
+    Agent (Python)->>+Media (Rust): API: playAudio(port: 18050, audio_data)
+    Media (Rust)-->>Arayan: Karşılama Sesi (RTP)
+    deactivate Agent (Python)
+    deactivate Media (Rust)
 ```
 
 ---
 
-## 5. Uygulama ve Dağıtım Modelleri
+## 6. Platform Port ve Protokol Referans Haritası
 
-Bu evrensel mimari anayasası, farklı operasyonel, ticari ve güvenlik ihtiyaçlarına göre çeşitli somut şekillerde hayata geçirilebilir. Her model, aynı temel mimari prensiplerini farklı bir altyapı üzerinde uygular.
+| Servis | Port | Protokol | Amaç | Erişilebilirlik |
+| :--- | :--- | :--- | :--- | :--- |
+| `sip-signaling`| 5060 | UDP | Dış SIP trafiği | **Harici (Public)** |
+| `api-gateway` | 80, 443 | TCP | Dış HTTP/S trafiği | **Harici (Public)** |
+| `media-service`| 50052 | TCP | Dahili gRPC komutları | Dahili |
+| | 10000-20000 | UDP | Harici RTP (ses) akışı | **Harici (Public)** |
+| `user-service` | 50053 | TCP | Dahili gRPC komutları | Dahili |
+| `dialplan-service`| 50054 | TCP | Dahili gRPC komutları | Dahili |
+| `rabbitmq` | 5672 | TCP | AMQP protokolü | Dahili |
+| | 15672 | TCP | RabbitMQ Yönetim Arayüzü | Opsiyonel (Harici) |
+| `postgres` | 5432 | TCP | Veritabanı bağlantısı | Dahili |
+| `redis` | 6379 | TCP | Önbellek/Durum Deposu | Dahili |
 
-Platformun temel dağıtım senaryoları ve uygulama detayları için lütfen aşağıdaki özel dokümana başvurun:
+---
 
-**➡️ [Dağıtım Modelleri ve Uygulama Senaryoları](../operations/Deployment-Models.md)**
+## 7. Yaşayan Belge Olarak Anayasa
 
-## 6. Referans Dokümanlar
-
-Bu anayasa, projenin en üst düzey teknik belgesidir. Daha detaylı bilgi için aşağıdaki belgelere başvurulmalıdır:
-
-*   **Servislerin Birbiriyle Nasıl Konuştuğu:** `docs/engineering/Service-Communication-Architecture.md`
-*   **İş Modeli ve Ürün Paketleri:** `docs/product/Business-Model.md`
-*   **Uygulama Geliştirme Yol Haritası:** `docs/blueprint/Build-Strategy.md`
-*   **Repo ve Sorumluluk Listesi:** `docs/blueprint/Ecosystem-Repos.md`
+Bu doküman, statik bir plan değil, projenin yaşayan anayasasıdır. Herhangi bir mimari değişiklik, yeni bir servis eklenmesi veya teknoloji yığınının güncellenmesi, **öncelikle bu belgede revize edilmelidir.** Bu, projenin bütünlüğünü, tutarlılığını ve uzun vadeli sağlığını korumanın tek yoludur.
