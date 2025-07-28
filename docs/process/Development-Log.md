@@ -2,7 +2,16 @@
 
 Bu belge, projenin gelişim hikayesini, alınan önemli kararları ve bu kararların arkasındaki "neden"leri kaydeder. Ters kronolojik sıra ile tutulur.
 
+---
+### **2025-07-28: "Genesis Bloğu" Mimarisine Geçiş ve Harici AI Geri Bildirimlerinin Entegrasyonu**
 
+*   **Karar:** Harici bir uzman AI'dan (Deepseek) gelen kapsamlı geri bildirimler ışığında, projenin temel mimarisi ve vizyonu, "Genesis Bloğu" olarak adlandırılan v9.0 anayasası altında yeniden yapılandırılmıştır. Bu karar, `ADR-002` ile resmiyet kazanmıştır.
+*   **Gerekçe:** Projenin ilk vizyonu sağlam olmakla birlikte, harici denetim; SIP güvenliği (SRTP), gerçek zamanlı AI performansı (streaming APIs) ve dağıtık veri tutarlılığı (SAGA pattern) gibi kurumsal düzeyde kritik konuları daha en başından planlamamız gerektiğini ortaya koymuştur. Sadece "çalışan" bir sistem değil, "ölçeklenen, güvenli ve yönetilebilir" bir sistem inşa etmek için bu stratejik revizyon zorunlu görülmüştür.
+*   **Uygulanan Değişiklikler:**
+    1.  **Yeni Anayasa:** `Architecture-Overview.md` (v9.0 "Genesis") projenin yeni ana referans belgesi olarak kabul edildi.
+    2.  **Dinamik Veritabanı:** Veritabanı şeması, çoklu kiracılık, dinamik anonslar ve "kendi kendini başlatma" (self-bootstrapping) yeteneklerini destekleyecek şekilde `init.sql`'de yeniden tasarlandı.
+    3.  **Rollerin Netleştirilmesi:** `dialplan-service` mutlak karar merkezine, `sip-signaling` ve `agent-service` ise sırasıyla postacı ve orkestratör rollerine indirgenerek sorumluluklar basitleştirildi.
+*   **Sonuç:** Bu stratejik pivot, Sentiric'i sadece bir MVP olmaktan çıkarıp, en başından itibaren kurumsal bir "İletişim İşletim Sistemi" olarak konumlandırmıştır. Platformun temelleri, gelecekteki tüm karmaşık senaryoları ve pazar ihtiyaçlarını karşılayacak şekilde güçlendirilmiştir.
 ---
 ### **2024-07-25: Faz 0 - Sentiric Ekosisteminin Fiziksel Olarak Şekillendirilmesi (23 Repo Oluşturuldu)**
 
