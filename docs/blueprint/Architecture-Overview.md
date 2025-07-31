@@ -45,10 +45,11 @@ graph TD
             B2("[[sentiric-api-gateway-service]] <br> **Go/Node.js - Yönetim API**")
         end
 
-        subgraph "🧠 2. Karar & Uygulama Katmanı"
+        subgraph "🧠 2. Zeka & Orkestrasyon Katmanı"
              style BrainLayer fill:#ebfbee,stroke:#40c057
-            C1("[[sentiric-dialplan-service]] <br> **Go - Stratejik Karar Merkezi**")
-            C2("[[sentiric-agent-service]] <br> **Python - Eylem Orkestratörü**")
+             C1("[[sentiric-dialplan-service]] <br> **Go - Stratejik Karar Merkezi**")
+             C2("[[sentiric-agent-service]] <br> **Go - Eylem Orkestratörü**")
+             C3("[[sentiric-llm-service]] <br> **Python - AI Dil Modeli Ağ Geçidi**")
         end
 
         subgraph "🛠️ 3. Uzman Destek Servisleri"
@@ -67,14 +68,15 @@ graph TD
         F3("[[sentiric-contracts]] <br> **.proto - API Sözleşmeleri**")
     end
 
-    %% --- İletişim Akışları ---
+    %% --- İletişim Akışları (Güncellenmiş) ---
     A1 -- "SIP (UDP)" --> B1
     B1 -- "gRPC (Senkron)" --> C1
     C1 -- "Veritabanı Sorgusu (TCP)" --> F2
     C1 -- "gRPC (Senkron)" --> D1
     B1 -- "Olay (Asenkron)" --> F1
     F1 -- "Olayı Tüketir" --> C2
-    C2 -- "gRPC (Senkron)" --> D1 & D2 & D3 & D4
+    C2 -- "gRPC (Senkron)" --> D1 & D2
+    C2 -- "HTTP/REST (Senkron)" --> C3 & D3 & D4
     A2 -- "HTTPS" --> B2
     B2 -- "gRPC (Senkron)" --> C1 & D1
     
@@ -84,8 +86,9 @@ graph TD
 ### **2.2. Teknoloji Yığını ve Gerekçeleri**
 
 *   **Rust (`sip-gateway`, `media-service`):** Maksimum performans, bellek güvenliği ve düşük seviye ağ kontrolü gerektiren, dış dünyaya en yakın servisler için.
-*   **Go (`dialplan-service`, `user-service`):** Hızlı, basit, yüksek eşzamanlılık gerektiren ve veritabanı ile yoğun iletişim kuran gRPC tabanlı uzman servisler için.
-*   **Python (`agent-service`, `stt/tts`):** Zengin AI/ML ekosistemi, hızlı prototipleme ve karmaşık iş mantığının uygulanması için ideal olan, platformun beyni için.
+*   **Go (`dialplan-service`, `user-service`, `agent-service`):** Hızlı, basit, yüksek eşzamanlılık gerektiren ve veritabanı ile yoğun iletişim kuran gRPC tabanlı uzman servisler ve ana orkestratör için.
+*   **Python (`llm-service`, `stt-service`, `tts-service`):** Zengin AI/ML ekosistemi, hızlı prototipleme ve karmaşık AI mantığının uygulanması için ideal olan, izole AI ağ geçitleri için.
+
 
 ### **2.3. Uçtan Uca Çağrı Akışı (Genesis Senaryosu)**
 

@@ -9,13 +9,15 @@ Bu liste, Sentiric ekosistemindeki her bir reponun nihai rolünü, kararlaştır
 ## **A. Çekirdek İletişim ve AI Servisleri**
 *(Platformun kalbi ve beyni; gerçek zamanlı insan-makine etkileşimi ve zekasını yöneten temel servisler.)*
 
+**Kategori A: Çekirdek İletişim ve AI Servisleri (Güncellenmiş)**
 | Kategori | Repo Adı | **Nihai Teknoloji** | Temel Sorumluluklar |
 | :--- | :--- | :--- | :--- |
-| **İletişim** | `sentiric-sip-signaling-service` | **Rust** | SIP sinyalleşmesini orkestre eder, proxy sorunlarını çözer. Diğer çekirdek servisleri **gRPC** ile anlık olarak çağırır ve `call.started` olayını **RabbitMQ**'ya yayınlar. |
-| | `sentiric-media-service` | **Rust** | Gerçek zamanlı ses/görüntü (RTP/SRTP) akışlarını yönetir. **gRPC** ile port ayırır, harici komutlarla (REST/API) medya oynatır. |
-| **Yapay Zeka**| `sentiric-agent-service` | **Python (FastAPI)**| **Platformun asıl beyni.** `RabbitMQ`'dan gelen olayları dinler, diyalog akışını yönetir, AI motorlarını (STT/LLM/TTS) orkestra eder ve görevleri yürütür. |
-| | `sentiric-tts-service` | **Python** | Metin girdilerini doğal insan sesine dönüştürür (Text-to-Speech). |
-| | `sentiric-stt-service` | **Python** | Ses girdilerini metne dönüştürür (Speech-to-Text). |
+| **İletişim** | `sentiric-sip-signaling-service` | **Rust** | SIP sinyalleşmesini orkestre eder... |
+| | `sentiric-media-service` | **Rust** | Gerçek zamanlı ses/görüntü (RTP/SRTP) akışlarını yönetir... |
+| **Orkestrasyon**| `sentiric-agent-service` | **Go**| **Platformun asıl orkestratörü.** `RabbitMQ`'dan gelen olayları dinler, `dialplan` kararlarını uygular ve diğer uzman servisleri (gRPC ve HTTP ile) yönetir. |
+| **Yapay Zeka**| `sentiric-llm-service` | **Python** | **AI Dil Modeli Ağ Geçidi.** `agent-service`'ten gelen HTTP isteklerini alır ve bunları Google Gemini, OpenAI gibi harici LLM sağlayıcılarına yönlendirir. Bağımlılıkları izole eder. |
+| | `sentiric-tts-service` | **Python** | Metin girdilerini doğal insan sesine dönüştürür... |
+| | `sentiric-stt-service` | **Python** | Ses girdilerini metne dönüştürür... |
 | | `sentiric-knowledge-service`| **Python** | AI ajanları için RAG mimarisiyle yapılandırılmış, sorgulanabilir bir bilgi tabanı sunar. |
 
 ## **B. Veri ve Kalıcılık Servisleri (gRPC Tabanlı)**
