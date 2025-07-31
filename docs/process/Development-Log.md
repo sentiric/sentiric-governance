@@ -3,6 +3,12 @@
 Bu belge, projenin gelişim hikayesini, alınan önemli kararları ve bu kararların arkasındaki "neden"leri kaydeder. Ters kronolojik sıra ile tutulur.
 
 ---
+### **2025-07-31: Stratejik Sentez: Nihai Yol Haritası ve Görev Panosunun Oluşturulması (v12.0)**
+
+*   **Karar:** Projenin tüm önceki yol haritaları, yapılan kapsamlı analizler ve çoklu sunucu/hibrit dağıtım gibi yeni ortaya çıkan kritik gereksinimler birleştirilerek, projenin nihai stratejik yol haritası ve buna bağlı granüler görev panosu oluşturulmuştur. Bu, planlama aşamasını sonlandıran ve uygulama aşamasına geçişi başlatan kilit bir adımdır.
+*   **Gerekçe:** Proje büyüdükçe ve vizyon netleştikçe, üst düzey bir yol haritasının geliştirme ekibine günlük olarak rehberlik etmek için yetersiz kaldığı anlaşıldı. Özellikle dağıtık altyapı ihtiyacı, güvenlik (mTLS) ve dayanıklılık (healthchecks) gibi konuların en başa alınmasını zorunlu kıldı. Bu yeni yapı, stratejik "Neden" (Roadmap) ile taktiksel "Nasıl" (Görev Panosu) arasında net bir bağ kurarak, geliştirme sürecini öngörülebilir, ölçülebilir ve esnek hale getirmektedir.
+*   **Sonuç:** Sentiric projesi artık, en küçük teknik görevden en büyük stratejik hedefe kadar her adımı tanımlayan, bütünleşik ve eksiksiz bir plana sahiptir. Bu plan, ekibin "her zaman çalışan bir sistem" hedefiyle, her fazda somut değer üreterek iteratif bir şekilde ilerlemesini sağlayacak temel yönetim aracıdır. Öncelikler netleşmiş, belirsizlikler giderilmiştir.
+---
 ### **2025-07-28: "Genesis Bloğu" Mimarisine Geçiş ve Harici AI Geri Bildirimlerinin Entegrasyonu**
 
 *   **Karar:** Harici bir uzman AI'dan (Deepseek) gelen kapsamlı geri bildirimler ışığında, projenin temel mimarisi ve vizyonu, "Genesis Bloğu" olarak adlandırılan v9.0 anayasası altında yeniden yapılandırılmıştır. Bu karar, `ADR-002` ile resmiyet kazanmıştır.

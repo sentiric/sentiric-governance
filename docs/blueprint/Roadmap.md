@@ -1,49 +1,38 @@
-# 🧭 Sentiric: Stratejik Yol Haritası (v9.0 "Genesis" Uyumlu)
+# 🧭 Sentiric: Stratejik Yol Haritası (v12.0 "Bütünleşik Genesis")
 
-Bu doküman, Sentiric platformunun geliştirme sürecini fazlara ayırarak, hedefleri ve her fazın çıktılarını net bir şekilde tanımlar. Bu, "Genesis Mimarisi" vizyonumuzu eyleme döken plandır.
+Bu yol haritası, Sentiric "İletişim İşletim Sistemi" vizyonunu hayata geçiren, iteratif ve sonuç odaklı geliştirme planıdır. Her faz, platforma somut ve test edilebilir yeni bir değer katmanı ekler.
 
----
+## **FAZ 1: "GÜVENLİ VE DAĞITIK OMURGA"**
 
-## Faz 1: "Genesis Çekirdeği" - Dayanıklı MVP (Mevcut Odak)
-
-*   **Durum:** ⬜ **Sıradaki**
-*   **Hedef:** Platformun "Genesis Mimarisi"ni hayata geçirmek. Dış dünyadan gelen her türlü çağrıyı (kayıtlı, misafir, hatalı) anlayan, kararlı bir şekilde karşılayan ve temel bir sesli yanıt veren çekirdek sistemi oluşturmak.
-*   **Ana Adımlar:**
-    1.  **Veritabanı İnşası:** Kendi kendini başlatan (self-bootstrapping) `init.sql` ile veritabanı şemasını kurmak.
-    2.  **Karar Merkezi'nin Geliştirilmesi:** `dialplan-service`'i, gelen aramalara göre dinamik olarak karar veren (misafir, kayıtlı, bakım modu) bir beyin haline getirmek.
-    3.  **Çekirdek Servislerin Adaptasyonu:** `sip-signaling`, `agent-service` ve `user-service`'i yeni "Tek Sorumluluk" rollerine göre yeniden yapılandırmak.
-    4.  **Güvenli Medya Akışı (SRTP):** `media-service`'e, ses akışlarını şifrelemek için SRTP desteğinin temellerini eklemek.
-    5.  **Performans Odaklı AI Akışı (Streaming):** `agent-service`'in AI motorlarıyla olan iletişimini, gelecekteki "streaming" API'leri destekleyecek şekilde tasarlamak.
+*   **Hedef:** Platformun temel iskeletini, çoklu sunucu (multi-cloud, hybrid) ortamlarında güvenli, dayanıklı ve gözlemlenebilir bir şekilde çalışacak hale getirmek. Bu, gelecekteki tüm servislerin üzerine inşa edileceği **sağlam zemindir.**
+*   **Kabul Kriteri:** Bir test script'i (`sentiric-cli`) ile `user-service`'e gRPC üzerinden `GetUser` isteği atıldığında, isteğin `api-gateway`'den geçerek `user-service`'e ulaştığı, logların doğru formatta basıldığı ve tüm iletişimin mTLS ile şifrelendiği kanıtlanmalıdır.
 
 ---
 
-## Faz 2 - Platformlaşma ve Geliştirici Deneyimi (DX)
+## **FAZ 2: "FONKSİYONEL İSKELET"**
 
-*   **Durum:** ⬜ **Planlandı**
-*   **Hedef:** Geliştiricilerin kendi "Görev" ve "Kaynak Adaptörlerini" kolayca oluşturup platforma eklemesini sağlamak. `Dashboard` üzerinden "low-code" (az kodlu) yapılandırma sunmak.
-*   **Potansiyel Özellikler:**
-    *   **Low-Code IVR Tasarımcısı:** Yöneticilerin `dashboard-ui` üzerinden sürükle-bırak ile kendi arama akışlarını (dialplan) tasarlayabilmesi.
-    *   **Geliştirici Sandbox:** `sentiric-cli`'ye, geliştiricilerin yazdıkları yeni "Task"ları platformun geri kalanını kurmadan, yerel olarak test edebilecekleri bir simülasyon ortamı eklenmesi.
-    *   **Pazar Yeri (Marketplace) v1.0:** `sentiric-marketplace-service`'in ilk versiyonu ile, topluluk tarafından geliştirilen "Task" ve "Connector" paketlerinin listelenmesi.
+*   **Hedef:** Omurga üzerine, bir telefon çağrısını baştan sona yönetebilen temel servisleri (iskeleti) yerleştirmek. Bu faz sonunda, sistem bir çağrıyı alabilir, hangi plana göre hareket edeceğine karar verebilir, bir medya kanalı açabilir ve temel bir kayıt oluşturabilir.
+*   **Kabul Kriteri:** `sentiric-cli`'den başlatılan bir test çağrısı, `sip-gateway` -> `sip-signaling` -> `dialplan` -> `media` servislerini başarıyla tetiklemeli, RabbitMQ'ya `call.started` olayı düşmeli ve `cdr-service` bunu veritabanına temel bir kayıt olarak işlemelidir. Henüz sesli yanıt yoktur.
 
 ---
 
-## Faz 3 - Zeka, Optimizasyon ve Veri Bütünlüğü
+## **FAZ 3: "CANLANAN PLATFORM"**
 
-*   **Durum:** ⬜ **Planlandı**
-*   **Hedef:** Platformun AI yeteneklerini derinleştirmek, operasyonel verimliliği artırmak ve dağıtık sistemlerde veri bütünlüğünü garanti altına almak.
-*   **Potansiyel Özellikler:**
-    *   **Akıllı Yönlendirme:** Basit görevler için daha küçük/ucuz LLM'leri, karmaşık görevler için büyük LLM'leri kullanan "Model Kademelendirme" (Model Cascading).
-    *   **Gelişmiş RAG:** `knowledge-service`'e, hibrit arama (keyword + vector) ve daha hafif embedding modelleri (örn: bge-small) entegrasyonu.
-    *   **Dağıtık Transaction Yönetimi (SAGA Pattern):** Birden fazla servise yayılan işlemlerin (örn: ödeme al, CRM'e kaydet, takvime ekle) atomik olarak, veri tutarlılığı bozulmadan yapılmasını sağlamak.
+*   **Hedef:** İskelete "beyin" ve "ses" ekleyerek platformu canlandırmak. Bu faz sonunda, sistem arayanla ilk anlamlı sesli diyaloğu kurabilir ve bu etkileşim bir yönetici tarafından izlenebilir.
+*   **Kabul Kriteri:** Gerçek bir telefonla arama yapıldığında, sistem "Merhaba, Sentiric'e hoş geldiniz" anonsunu çalmalı, kullanıcının cevabını metne çevirmeli ve bu etkileşim `dashboard-ui`'da canlı olarak görülebilmelidir.
 
 ---
 
-## Faz 4 - Çoklu Kanal (Omnichannel) ve Küresel Ölçeklenme
+## **FAZ 4: "AKILLI VE İNSAN ODAKLI PLATFORM"**
 
-*   **Durum:** ⬜ **Vizyon**
-*   **Hedef:** Sentiric'in diyalog yeteneklerini sesin ötesine taşıyarak, metin tabanlı ve görsel kanalları da destekleyen bütünleşik bir platform haline getirmek.
-*   **Potansiyel Özellikler:**
-    *   **Mesajlaşma Entegrasyonu:** `sentiric-messaging-gateway-service`'i devreye alarak WhatsApp/Telegram gibi kanallardan gelen talepleri işleme.
-    *   **Web & Mobil SDK:** `sentiric-embeddable-voice-widget-sdk` ve `sentiric-sip-client-sdk` ile web sitelerine ve mobil uygulamalara sesli/görüntülü iletişim yetenekleri ekleme.
-    *   **Edge Computing:** Medya işlemlerini (transcoding, STT ön işleme) kullanıcılara daha yakın sunucularda (edge) WebAssembly (WASM) ile yaparak gecikmeyi daha da azaltmak.
+*   **Hedef:** Platformu, karmaşık görevleri yürütebilen, bilgi bankasından faydalanabilen ve gerektiğinde görevi sorunsuz bir şekilde insan temsilciye devredebilen, tam teşekküllü bir AI orkestratörüne dönüştürmek.
+*   **Kabul Kriteri:** Bir kullanıcı, "yarın için randevu almak istiyorum" dediğinde, sistem RAG ile bilgi alıp, Durum Makinesi ile adımları takip ederek randevuyu oluşturabilmeli veya "operatöre bağlan" dediğinde çağrıyı `web-agent-ui`'ye düşürebilmelidir.
+
+---
+
+## **FAZ 5: "EKOSİSTEMİN DOĞUŞU"**
+
+*   **Hedef:** Sentiric'i sadece bir sesli platform olmaktan çıkarıp, metin tabanlı kanalları da destekleyen ve üçüncü parti geliştiricilerin katkıda bulunabileceği bir ekosisteme dönüştürmek.
+*   **Kabul Kriteri:** Bir web sitesine `embeddable-voice-widget-sdk` entegre edilebilmeli, WhatsApp'tan gelen bir mesaja `messaging-gateway-service` aracılığıyla yanıt verilebilmeli ve SAGA paterni ile yapılan çok adımlı bir işlemin veri bütünlüğü garanti edilebilmelidir.
+
+---
