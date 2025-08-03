@@ -3,6 +3,12 @@
 Bu belge, projenin gelişim hikayesini, alınan önemli kararları ve bu kararların arkasındaki "neden"leri kaydeder. Ters kronolojik sıra ile tutulur.
 
 ---
+### 2025-07-31: Faz 1 - Dağıtık Omurganın Zırhlandırılması (mTLS Entegrasyonu)
+
+*   **Karar:** Projenin çoklu sunucu ve hibrit bulut ortamlarında güvenli bir şekilde çalışabilmesi için, tüm servisler arası gRPC iletişiminin şifrelenmesine ve karşılıklı olarak doğrulanmasına (mTLS) karar verildi.
+*   **Gerekçe:** Dağıtık bir mimaride servisler arasındaki trafik, güvenilmeyen ağlar üzerinden geçebilir. `insecure` bağlantılar kullanmak, veri sızıntısı ve "man-in-the-middle" saldırıları gibi ciddi güvenlik riskleri oluşturur. mTLS, her servisin yalnızca yetkili diğer servislerle konuşmasını sağlayarak "Sıfır Güven (Zero Trust)" ağ modelinin temel bir prensibini uygular.
+*   **Sonuç:** Platformun iletişim omurgası, artık şifreli ve güvenlidir. Bu, üzerine daha karmaşık ve hassas iş mantıkları inşa etmemiz için gereken temel güveni sağlar ve bizi kurumsal düzeyde bir güvenlik standardına bir adım daha yaklaştırır.
+---
 ### **2025-07-31: Stratejik Sentez: Nihai Yol Haritası ve Görev Panosunun Oluşturulması (v12.0)**
 
 *   **Karar:** Projenin tüm önceki yol haritaları, yapılan kapsamlı analizler ve çoklu sunucu/hibrit dağıtım gibi yeni ortaya çıkan kritik gereksinimler birleştirilerek, projenin nihai stratejik yol haritası ve buna bağlı granüler görev panosu oluşturulmuştur. Bu, planlama aşamasını sonlandıran ve uygulama aşamasına geçişi başlatan kilit bir adımdır.

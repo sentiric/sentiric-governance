@@ -8,8 +8,8 @@ Bu belge, `Roadmap.md`'deki stratejik hedeflere ulaşmak için gereken tüm takt
 
 | ID | Görev | Öncelik | Repo(lar) | Durum |
 | :--- | :--- | :--- | :--- | :--- |
-| **P1-T01**| **Altyapı:** Profil Tabanlı Dağıtım Stratejisi Oluşturma (`telekom`, `app`, `data` profilleri) | **Kritik** | `infrastructure` | `[ ] To Do` |
-| **P1-T02**| **Altyapı:** Dayanıklı Başlatma için `healthcheck` ve `depends_on` entegrasyonu | **Kritik** | `infrastructure` | `[ ] To Do` |
+| **P1-T01**| **Altyapı:** Profil Tabanlı Dağıtım Stratejisi Oluşturma (`telekom`, `app`, `data`, `ai`, `?` profilleri) | **Kritik** | `infrastructure` | `[ ✔️ ] Done` |
+| **P1-T02**| **Altyapı:** Dayanıklı Başlatma için `healthcheck` ve `depends_on` entegrasyonu | **Kritik** | `infrastructure` | `[ ✔️ ] Done` |
 | **P1-T03**| **Güvenlik:** Tüm gRPC İletişimini mTLS ile Güvenli Hale Getirme | **Kritik** | Tüm gRPC servisleri | `[ ] To Do` |
 | **P1-T04**| **DevOps:** Ortama Duyarlı (Console/JSON) Loglama Yapısını Tüm Servislere Uygulama| **Yüksek** | Tüm servisler | `[ ] To Do` |
 | **P1-T05**| **API:** `api-gateway-service` iskeletini oluşturma ve mTLS ile güvenli hale getirme| Yüksek | `api-gateway-service` | `[ ] To Do`|

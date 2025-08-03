@@ -19,7 +19,7 @@ Bu yol haritası, Sentiric "İletişim İşletim Sistemi" vizyonunu hayata geçi
 ## **FAZ 3: "CANLANAN PLATFORM"**
 
 *   **Hedef:** İskelete "beyin" ve "ses" ekleyerek platformu canlandırmak. Bu faz sonunda, sistem arayanla ilk anlamlı sesli diyaloğu kurabilir ve bu etkileşim bir yönetici tarafından izlenebilir.
-*   **Kabul Kriteri:** Gerçek bir telefonla arama yapıldığında, sistem "Merhaba, Sentiric'e hoş geldiniz" anonsunu çalmalı, kullanıcının cevabını metne çevirmeli ve bu etkileşim `dashboard-ui`'da canlı olarak görülebilmelidir.
+*   **Kabul Kriteri:** Gerçek bir telefonla arama yapıldığında, sistem "Merhaba..." anonsunu çalmalı, **kullanıcının cevabını metne çevirmeli (STT), bu metne göre bir yanıt üretmeli (LLM), bu yanıtı sese çevirmeli (TTS) ve kullanıcıya dinletmelidir.** Bu etkileşim `dashboard-ui`'da canlı olarak görülebilmelidir.
 
 ---
 
