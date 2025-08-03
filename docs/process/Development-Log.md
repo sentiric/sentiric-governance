@@ -3,6 +3,12 @@
 Bu belge, projenin gelişim hikayesini, alınan önemli kararları ve bu kararların arkasındaki "neden"leri kaydeder. Ters kronolojik sıra ile tutulur.
 
 ---
+### **2025-08-04: KRİTİK HATA GİDERİLDİ - mTLS Omurgası Aktif Edildi**
+
+*   **Karar:** Platformun ilk başlatılmasında tespit edilen ve tüm servisler arası gRPC iletişimini engelleyen "No such file or directory (os error 2)" hatası, `.env` dosyasındaki sertifika yollarının, tekil sertifikalar yerine tam sertifika zincirlerini (`-chain.crt`) kullanacak şekilde güncellenmesiyle giderilmiştir.
+*   **Gerekçe:** gRPC mTLS kurulumunda, istemcilerin ve sunucuların birbirini güvenilir bir kök CA'ya kadar doğrulayabilmesi için tam güven zincirinin sunulması gerekmektedir. Önceki yapılandırma bu ara sertifikaları içermediği için TLS handshake işlemi başarısız oluyordu.
+*   **Sonuç:** Bu düzeltme ile **P0-T01 görevi tamamlanmıştır.** Sentiric platformunun tüm Go ve Rust tabanlı servisleri artık birbirleriyle beklendiği gibi güvenli ve şifreli bir şekilde iletişim kurabilmektedir. Bu, platformun temel iletişim omurgasının sağlıklı çalıştığını kanıtlayan ve bir sonraki fonksiyonel testlere geçmemizi sağlayan kritik bir adımdır.
+---
 ### 2025-07-31: Faz 1 - Dağıtık Omurganın Zırhlandırılması (mTLS Entegrasyonu)
 
 *   **Karar:** Projenin çoklu sunucu ve hibrit bulut ortamlarında güvenli bir şekilde çalışabilmesi için, tüm servisler arası gRPC iletişiminin şifrelenmesine ve karşılıklı olarak doğrulanmasına (mTLS) karar verildi.
