@@ -3,6 +3,19 @@
 Bu belge, projenin gelişim hikayesini, alınan önemli kararları ve bu kararların arkasındaki "neden"leri kaydeder. Ters kronolojik sıra ile tutulur.
 
 ---
+### **2025-08-04: BÜYÜK BAŞARI - Uçtan Uca Çağrı Akışı Başarıyla Tamamlandı!**
+
+*   **Karar:** Rust ve Go servisleri arasındaki mTLS uyumsuzluğunu ve Docker Compose başlatma sırası sorunlarını gidermek için yapılan düzeltmelerin ardından gerçekleştirilen test araması başarıyla sonuçlanmıştır.
+*   **Gerekçe:** Önceki testlerde tespit edilen "broken pipe" ve "connection refused" hataları, sırasıyla Rust istemcisindeki `domain_name` yapılandırmasının düzeltilmesi ve Docker Compose'a `healthcheck` mekanizmaları eklenmesiyle giderilmiştir.
+*   **Sonuç:** Gerçekleştirilen test araması, tüm senkron ve asenkron adımları başarıyla tamamlamıştır:
+    1.  `sip-gateway` -> `sip-signaling` (SIP/UDP)
+    2.  `sip-signaling` -> `user-service`, `dialplan-service`, `media-service` (gRPC/mTLS)
+    3.  `sip-signaling` -> `RabbitMQ` (AMQP)
+    4.  `RabbitMQ` -> `agent-service` (AMQP)
+    5.  `agent-service` -> `media-service` (gRPC/mTLS)
+    6.  `media-service` -> `MicroSIP` (RTP/UDP)
+    Bu, platformun temel iletişim omurgasının ve mantıksal akışının **tamamen fonksiyonel** olduğunu kanıtlamaktadır. Proje, artık daha gelişmiş AI ve iş mantığı özelliklerini eklemek için sağlam bir temele sahiptir.
+---
 ### **2025-08-04: KRİTİK HATA GİDERİLDİ - mTLS Omurgası Aktif Edildi**
 
 *   **Karar:** Platformun ilk başlatılmasında tespit edilen ve tüm servisler arası gRPC iletişimini engelleyen "No such file or directory (os error 2)" hatası, `.env` dosyasındaki sertifika yollarının, tekil sertifikalar yerine tam sertifika zincirlerini (`-chain.crt`) kullanacak şekilde güncellenmesiyle giderilmiştir.
