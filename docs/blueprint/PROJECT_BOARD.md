@@ -33,7 +33,23 @@ Bu belge, stratejik yol haritasını, taktiksel görev panosunu ve teknik iyile�
 | **P1-T15**| **[Yeni Görev 🚀]: Altyapı:** Servisler Arası "Healthcheck" ve Başlatma Bağımlılıkları Eklemek | **Kritik**| `infrastructure` | `[ ✔️ ] Done` |
 | **P1-T16**| **[Yeni Görev 🚀]: Güvenlik:** Go ve Rust Servisleri Arasındaki mTLS Uyumsuzluğunu Gidermek | **Kritik**| `sip-signaling`, Go Servisleri | `[ ✔️ ] Done` |
 
+---
 
+### **FAZ 1.5: GÖZLEMLENEBİLİRLİK OMURGASI**
+
+**Hedef:** Platformun her bir parçasını izlenebilir, ölçülebilir ve hataların kolayca ayıklanabilir hale getirmek. Bu, projenin hem geliştirme hızını hem de üretim kararlılığını artıracak temel bir yatırımdır.
+
+| ID       | Görev                                                                                                                              | Öncelik | Repo(lar)                       | Durum     |
+|:---------|:-----------------------------------------------------------------------------------------------------------------------------------|:--------|:--------------------------------|:----------|
+| **OBS-01** | **[Yeni Görev 🚀]:** `OBSERVABILITY_STANDARD.md` dokümanını oluşturmak ve ana dokümanları güncellemek.                             | **Kritik**  | `governance`                    | `[ ✔️ ] Done`  |
+| **OBS-02** | **[P1-T04 Zenginleştirilmiş]:** Tüm **Go** servislerinde (`agent`, `user`, `dialplan`) `zerolog` ile standart ve ortama duyarlı loglamayı implemente etmek. | **Kritik**  | Go Servisleri                   | `[ ] To Do`   |
+| **OBS-03** | **[Yeni Görev 🚀]:** Tüm **Rust** servislerinde (`media`, `sip-gateway`, `sip-signaling`) `tracing` ile standart ve ortama duyarlı loglamayı implemente etmek. | **Kritik**  | Rust Servisleri                 | `[ ] To Do`   |
+| **OBS-04** | **[Yeni Görev 🚀]:** Tüm **Python** servislerinde (`llm`, `tts`) `structlog` ile standart ve ortama duyarlı loglamayı implemente etmek. | **Kritik**  | Python Servisleri               | `[ ] To Do`   |
+| **OBS-05** | **[Yeni Görev 🚀]:** Altyapıya Prometheus ve Grafana eklemek.                                                                        | **Yüksek**  | `infrastructure`                | `[ ] To Do`   |
+| **OBS-06** | **[Yeni Görev 🚀]:** Tüm servislere Prometheus `/metrics` endpoint'ini ve temel RED metriklerini eklemek.                         | **Yüksek**  | Tümü                            | `[ ] To Do`   |
+| **OBS-07** | **[Yeni Görev 🚀]:** Altyapıya Jaeger/Tempo (tracing backend) eklemek.                                                                | **Orta**    | `infrastructure`                | `[ ] To Do`   |
+| **OBS-08** | **[Yeni Görev 🚀]:** Ağ geçitlerinde (`sip-gateway`, `api-gateway`) `trace_id` oluşturma ve yayma mekanizmasını implemente etmek. | **Yüksek**  | `sip-gateway`, `api-gateway`    | `[ ] To Do`   |
+| **OBS-09** | **[Yeni Görev 🚀]:** Diğer tüm servislerde gelen `trace_id`'yi yakalama ve yayma (context propagation) işlemini implemente etmek. | **Yüksek**  | Tümü                            | `[ ] To Do`   |
 ---
 
 ### **FAZ 2: FONKSİYONEL İSKELET**
