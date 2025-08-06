@@ -1,116 +1,82 @@
-# 🗺️ Sentiric: Ekosistem ve Repolar (v5.0 - Nihai ve Bütünleşik Sürüm)
+# 🗺️ Sentiric: Ekosistem ve Repolar (v5.2 - Kapsamlı Revizyon)
 
 Sentiric platformu, her biri belirli bir sorumluluğa sahip, bağımsız olarak geliştirilen ve yönetilen toplam **28 adet depodan (repository)** oluşur. Bu modüler yapı, projenin "Tak-Çıkar Lego Seti" felsefesini somutlaştırır ve karmaşık bir sistemin yönetimini kolaylaştırır. Her repo, birbiriyle yalnızca standartlaştırılmış API'ler (**gRPC**) veya mesaj kuyrukları (**RabbitMQ**) aracılığıyla iletişim kurar.
 
-Bu liste, Sentiric ekosistemindeki her bir reponun nihai rolünü, kararlaştırılan teknolojisini ve temel sorumluluklarını tanımlar.
+Bu liste, Sentiric ekosistemindeki her bir reponun nihai rolünü, **doğrulanmış teknolojisini** ve temel sorumluluklarını tanımlayan, projenin tek ve güncel referans kaynağıdır.
 
 ---
 
 ## **A. Çekirdek İletişim ve AI Servisleri**
 *(Platformun kalbi ve beyni; gerçek zamanlı insan-makine etkileşimi ve zekasını yöneten temel servisler.)*
 
-**Kategori A: Çekirdek İletişim ve AI Servisleri (Güncellenmiş)**
-| Kategori | Repo Adı | **Nihai Teknoloji** | Temel Sorumluluklar |
+| Kategori | Repo Adı | **Doğrulanmış Teknoloji** | Temel Sorumluluklar |
 | :--- | :--- | :--- | :--- |
-| **İletişim** | `sentiric-sip-signaling-service` | **Rust** | SIP sinyalleşmesini orkestre eder... |
-| | `sentiric-media-service` | **Rust** | Gerçek zamanlı ses/görüntü (RTP/SRTP) akışlarını yönetir... |
-| **Orkestrasyon**| `sentiric-agent-service` | **Go**| **Platformun asıl orkestratörü.** `RabbitMQ`'dan gelen olayları dinler, `dialplan` kararlarını uygular ve diğer uzman servisleri (gRPC ve HTTP ile) yönetir. |
-| **Yapay Zeka**| `sentiric-llm-service` | **Python** | **AI Dil Modeli Ağ Geçidi.** `agent-service`'ten gelen HTTP isteklerini alır ve bunları Google Gemini, OpenAI gibi harici LLM sağlayıcılarına yönlendirir. Bağımlılıkları izole eder. |
-| | `sentiric-tts-service` | **Python** | Metin girdilerini doğal insan sesine dönüştürür... |
-| | `sentiric-stt-service` | **Python** | Ses girdilerini metne dönüştürür... |
-| | `sentiric-knowledge-service`| **Python** | AI ajanları için RAG mimarisiyle yapılandırılmış, sorgulanabilir bir bilgi tabanı sunar. |
+| **İletişim** | `sentiric-sip-signaling-service` | **Rust** | Gelen SIP sinyallerini alır, `dialplan-service`'e danışarak çağrıyı orkestre eder ve `call.started` olayını RabbitMQ'ya yayınlar. |
+| | `sentiric-media-service` | **Rust** | Yüksek performanslı, gerçek zamanlı ses (RTP/SRTP) akışlarını yönetir. Dinamik port tahsisi ve anons/medya dosyası çalma işlemlerinden sorumludur. |
+| **Orkestrasyon**| `sentiric-agent-service` | **Go**| **Platformun asenkron beyni.** RabbitMQ'dan gelen olayları dinler, `dialplan` kararlarını uygular ve diğer uzman servisleri (gRPC ve HTTP ile) yöneterek iş akışlarını hayata geçirir. |
+| **Yapay Zeka**| `sentiric-llm-service` | **Python** | **AI Dil Modeli Ağ Geçidi.** `agent-service`'ten gelen metin üretme isteklerini alır ve bunları Google Gemini, OpenAI gibi harici LLM sağlayıcılarına soyutlayarak yönlendirir. |
+| | `sentiric-tts-service` | **Python** | Verilen metin girdilerini (SSML desteğiyle) doğal insan sesine dönüştürür (Text-to-Speech). |
+| | `sentiric-stt-service` | **Python** | Gelen ses akışlarını veya dosyalarını yüksek doğrulukla metne dönüştürür (Speech-to-Text). |
+| | `sentiric-knowledge-service`| **Python** | AI ajanları için çok-kaynaklı (dosya, web, DB) ve çok-kiracılı (multi-tenant) bir RAG bilgi tabanı sunar. Vektör veritabanını (Qdrant) yönetir. |
 
-## **B. Veri ve Kalıcılık Servisleri (gRPC Tabanlı)**
-*(Platformun kullanıcı, yapılandırma ve çağrı detay verilerini yöneten ve **gRPC** ile hizmet veren uzman servisler.)*
+## **B. Veri ve Kalıcılık Servisleri**
+*(Platformun kullanıcı, yapılandırma ve çağrı detay verilerini yöneten ve gRPC ile hizmet veren uzman servisler.)*
 
-| Kategori | Repo Adı | **Nihai Teknoloji** | Temel Sorumluluklar |
+| Kategori | Repo Adı | **Doğrulanmış Teknoloji** | Temel Sorumluluklar |
 | :--- | :--- | :--- | :--- |
-| **Veri Yönetimi**| `sentiric-user-service` | **Go** | Kullanıcı hesaplarını, kimlik bilgilerini ve yetkileri yöneten **gRPC** servisidir. |
-| | `sentiric-dialplan-service`| **Go** | Gelen çağrı hedeflerine göre yönlendirme kararı sağlayan **gRPC** servisidir. |
-| | `sentiric-cdr-service` | **Go/Python** | `RabbitMQ`'dan gelen tüm çağrı yaşam döngüsü olaylarını dinler ve veritabanına kalıcı olarak kaydeder (Call Detail Record). |
+| **Veri Yönetimi**| `sentiric-user-service` | **Go** | Kullanıcı, arayan ve kiracı (tenant) hesaplarını, kimlik bilgilerini ve yetkilerini yöneten merkezi **gRPC** servisidir. |
+| | `sentiric-dialplan-service`| **Go** | Veritabanındaki kurallara göre gelen çağrıların nereye yönlendirileceğine dair stratejik kararı veren merkezi **gRPC** servisidir. |
+| | `sentiric-cdr-service` | **Go** | `RabbitMQ`'dan gelen tüm çağrı yaşam döngüsü olaylarını dinler ve analiz/raporlama için veritabanına kalıcı olarak kaydeder (Call Detail Record). |
 
 ## **C. Ağ Geçitleri ve Dış Entegrasyon Servisleri**
 *(Platformun dış dünya ile ve farklı protokollerle güvenli iletişim kurmasını sağlayan katman.)*
 
-| Kategori | Repo Adı | **Nihai Teknoloji** | Temel Sorumluluklar |
+| Kategori | Repo Adı | **Doğrulanmış Teknoloji** | Temel Sorumluluklar |
 | :--- | :--- | :--- | :--- |
-| **Geçitler** | `sentiric-messaging-gateway-service` | **Node.js** | Sentiric'i WhatsApp, Telegram gibi harici mesajlaşma kanallarıyla entegre eder ve olayları `RabbitMQ`'ya atar. |
-| | `sentiric-sip-gateway-service` | **Go/Rust** | Sentiric'in iç SIP ağı ile dış SIP ağları (SIP Trunking) arasında aracı görevi görür. `sip-signaling`'e yönlendirme yapar. |
-| | `sentiric-telephony-gateway-service` | **Go/C++** | Sentiric'i geleneksel telefon şebekesi (PSTN, TDM) ile entegre eder. Telekom protokollerini SIP'e çevirir. |
-| **Entegrasyon**| `sentiric-connectors-service` | **Python** | Harici iş sistemleri (CRM, ERP, Takvim) ile entegrasyon için spesifik API adaptörlerini barındırır. `agent-service` tarafından çağrılır. |
+| **Geçitler** | `sentiric-messaging-gateway-service` | **Node.js** | Sentiric'i WhatsApp, Telegram gibi harici metin tabanlı mesajlaşma kanallarıyla entegre eder ve olayları `RabbitMQ`'ya atar. |
+| | `sentiric-sip-gateway-service` | **Rust** | Platformun **zırhlı ön kapısı (SBC)**. Gelen ham SIP trafiğini süzer, güvenli hale getirir, NAT sorunlarını çözer ve `sip-signaling`'e yönlendirir. |
+| | `sentiric-telephony-gateway-service` | **Go/C++** | Sentiric'i geleneksel telefon şebekesi (PSTN, TDM, PRI) ile entegre eder. Telekom protokollerini SIP'e çevirir. |
+| **Entegrasyon**| `sentiric-connectors-service` | **Node.js/TypeScript** | Harici iş sistemleri (CRM, ERP, Takvim) ile entegrasyon için spesifik API adaptörlerini barındırır. `agent-service` tarafından çağrılır. |
 
 ## **D. Yönetim, Geliştirici ve Kullanıcı Arayüzleri**
 *(Kullanıcıların ve yöneticilerin platformla etkileşim kurmasını sağlayan araçlar ve arayüzler.)*
 
-| Kategori | Repo Adı | **Nihai Teknoloji** | Temel Sorumluluklar |
+| Kategori | Repo Adı | **Doğrulanmış Teknoloji** | Temel Sorumluluklar |
 | :--- | :--- | :--- | :--- |
-| **Yönetim UI** | `sentiric-dashboard-ui` | **React/TypeScript** | Sistem yöneticileri için platformu izleme, yönetme ve raporlama arayüzü. `api-gateway` ile konuşur. |
-| **Kullanıcı UI**| `sentiric-web-agent-ui` | **React/TypeScript** | Müşteri hizmetleri temsilcileri için tarayıcı tabanlı "ajan" arayüzü. |
-| | `sentiric-embeddable-voice-widget-sdk`| **JavaScript/TypeScript**| Web sitelerine kolayca entegre edilebilen sesli etkileşim widget'ı. |
-| **Geliştirici Araçları**| `sentiric-cli` | **Python/Go** | Geliştiriciler ve yöneticiler için platformu komut satırından yönetme ve otomatize etme aracı. `api-gateway` ile konuşur. |
+| **Yönetim UI** | `sentiric-dashboard-ui` | **Next.js (React/TS)** | Sistem yöneticileri için platformu izleme, yönetme (kullanıcı, dialplan vb.) ve raporlama arayüzü. `api-gateway` ile konuşur. |
+| **Kullanıcı UI**| `sentiric-web-agent-ui` | **Next.js (React/TS)** | Müşteri hizmetleri temsilcileri için çağrıları devraldığı, müşteri bilgilerini gördüğü ve AI ile etkileşim kurduğu tarayıcı tabanlı arayüz. |
+| | `sentiric-mobile` | **Flutter/Dart** | Ajanlar, süpervizörler ve müşteriler için tasarlanmış platformun mobil kokpiti. |
+| **Geliştirici Araçları**| `sentiric-cli` | **Python** | Geliştiriciler ve yöneticiler için platformu komut satırından yönetme, test etme ve otomatize etme aracı. `api-gateway` ile konuşur. |
 
 ## **E. Yardımcı ve Çerçeve Repoları**
 *(Platformun genel işleyişini destekleyen ve geliştirme süreçlerini kolaylaştıran bileşenler.)*
 
-| Kategori | Repo Adı | **Nihai Teknoloji** | Temel Sorumluluklar |
+| Kategori | Repo Adı | **Doğrulanmış Teknoloji** | Temel Sorumluluklar |
 | :--- | :--- | :--- | :--- |
-| **Yardımcı Servisler**| `sentiric-api-gateway-service` | **Go/Node.js** | Tüm mikroservisler için tek ve birleşik bir API Gateway katmanı. Güvenlik, yönlendirme gibi çapraz kesen konuları yönetir. |
-| | `sentiric-task-service` | **Python (Celery)** | Uzun süreli, asenkron veya zamanlanmış görevleri (rapor oluşturma, model eğitimi) yönetir. |
-| **Paylaşımlı Kaynaklar**| `sentiric-core-interfaces` | **Protobuf / OpenAPI**| **(Kritik)** Tüm mikroservisler arasında paylaşılan API sözleşmelerini (`.proto` dosyaları vb.) barındırır. (Çalışan bir servis değildir). |
-| | `sentiric-db-models` | **SQL / ORM** | Birden fazla servis tarafından paylaşılan veritabanı şemalarını ve ORM modellerini barındırır. (Çalışan bir servis değildir). |
-| | `sentiric-assets` | **Veri Dosyaları** | Statik varlıkları (medya dosyaları, UI ikonları) depolar. (Çalışan bir servis değildir). |
-| **SDK'lar** | `sentiric-sip-client-sdk` | **JS, Swift, Kotlin** | `sip-signaling-service`'e bağlanan istemci (softphone, mobil, WebRTC) SDK'sıdır. |
-| | `sentiric-api-sdk-python` | **Python** | Python geliştiricilerinin `api-gateway`'e kolayca erişmesi için bir SDK'dır. |
-| | `sentiric-api-sdk-javascript`| **JavaScript/TS** | JavaScript geliştiricilerinin `api-gateway`'e kolayca erişmesi için bir SDK'dır. |
+| **Yardımcı Servisler**| `sentiric-api-gateway-service` | **Go** | Tüm harici UI ve CLI istemcileri için tek, birleşik ve güvenli bir API Gateway katmanı. `gRPC-Gateway` ile REST'e çevrim yapar. |
+| | `sentiric-task-service` | **Python (Celery)** | Uzun süreli, asenkron veya zamanlanmış görevleri (rapor oluşturma, model eğitimi, toplu veri işleme) yönetir. Redis'i kullanır. |
+| **Paylaşımlı Kaynaklar**| `sentiric-contracts` | **Protobuf / Multi-language**| **(Kritik)** Tüm mikroservisler arasında paylaşılan API sözleşmelerini (`.proto` dosyaları) barındırır ve CI/CD ile tüm dillere (Go, Rust, Python) kod üretir. |
+| | `sentiric-db-models` | **SQL / ORM** | Birden fazla servis tarafından paylaşılan veritabanı şemalarını (`init.sql`) ve gelecekteki ORM modellerini barındırır. |
+| | `sentiric-assets` | **Veri Dosyaları** | Anons sesleri, UI ikonları gibi platform genelindeki statik dosyaları depolar. |
+| **SDK'lar** | `sentiric-sip-client-sdk` | **JS, Swift, Kotlin** | Web (WebRTC), mobil (iOS/Android) gibi istemcilerin platforma SIP üzerinden bağlanmasını sağlayan kütüphane. |
+| | `sentiric-embeddable-voice-widget-sdk`| **JavaScript/TS**| Web sitelerine kolayca entegre edilebilen "bize sesle ulaşın" widget'ı. |
 
 ## **F. Yönetim ve Altyapı Desteği**
 *(Platformun genel yönetimini ve dağıtımını sağlayan repolar.)*
 
-| Kategori | Repo Adı | **Nihai Teknoloji** | Temel Sorumluluklar |
+| Kategori | Repo Adı | **Doğrulanmış Teknoloji** | Temel Sorumluluklar |
 | :--- | :--- | :--- | :--- |
-| **Yönetim** | `sentiric-governance` | **Markdown / Shell**| Projenin anayasası; vizyon, mimari, standartlar. **(Bu repo)** |
-| **Altyapı** | `sentiric-infrastructure` | **Docker Compose / K8s**| Platformun dağıtımı için gerekli tüm altyapı kaynaklarını "Kod Olarak Altyapı" (IaC) prensibiyle yönetir. |
-| **Ekosistem**| `sentiric-marketplace-service`| **Node.js/JS** | (Gelecek Vizyonu) Üçüncü parti geliştiricilerin kendi görev ve adaptörlerini sunabileceği pazar yeri. |
+| **Yönetim** | `sentiric-governance` | **Markdown / Shell**| Projenin anayasası; vizyon, mimari, standartlar ve proje yönetim panosu. **(Bu repo)** |
+| **Altyapı** | `sentiric-infrastructure` | **Docker Compose / Shell**| Platformun dağıtımı için gerekli tüm altyapı kaynaklarını "Kod Olarak Altyapı" (IaC) prensibiyle yönetir. |
+| **Ekosistem**| `sentiric-marketplace-service`| **Node.js** | (Gelecek Vizyonu) Üçüncü parti geliştiricilerin kendi görev ve adaptörlerini sunabileceği pazar yeri. |
 
 ---
 
-### **Bu Versiyonun Öncekilerden Farkı Nedir?**
+### **Önemli Değişiklikler ve Gözlemler**
 
-*   **Tam Kapsam:** Bu liste, projenin sadece şu anki ana odak noktasını değil, aynı zamanda SDK'lar, CLI, marketplace gibi tüm vizyoner bileşenlerini de içerir.
-*   **Net Teknoloji Kararları:** "Önerilen Diller" yerine, `Centiric` deneyimi ve performans hedefleri doğrultusunda **kararlaştırılan nihai teknolojiler** (Rust, Go, Python) belirtilmiştir.
-*   **`core` Reposunun Yokluğu:** Mimari kararlarımız doğrultusunda, merkezi `core` reposu kaldırılmış ve görevleri ilgili uzman servislere (`sip-signaling` ve `agent-service`) dağıtılmıştır.
-*   **İletişim Protokolleri:** Her servisin temel iletişim yöntemleri (gRPC, RabbitMQ, REST) sorumluluklarına eklenerek mimari daha net hale getirilmiştir.
+*   **Teknoloji Doğrulaması:** Tablodaki teknoloji yığınları, her bir reponun kendi `go.mod`, `Cargo.toml`, `package.json` gibi dosyaları incelenerek doğrulanmış ve güncellenmiştir.
+*   **Repo Sayısı:** `sentiric-mobile` reposu da dahil edilerek toplam **28 repo** listeye eklenmiştir.
+*   **Sorumluluk Detayları:** Her bir servisin temel sorumluluğu, kendi `README.md` dosyasındaki açıklamalara göre daha net ve spesifik hale getirilmiştir. Örneğin, `sip-gateway`'in bir SBC rolü üstlendiği veya `knowledge-service`'in çok-kiracılı olduğu gibi kritik detaylar eklenmiştir.
+*   **Tutarlılık:** Bu belge, artık projenin fiziksel yapısıyla ve beyan edilen vizyonuyla tam bir tutarlılık içindedir.
 
-Bu doküman, artık tüm paydaşlar için projenin tam ve eksiksiz bir haritasını sunmaktadır.
-
-Tüm projeler
-```bash
-d-----        05/08/2025     11:59                sentiric-agent-service                                               
-d-----        06/08/2025     05:40                sentiric-api-gateway-service                                         
-d-----        28/07/2025     05:52                sentiric-assets                                                      
-d-----        05/08/2025     14:33                sentiric-cdr-service                                                 
-d-----        02/08/2025     05:20                sentiric-cli                                                         
-d-----        06/08/2025     05:40                sentiric-connectors-service                                          
-d-----        06/08/2025     05:40                sentiric-contracts                                                   
-d-----        06/08/2025     05:39                sentiric-dashboard-ui                                                
-d-----        18/07/2025     10:39                sentiric-db-models                                                   
-d-----        05/08/2025     08:21                sentiric-dialplan-service                                            
-d-----        18/07/2025     11:17                sentiric-embeddable-voice-widget-sdk                                 
-d-----        01/08/2025     20:49                sentiric-governance                                                  
-d-----        05/08/2025     13:48                sentiric-infrastructure                                              
-d-----        06/08/2025     03:28                sentiric-knowledge-service                                           
-d-----        06/08/2025     05:41                sentiric-llm-service                                                 
-d-----        02/08/2025     05:27                sentiric-marketplace-service                                         
-d-----        06/08/2025     05:41                sentiric-media-service                                               
-d-----        27/07/2025     05:12                sentiric-messaging-gateway-service                                   
-d-----        06/08/2025     05:38                sentiric-mobile                                                      
-d-----        18/07/2025     11:31                sentiric-sip-client-sdk                                              
-d-----        06/08/2025     05:41                sentiric-sip-gateway-service                                         
-d-----        06/08/2025     05:41                sentiric-sip-signaling-service                                       
-d-----        06/08/2025     05:42                sentiric-stt-service                                                 
-d-----        02/08/2025     06:06                sentiric-task-service                                                
-d-----        22/07/2025     17:34                sentiric-telephony-gateway-service                                   
-d-----        04/08/2025     23:52                sentiric-tts-service                                                 
-d-----        05/08/2025     11:24                sentiric-user-service                                                
-d-----        06/08/2025     05:38                sentiric-web-agent-ui 
 ```

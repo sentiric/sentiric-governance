@@ -1,16 +1,17 @@
 ### **Sentiric Platformu: Bütünleşik Eylem Planı (v4.1)**
 
 Bu belge, stratejik yol haritasını, taktiksel görev panosunu ve teknik iyileştirme önerilerini tek bir yerde birleştiren, projenin ana eylem planıdır.
-Not: Her yeni projede yapılması gerekenler
-* Ortama Duyarlı (Console/JSON) Loglama Yapısını Tüm Servislere Uygula
-* Tüm gRPC İletişimini mTLS ile Güvenli Hale Getir
-* Tüm servislerde versiyon tutarlılığını sağla
-* Tüm servislerin Kübernetis yada bağımsız sunucularda çalışabilecek şekilde uygula
-* Üretim ortamı için Güvenli kasa kriterlerini her zaman değerlendir
-* Tüm servislerde OBSERVABILITY_STANDARD.md standartlarına uy
-* Tüm servislerin trace id ile merkezi noktadan takibinin mümkün kararlılığını
-* Her zaman üretim ortamı için hazır olara
-* Her işlemde tam eksiksiz kod geliştirmesi düzeltmesi uygulama ve test başarılı olduğunda commitle.
+
+#### **Geliştirme Manifestosu: Her Servis İçin Altın Kurallar**
+
+*Her yeni servis oluşturulduğunda veya mevcut bir servis güncellendiğinde aşağıdaki prensiplere uyulmalıdır:*
+
+1.  **Gözlemlenebilirlik Temeldir:** Servis, `OBSERVABILITY_STANDARD.md`'ye uygun olarak ortama duyarlı (Console/JSON) yapılandırılmış loglama, Prometheus metrikleri ve `trace_id` yayma yeteneklerine sahip olmalıdır.
+2.  **Güvenlik Varsayılandır:** Servisler arası iletişim **mTLS** ile şifrelenmeli, tüm harici API'ler yetkilendirilmelidir. Sırlar (secrets) asla kodda yer almamalıdır.
+3.  **Üretime Hazır Tasarım:** Servis, `healthcheck` endpoint'lerine sahip olmalı, "Graceful Shutdown" mekanizmasını implemente etmeli ve Kubernetes gibi ortamlarda çalışabilecek şekilde tasarlanmalıdır.
+4.  **Test Edilebilirlik Zorunluluktur:** Kritik iş mantıkları, CI/CD pipeline'ında çalıştırılan **birim testleri (unit tests)** ile kapsanmalıdır.
+5.  **Dokümantasyon Canlıdır:** Servisin `README.md` dosyası, sorumluluklarını, API'lerini ve nasıl çalıştırılacağını net bir şekilde açıklamalıdır. `governance`'daki ana dokümanlarla tutarlı olmalıdır.
+6.  **İşlem Bütünlüğü:** Her commit, tam ve eksiksiz bir işlevi (kod, test, dokümantasyon) temsil etmeli ve başarılı bir şekilde test edildikten sonra yapılmalıdır.
 
 #### **Nasıl Okunmalı?**
 
@@ -22,7 +23,7 @@ Not: Her yeni projede yapılması gerekenler
 
 ### **FAZ 1: GÜVENLİ VE DAYANIKLI OMURGA**
 
-**Hedef:** Platformun temel iskeletini, çoklu sunucu ortamlarında güvenli, dayanıklı, gözlemlenebilir ve **test edilebilir** bir şekilde çalışacak hale getirmek. Bu, üzerine inşa edilecek tüm servislerin sağlam zeminidir.
+**Hedef:** Platformun temel iskeletini, çoklu sunucu ortamlarında güvenli, dayanıklı, gözlemlenebilir ve test edilebilir bir şekilde çalışacak hale getirmek. Bu, üzerine inşa edilecek tüm servislerin sağlam zeminidir.
 
 | ID | Görev | Öncelik | Repo(lar) | Durum |
 | :--- | :--- | :--- | :--- | :--- |
@@ -98,3 +99,4 @@ Not: Her yeni projede yapılması gerekenler
 | **P4-T03**| **[Görev]: Entegrasyon:** `connectors-service` için ilk konektörün (örn. Google Calendar) geliştirilmesi | Yüksek| `connectors-service` | `[ ⬜ ] To Do` |
 | **P4-T04**| **[Yeni Görev 🚀]: Vizyon:** `sentiric-marketplace-service` iskeletini oluşturma | **Orta** | `marketplace-service`, `infrastructure` | `[ ⬜ ] To Do` |
 | **P4-T05**| **[Görev]: UI/UX:** `dashboard-ui` üzerine "Low-Code Dialplan Tasarımcısı" v1.0 eklenmesi | Orta| `dashboard-ui` | `[ ⬜ ] To Do` |
+```
