@@ -42,7 +42,11 @@ Bu komut, projenin ana çalışma alanını (`../`) tarar ve varsayılan ayarlar
 # .../sentric-governance/ dizinindeyken:
 python tools/snapshot_tool.py collect ../sentric.txt --base-dir ../
 ```
-*   **Sonuç:** `.../sentric-governance/project_snapshot.txt` dosyası oluşturulur.
+
+```bash
+python tools/snapshot_tool.py collect ../cdr-service.txt --base-dir ../ --include-dir sentiric-cdr-service
+```
+
 
 ### 2. Gelişmiş Snapshot Oluşturma (Özel Kurallar)
 

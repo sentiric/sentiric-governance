@@ -35,6 +35,9 @@ DEFAULT_INCLUDE_EXTENSIONS = [
     # Project files
     "*.mod", "*.sum", "go.mod", "go.sum", "requirements.txt", "package.json",
     "Cargo.toml", "pom.xml", "build.gradle", "*.gradle"
+
+    # env
+    ".env.example", ".env.docker"
 ]
 
 DEFAULT_EXCLUDE_PATTERNS = [
