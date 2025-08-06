@@ -1,6 +1,6 @@
 # 🗺️ Sentiric: Ekosistem ve Repolar (v5.0 - Nihai ve Bütünleşik Sürüm)
 
-Sentiric platformu, her biri belirli bir sorumluluğa sahip, bağımsız olarak geliştirilen ve yönetilen toplam **26 adet depodan (repository)** oluşur. Bu modüler yapı, projenin "Tak-Çıkar Lego Seti" felsefesini somutlaştırır ve karmaşık bir sistemin yönetimini kolaylaştırır. Her repo, birbiriyle yalnızca standartlaştırılmış API'ler (**gRPC**) veya mesaj kuyrukları (**RabbitMQ**) aracılığıyla iletişim kurar.
+Sentiric platformu, her biri belirli bir sorumluluğa sahip, bağımsız olarak geliştirilen ve yönetilen toplam **28 adet depodan (repository)** oluşur. Bu modüler yapı, projenin "Tak-Çıkar Lego Seti" felsefesini somutlaştırır ve karmaşık bir sistemin yönetimini kolaylaştırır. Her repo, birbiriyle yalnızca standartlaştırılmış API'ler (**gRPC**) veya mesaj kuyrukları (**RabbitMQ**) aracılığıyla iletişim kurar.
 
 Bu liste, Sentiric ekosistemindeki her bir reponun nihai rolünü, kararlaştırılan teknolojisini ve temel sorumluluklarını tanımlar.
 
@@ -82,3 +82,35 @@ Bu liste, Sentiric ekosistemindeki her bir reponun nihai rolünü, kararlaştır
 *   **İletişim Protokolleri:** Her servisin temel iletişim yöntemleri (gRPC, RabbitMQ, REST) sorumluluklarına eklenerek mimari daha net hale getirilmiştir.
 
 Bu doküman, artık tüm paydaşlar için projenin tam ve eksiksiz bir haritasını sunmaktadır.
+
+Tüm projeler
+```bash
+d-----        05/08/2025     11:59                sentiric-agent-service                                               
+d-----        06/08/2025     05:40                sentiric-api-gateway-service                                         
+d-----        28/07/2025     05:52                sentiric-assets                                                      
+d-----        05/08/2025     14:33                sentiric-cdr-service                                                 
+d-----        02/08/2025     05:20                sentiric-cli                                                         
+d-----        06/08/2025     05:40                sentiric-connectors-service                                          
+d-----        06/08/2025     05:40                sentiric-contracts                                                   
+d-----        06/08/2025     05:39                sentiric-dashboard-ui                                                
+d-----        18/07/2025     10:39                sentiric-db-models                                                   
+d-----        05/08/2025     08:21                sentiric-dialplan-service                                            
+d-----        18/07/2025     11:17                sentiric-embeddable-voice-widget-sdk                                 
+d-----        01/08/2025     20:49                sentiric-governance                                                  
+d-----        05/08/2025     13:48                sentiric-infrastructure                                              
+d-----        06/08/2025     03:28                sentiric-knowledge-service                                           
+d-----        06/08/2025     05:41                sentiric-llm-service                                                 
+d-----        02/08/2025     05:27                sentiric-marketplace-service                                         
+d-----        06/08/2025     05:41                sentiric-media-service                                               
+d-----        27/07/2025     05:12                sentiric-messaging-gateway-service                                   
+d-----        06/08/2025     05:38                sentiric-mobile                                                      
+d-----        18/07/2025     11:31                sentiric-sip-client-sdk                                              
+d-----        06/08/2025     05:41                sentiric-sip-gateway-service                                         
+d-----        06/08/2025     05:41                sentiric-sip-signaling-service                                       
+d-----        06/08/2025     05:42                sentiric-stt-service                                                 
+d-----        02/08/2025     06:06                sentiric-task-service                                                
+d-----        22/07/2025     17:34                sentiric-telephony-gateway-service                                   
+d-----        04/08/2025     23:52                sentiric-tts-service                                                 
+d-----        05/08/2025     11:24                sentiric-user-service                                                
+d-----        06/08/2025     05:38                sentiric-web-agent-ui 
+```
