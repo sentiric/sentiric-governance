@@ -1,6 +1,16 @@
-### **Sentiric Platformu: Bütünleşik Eylem Planı (v4.0)**
+### **Sentiric Platformu: Bütünleşik Eylem Planı (v4.1)**
 
 Bu belge, stratejik yol haritasını, taktiksel görev panosunu ve teknik iyileştirme önerilerini tek bir yerde birleştiren, projenin ana eylem planıdır.
+Not: Her yeni projede yapılması gerekenler
+* Ortama Duyarlı (Console/JSON) Loglama Yapısını Tüm Servislere Uygula
+* Tüm gRPC İletişimini mTLS ile Güvenli Hale Getir
+* Tüm servislerde versiyon tutarlılığını sağla
+* Tüm servislerin Kübernetis yada bağımsız sunucularda çalışabilecek şekilde uygula
+* Üretim ortamı için Güvenli kasa kriterlerini her zaman değerlendir
+* Tüm servislerde OBSERVABILITY_STANDARD.md standartlarına uy
+* Tüm servislerin trace id ile merkezi noktadan takibinin mümkün kararlılığını
+* Her zaman üretim ortamı için hazır olara
+* Her işlemde tam eksiksiz kod geliştirmesi düzeltmesi uygulama ve test başarılı olduğunda commitle.
 
 #### **Nasıl Okunmalı?**
 
