@@ -47,8 +47,8 @@ graph TD
 
         subgraph "🧠 2. Zeka & Orkestrasyon Katmanı"
              style BrainLayer fill:#ebfbee,stroke:#40c057
-             C1("[[sentiric-dialplan-service]] <br> **Go - Stratejik Karar Merkezi**")
-             C2("[[sentiric-agent-service]] <br> **Go - Eylem Orkestratörü**")
+             C1("[[sentiric-dialplan-service]] <br> **Stratejik Karar Merkezi**")
+             C2("[[sentiric-agent-service]] <br> **Eylem & SAGA Orkestratörü**")
              C3("[[sentiric-llm-service]] <br> **Python - AI Dil Modeli Ağ Geçidi**")
         end
 
@@ -64,7 +64,7 @@ graph TD
     subgraph "🏗️ 4. Altyapı & Veri Katmanı"
         style Infra fill:#f8f9fa,stroke:#6c757d
         F1("🐇 RabbitMQ (Asenkron Olaylar)")
-        F2("🗄️ PostgreSQL (Kalıcı Veri & Kurallar)")
+        F2("🗄️ PostgreSQL (Kalıcı Veri, Kurallar, SAGA State)")
         F3("[[sentiric-contracts]] <br> **.proto - API Sözleşmeleri**")
     end
 
@@ -75,12 +75,20 @@ graph TD
     C1 -- "gRPC (Senkron)" --> D1
     B1 -- "Olay (Asenkron)" --> F1
     F1 -- "Olayı Tüketir" --> C2
-    C2 -- "gRPC (Senkron)" --> D1 & D2
-    C2 -- "HTTP/REST (Senkron)" --> C3 & D3 & D4
+    C2 -- "gRPC (Senkron)" --> D1
+    C2 -- "gRPC (Senkron)" --> D2
+    C2 -- "HTTP/REST (Senkron)" --> C3
+    C2 -- "HTTP/REST (Senkron)" --> D3
+    C2 -- "HTTP/REST (Senkron)" --> D4
+    C2 -- "SAGA State Yönetimi (TCP)" --> F2
     A2 -- "HTTPS" --> B2
-    B2 -- "gRPC (Senkron)" --> C1 & D1
+    B2 -- "gRPC (Senkron)" --> C1
+    B2 -- "gRPC (Senkron)" --> D1
     
-    F3 -.-> |"Tüm Go/Python/Rust Servisleri Tarafından Kullanılır"| C1 & C2 & D1 & D2
+    F3 -.-> |"Tüm Go/Python/Rust Servisleri Tarafından Kullanılır"| C1
+    F3 -.-> |"Tüm Go/Python/Rust Servisleri Tarafından Kullanılır"| C2
+    F3 -.-> |"Tüm Go/Python/Rust Servisleri Tarafından Kullanılır"| D1
+    F3 -.-> |"Tüm Go/Python/Rust Servisleri Tarafından Kullanılır"| D2
 ```
 
 ### **2.2. Teknoloji Yığını ve Gerekçeleri**

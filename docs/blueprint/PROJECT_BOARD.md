@@ -70,6 +70,10 @@ Bu belge, stratejik yol haritasını, taktiksel görev panosunu ve teknik iyile�
 | **P2-T06**| **[Görev]: Test:** `cli` ile tam bir çağrı akışını (INVITE -> BYE) simüle edip DB'de CDR kaydını doğrulama | Yüksek | `cli`, `cdr-service` | `[ ⬜ ] To Do` |
 | **P2-T07**| **[Yeni Görev 🚀]: Çekirdek:** `sentiric-task-service` iskeletini (Celery/Redis) oluşturma | **Yüksek** | `task-service`, `infrastructure` | `[ ⬜ ] To Do` |
 | **P2-T08**| **[Yeni Görev 🚀]: Entegrasyon:** `sentiric-messaging-gateway-service` iskeletini oluşturma | **Orta** | `messaging-gateway-service`, `infrastructure` | `[ ⬜ ] To Do` |
+| **P2-T09**| **[Yeni Görev 🚀]: Veri Bütünlüğü:** `saga_transactions` tablosunu `init.sql`'e ekle | **Yüksek** | `infrastructure` | `[ ⬜ ] To Do` |
+| **P2-T10**| **[Yeni Görev 🚀]: Veri Bütünlüğü:** `agent-service`'de `SagaManager` modülünün iskeletini oluştur | **Yüksek** | `agent-service` | `[ ⬜ ] To Do` |
+| **P2-T11**| **[Yeni Görev 🚀]: Veri Bütünlüğü:** Katılımcı servislerde temel işlem/tazmin endpoint'lerini tanımla | **Orta** | `user-service`, `connectors-service` | `[ ⬜ ] To Do` |
+| **P2-T12**| **[Yeni Görev 🚀]: Veri Bütünlüğü:** `cli` ile ilk SAGA akışını tetikleyen bir prototip test yaz | **Orta** | `cli`, `agent-service` | `[ ⬜ ] To Do` |
 
 ---
 
@@ -82,7 +86,7 @@ Bu belge, stratejik yol haritasını, taktiksel görev panosunu ve teknik iyile�
 | **P3-T01**| **[Yeni Görev 🚀]: AI Çekirdek:** `agent-service`'de Redis tabanlı Durum Makinesi (State Machine) implementasyonu | **Kritik**| `agent-service`, `infrastructure` | `[ ⬜ ] To Do` |
 | **P3-T02**| **[Görev]: AI Çekirdek:** `llm-service`'in `agent-service` ile entegrasyonu | **Kritik**| `llm-service`, `agent-service` | `[ ✔️ ] Done` |
 | **P3-T03**| **[Görev]: Akış:** `agent-service`'in `dialplan` kararına göre `media-service`'e `PlayAudio` komutu göndermesi | **Yüksek**| `agent-service`, `media-service` | `[ ✔️ ] Done` |
-| **P3-T04**| **[Görev]: AI Duyular:** `tts-service` ve `stt-service` iskeletlerinin oluşturulması ve entegrasyonu | **Yüksek**| `tts-service`, `stt-service`, `agent-service` | `[ ⏳ ] WIP` |
+| **P3-T04**| **[Görev]: AI Duyular:** `tts-service` ve `stt-service` iskeletlerinin oluşturulması ve entegrasyonu
 | **P3-T05**| **[Görev]: UI:** `dashboard-ui`'nin `api-gateway` üzerinden `cdr-service` verilerini göstermesi | Yüksek | `dashboard-ui`, `api-gateway-service` | `[ ⬜ ] To Do` |
 | **P3-T06**| **[Görev]: Test:** Gerçek bir telefonla arama yapıp sistemin ilk anonsunu duyma (Uçtan Uca Test) | Yüksek | Tümü | `[ ✔️ ] Done` |
 
