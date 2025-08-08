@@ -3,6 +3,16 @@
 Bu belge, projenin gelişim hikayesini, alınan önemli kararları ve bu kararların arkasındaki "neden"leri kaydeder. Ters kronolojik sıra ile tutulur.
 
 ---
+### **2025-08-08: Asenkron Omurganın İnşası - `sentiric-task-service` Tamamlandı**
+
+*   **Karar:** Platformun uzun süren ve zamanlanmış görevlerini yönetecek olan `sentiric-task-service`'in, Celery, RabbitMQ ve Redis kullanılarak, `stt-service` ve `tts-service` ile aynı yüksek kalite standartlarında inşa edilmesine karar verilmiştir.
+*   **Gerekçe:** Platformun ana diyalog akışını (anlık istek/yanıt döngüsü) bloke etmeden, rapor oluşturma gibi ağır işlemleri arka planda yürütebilecek güvenilir bir asenkron altyapı zorunludur. `stt/tts` servislerinden elde edilen tecrübelerle proje yapısını (`pyproject.toml`), build sürecini (`Dockerfile`) ve çalışma zamanı yapılandırmasını (`docker-compose.yml`) standartlaştırmak, projenin genel bakım maliyetini düşürür ve tutarlılığını artırır.
+*   **Uygulanan Değişiklikler ve Sonuçlar:**
+    1.  **Mimari:** FastAPI (API), Celery (Worker) ve Flower (İzleme) olmak üzere üç ana bileşenden oluşan, ölçeklenebilir bir mimari kuruldu.
+    2.  **Entegrasyon:** Servis, `sentiric-infrastructure`'ın sağladığı RabbitMQ ve Redis servislerine, standartlaştırılmış `.env` yapılandırması üzerinden başarıyla bağlandı. RabbitMQ'daki `ACCESS_REFUSED` ve Celery'deki `ValueError` gibi kritik entegrasyon hataları çözüldü.
+    3.  **Doğrulama:** Uçtan uca yapılan `curl` testleri, servisin görevleri başarıyla kabul ettiğini, arka planda işlediğini ve sonucunu API üzerinden doğru bir şekilde sunduğunu kanıtladı.
+*   **Sonuç:** `sentiric-task-service`, platformun asenkron iş yüklerini yönetmeye hazır, sağlam ve gözlemlenebilir bir temel taşı olarak tamamlanmıştır.
+---
 ### **2025-08-04: BÜYÜK BAŞARI - Uçtan Uca Çağrı Akışı Başarıyla Tamamlandı!**
 
 *   **Karar:** Rust ve Go servisleri arasındaki mTLS uyumsuzluğunu ve Docker Compose başlatma sırası sorunlarını gidermek için yapılan düzeltmelerin ardından gerçekleştirilen test araması başarıyla sonuçlanmıştır.
