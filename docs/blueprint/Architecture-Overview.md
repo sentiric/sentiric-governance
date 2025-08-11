@@ -1,4 +1,4 @@
-# 🏛️ Sentiric Anayasası (v10.0 - Nihai Sürüm)
+# 🏛️ Sentiric Anayasası (v11.0 - Ses Orkestrasyonu)
 
 **Belge Durumu:** **AKTİF VE BAĞLAYICI**
 **Son Güncelleme:** [Bugünün Tarihi]
@@ -41,7 +41,7 @@ graph TD
     subgraph "🚀 Sentiric Platformu"
         subgraph "🔌 1. Ağ Geçitleri (Edge Layer)"
             style EdgeLayer fill:#e7f5ff,stroke:#228be6
-            B1("[[sentiric-sip-gateway-service]] <br> **Rust/Go - Güvenlik & NAT**")
+            B1("[[sentiric-sip-gateway-service]] <br> **Rust - Güvenlik & NAT**")
             B2("[[sentiric-api-gateway-service]] <br> **Go/Node.js - Yönetim API**")
         end
 
@@ -51,44 +51,48 @@ graph TD
              C2("[[sentiric-agent-service]] <br> **Eylem & SAGA Orkestratörü**")
              C3("[[sentiric-llm-service]] <br> **Python - AI Dil Modeli Ağ Geçidi**")
         end
+        
+        subgraph "🎤 3. Ses Orkestrasyon Katmanı"
+            style TtsLayer fill:#f3e5f5,stroke:#8e24aa
+            TTS_GW("[[sentiric-tts-gateway-service]] <br> **Rust - Akıllı Ses Yönlendirici**")
+        end
 
-        subgraph "🛠️ 3. Uzman Destek Servisleri"
+        subgraph "🛠️ 4. Uzman Destek Servisleri"
             style CoreServices fill:#fff4e6,stroke:#fd7e14
             D1("[[sentiric-user-service]] <br> **Go - Kimlik Yönetimi**")
             D2("[[sentiric-media-service]] <br> **Rust - Ses Akışı (RTP)**")
             D3("[[sentiric-stt-service]] <br> **Python - Konuşma->Metin**")
-            D4("[[sentiric-tts-service]] <br> **Python - Metin->Konuşma**")
+            TTS_Edge("[[sentiric-edge-tts-service]] <br> **Python - Hızlı/Ücretsiz Ses**")
+            TTS_Coqui("[[sentiric-coqui-tts-service]] <br> **Python - Klonlama/Yerel Ses**")
         end
     end
 
-    subgraph "🏗️ 4. Altyapı & Veri Katmanı"
+    subgraph "🏗️ 5. Altyapı & Veri Katmanı"
         style Infra fill:#f8f9fa,stroke:#6c757d
         F1("🐇 RabbitMQ (Asenkron Olaylar)")
         F2("🗄️ PostgreSQL (Kalıcı Veri, Kurallar, SAGA State)")
-        F3("[[sentiric-contracts]] <br> **.proto - API Sözleşmeleri**")
+        F3("⚡ Redis (Cache, Durum Yönetimi)")
+        F4("[[sentiric-contracts]] <br> **.proto - API Sözleşmeleri**")
     end
 
     %% --- İletişim Akışları (Güncellenmiş) ---
     A1 -- "SIP (UDP)" --> B1
-    B1 -- "gRPC (Senkron)" --> C1
-    C1 -- "Veritabanı Sorgusu (TCP)" --> F2
-    C1 -- "gRPC (Senkron)" --> D1
     B1 -- "Olay (Asenkron)" --> F1
-    F1 -- "Olayı Tüketir" --> C2
-    C2 -- "gRPC (Senkron)" --> D1
-    C2 -- "gRPC (Senkron)" --> D2
-    C2 -- "HTTP/REST (Senkron)" --> C3
-    C2 -- "HTTP/REST (Senkron)" --> D3
-    C2 -- "HTTP/REST (Senkron)" --> D4
-    C2 -- "SAGA State Yönetimi (TCP)" --> F2
-    A2 -- "HTTPS" --> B2
-    B2 -- "gRPC (Senkron)" --> C1
-    B2 -- "gRPC (Senkron)" --> D1
+    B1 -- "gRPC (Senkron)" --> C1
     
-    F3 -.-> |"Tüm Go/Python/Rust Servisleri Tarafından Kullanılır"| C1
-    F3 -.-> |"Tüm Go/Python/Rust Servisleri Tarafından Kullanılır"| C2
-    F3 -.-> |"Tüm Go/Python/Rust Servisleri Tarafından Kullanılır"| D1
-    F3 -.-> |"Tüm Go/Python/Rust Servisleri Tarafından Kullanılır"| D2
+    F1 -- "Olayı Tüketir" --> C2
+    C2 -- "gRPC" --> D1 & D2
+    C2 -- "HTTP/REST" --> C3 & D3
+    C2 -- "gRPC (SSML İsteği)" --> TTS_GW
+    
+    TTS_GW -- "Cache Sorgusu" --> F3
+    TTS_GW -- "gRPC (Basit Metin)" --> TTS_Edge
+    TTS_GW -- "gRPC (Basit Metin)" --> TTS_Coqui
+    
+    A2 -- "HTTPS" --> B2
+    B2 -- "gRPC" --> C1 & D1
+    
+    F4 -.-> |"Tüm Go/Rust/Python Servisleri Kullanır"| B1
 ```
 
 ### **2.2. Teknoloji Yığını ve Gerekçeleri**

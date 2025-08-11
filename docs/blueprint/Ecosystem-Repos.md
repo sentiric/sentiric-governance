@@ -15,9 +15,13 @@ Bu liste, Sentiric ekosistemindeki her bir reponun nihai rolünü, **doğrulanm�
 | | `sentiric-media-service` | **Rust** | Yüksek performanslı, gerçek zamanlı ses (RTP/SRTP) akışlarını yönetir. Dinamik port tahsisi ve anons/medya dosyası çalma işlemlerinden sorumludur. |
 | **Orkestrasyon**| `sentiric-agent-service` | **Go**| **Platformun asenkron beyni.** RabbitMQ'dan gelen olayları dinler, `dialplan` kararlarını uygular ve diğer uzman servisleri (gRPC ve HTTP ile) yöneterek iş akışlarını hayata geçirir. |
 | **Yapay Zeka**| `sentiric-llm-service` | **Python** | **AI Dil Modeli Ağ Geçidi.** `agent-service`'ten gelen metin üretme isteklerini alır ve bunları Google Gemini, OpenAI gibi harici LLM sağlayıcılarına soyutlayarak yönlendirir. |
-| | `sentiric-tts-service` | **Python** | Verilen metin girdilerini (SSML desteğiyle) doğal insan sesine dönüştürür (Text-to-Speech). |
+| | `sentiric-tts-gateway-service` | **Rust** | **Ses Üretim Santrali.** `agent-service`'ten gelen SSML tabanlı istekleri alır, akıllıca yönlendirir, önbelleğe alır ve en uygun Uzman TTS Servisi'nden ses üreterek yanıt döner. |
 | | `sentiric-stt-service` | **Python** | Gelen ses akışlarını veya dosyalarını yüksek doğrulukla metne dönüştürür (Speech-to-Text). |
 | | `sentiric-knowledge-service`| **Python** | AI ajanları için çok-kaynaklı (dosya, web, DB) ve çok-kiracılı (multi-tenant) bir RAG bilgi tabanı sunar. Vektör veritabanını (Qdrant) yönetir. |
+| | `sentiric-coqui-tts-service` | **Python** | Uzman TTS Servisi: Coqui XTTS modelini kullanarak yüksek kaliteli ses klonlama ve yerel ses üretimi sağlar. |
+| | `sentiric-edge-tts-service` | **Python** | Uzman TTS Servisi: Microsoft Edge motorunu kullanarak hızlı, kaliteli ve ücretsiz ses üretimi sağlar. Platformun varsayılan motorudur. |
+| | `sentiric-styletts2-tts-service` | **Python** | Uzman TTS Servisi: Gelecek nesil StyleTTS2 modelini barındıran Ar-Ge ve üretim servisidir. |
+| | `sentiric-elevenlabs-tts-service`| **Python** | Uzman TTS Servisi: ElevenLabs API'sini kullanarak premium ve markalı ses üretimi sağlar. |
 
 ## **B. Veri ve Kalıcılık Servisleri**
 *(Platformun kullanıcı, yapılandırma ve çağrı detay verilerini yöneten ve gRPC ile hizmet veren uzman servisler.)*

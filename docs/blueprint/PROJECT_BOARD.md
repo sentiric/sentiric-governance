@@ -77,6 +77,23 @@ Bu belge, stratejik yol haritasını, taktiksel görev panosunu ve teknik iyile�
 
 ---
 
+### **FAZ 2.5: AKILLI SES ORKESTRASYONU**
+
+**Hedef:** Platformun ses üretme yeteneğini, tek bir modele bağımlı olmaktan çıkarıp, birden fazla uzman TTS motorunu akıllıca yöneten, esnek, dayanıklı ve verimli bir hibrit sisteme dönüştürmek.
+
+| ID | Görev | Öncelik | Repo(lar) | Durum |
+|:---|:---|:---|:---|:---|
+| **TTS-01** | **[Görev]: Mimari:** Ses Orkestrasyon mimarisini `governance` dokümanlarına işlemek. | **Kritik** | `governance` | `[ ✔️ ] Done` |
+| **TTS-02** | **[Yeni Görev 🚀]: Servis:** `sentiric-edge-tts-service`'i oluşturmak ve altyapıya eklemek. | **Kritik** | `edge-tts-service`, `infrastructure` | `[ ⬜ ] To Do` |
+| **TTS-03** | **[Yeni Görev 🚀]: Servis:** `tts-service` reposunu `tts-gateway-service`'e dönüştürmek (Rust). | **Yüksek** | `tts-gateway-service` | `[ ⬜ ] To Do` |
+| **TTS-04** | **[Yeni Görev 🚀]: Entegrasyon:** `agent-service`'in `tts-gateway`'e istek atmasını sağlamak. | **Yüksek** | `agent-service`, `contracts` | `[ ⬜ ] To Do` |
+| **TTS-05** | **[Yeni Görev 🚀]: Servis:** Mevcut `tts-service` kodunu yeni `coqui-tts-service` reposuna taşımak. | **Orta** | `coqui-tts-service` | `[ ⬜ ] To Do` |
+| **TTS-06** | **[Yeni Görev 🚀]: Cache:** `tts-gateway`'e Redis tabanlı merkezi ses önbelleği eklemek. | **Orta** | `tts-gateway-service`, `infrastructure`| `[ ⬜ ] To Do` |
+| **TTS-07** | **[Yeni Görev 🚀]: SSML:** `tts-gateway`'e temel SSML ayrıştırma ve paralel işleme yeteneği eklemek. | **Orta** | `tts-gateway-service` | `[ ⬜ ] To Do` |
+| **TTS-08** | **[Yeni Görev 🚀]: Servis:** Gelecek nesil `styletts2-tts-service` için iskelet repo oluşturmak. | Düşük | `styletts2-tts-service` | `[ ⬜ ] To Do` |
+
+---
+
 ### **FAZ 3: CANLANAN PLATFORM**
 
 **Hedef:** İskelete "beyin" ve "ses" ekleyerek platformu, arayanla anlamlı bir diyalog kurabilen akıllı bir sisteme dönüştürmek.
