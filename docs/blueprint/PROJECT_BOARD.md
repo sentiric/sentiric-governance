@@ -30,13 +30,13 @@ Bu belge, stratejik yol haritasını, taktiksel görev panosunu ve teknik iyile�
 | **P1-T01**| **[Görev]: Altyapı:** Profil Tabanlı Dağıtım Stratejisi Oluşturma | **Kritik** | `infrastructure` | `[ ✔️ ] Done` |
 | **P1-T02**| **[Görev]: Altyapı:** Dayanıklı Başlatma için `healthcheck` ve `depends_on` entegrasyonu | **Kritik** | `infrastructure` | `[ ✔️ ] Done` |
 | **P1-T03**| **[Görev]: Güvenlik:** Tüm gRPC İletişimini mTLS ile Güvenli Hale Getirme | **Kritik** | Tüm gRPC servisleri | `[ ✔️ ] Done` |
-| **P1-T04**| **[Yeni Görev 🚀]: Mimari:** RabbitMQ Mimarisi'ni "Fanout Exchange" Modelin'e Geçirme | **Kritik**| `sip-signaling`, `agent-service`, `cdr-service` | `[ ⬜ ] To Do` |
+| **P1-T04**| **[Yeni Görev 🚀]: Mimari:** RabbitMQ Mimarisi'ni "Fanout Exchange" Modelin'e Geçirme | **Kritik**| `sip-signaling`, `agent-service`, `cdr-service` | `[ ✔️ ] Done` |
 | **P1-T05**| **[Yeni Görev 🚀]: Test:** Kritik İş Mantığı için Birim Testi (Unit Test) Altyapısını Kurma | **Kritik**| `dialplan-service`, `agent-service`, Tümü | `[ ⬜ ] To Do` |
 | **P1-T06**| **[Yeni Görev 🚀]: DevOps:** Tüm CI/CD pipeline'larına Test (`go test`) ve Linting (`golangci-lint`) adımlarını eklemek. | **Kritik**| Tümü | `[ ⬜ ] To Do` |
-| **P1-T07**| **[Yeni Görev 🚀]: Kod Kalitesi:** Monolitik `main.go` dosyalarını `internal` paket yapısıyla modüler hale getirme | **Yüksek**| `user-service`, `dialplan-service` | `[ ⬜ ] To Do` |
-| **P1-T08**| **[Görev]: API:** `api-gateway-service` iskeletini oluşturma ve mTLS ile güvenli hale getirme | Yüksek | `api-gateway-service` | `[ ⬜ ] To Do`|
+| **P1-T07**| **[Yeni Görev 🚀]: Kod Kalitesi:** Monolitik `main.go` dosyalarını `internal` paket yapısıyla modüler hale getirme | **Yüksek**| `user-service`, `dialplan-service`, `cdr-service` | `[ ✔️ ] Done` |
+| **P1-T08**| **[Görev]: API:** `api-gateway-service` iskeletini oluşturma ve mTLS ile güvenli hale getirme | Yüksek | `api-gateway-service` | `[ ✔️ ] Done`|
 | **P1-T09**| **[Görev]: Test:** `cli` üzerinden `api-gateway` aracılığıyla `user-service`'e ulaşan ilk uçtan uca testi yazma | Yüksek | `cli`, `api-gateway-service`, `user-service` | `[ ⬜ ] To Do` |
-| **P1-T10**| **[Yeni Görev 🚀]: Kod Kalitesi:** Ortam değişkenleri ve Dockerfile'lar için standardizasyon sağlama | Orta | Tümü, `infrastructure`, `governance` | `[ ⬜ ] To Do` |
+| **P1-T10**| **[Yeni Görev 🚀]: Kod Kalitesi:** Ortam değişkenleri ve Dockerfile'lar için standardizasyon sağlama | Orta | Tümü, `infrastructure`, `governance` | `[ ✔️ ] Done` |
 
 ---
 
@@ -47,11 +47,11 @@ Bu belge, stratejik yol haritasını, taktiksel görev panosunu ve teknik iyile�
 | ID | Görev | Öncelik | Repo(lar) | Durum |
 |:---|:---|:---|:---|:---|
 | **OBS-01** | **[Görev]:** `OBSERVABILITY_STANDARD.md` dokümanını oluşturmak ve ana dokümanları güncellemek. | **Kritik** | `governance` | `[ ✔️ ] Done` |
-| **OBS-02** | **[Görev]:** Tüm servislerde standart ve ortama duyarlı (JSON/Console) loglamayı implemente etmek. | **Kritik** | Tümü | `[ ⏳ ] WIP` |
+| **OBS-02** | **[Görev]:** Tüm servislerde standart ve ortama duyarlı (JSON/Console) loglamayı implemente etmek. | **Kritik** | Tümü | `[ ✔️ ] Done` |
 | **OBS-03** | **[Yeni Görev 🚀]:** Altyapıya Prometheus ve Grafana eklemek. | **Yüksek** | `infrastructure` | `[ ⬜ ] To Do` |
-| **OBS-04** | **[Yeni Görev 🚀]:** Tüm servislere Prometheus `/metrics` endpoint'ini ve temel RED metriklerini eklemek. | **Yüksek** | Tümü | `[ ⬜ ] To Do` |
-| **OBS-05** | **[Yeni Görev 🚀]:** Ağ geçitlerinde (`sip-gateway`, `api-gateway`) `trace_id` oluşturma ve yayma mekanizmasını implemente etmek. | **Yüksek** | `sip-gateway`, `api-gateway` | `[ ⬜ ] To Do` |
-| **OBS-06** | **[Yeni Görev 🚀]:** Diğer tüm servislerde gelen `trace_id`'yi yakalama ve yayma (context propagation) işlemini implemente etmek. | **Yüksek** | Tümü | `[ ⬜ ] To Do` |
+| **OBS-04** | **[Yeni Görev 🚀]:** Tüm servislere Prometheus `/metrics` endpoint'ini ve temel RED metriklerini eklemek. | **Yüksek** | Tümü | `[ ✔️ ] Done` |
+| **OBS-05** | **[Yeni Görev 🚀]:** Ağ geçitlerinde (`sip-gateway`, `api-gateway`) `trace_id` oluşturma ve yayma mekanizmasını implemente etmek. | **Yüksek** | `sip-gateway`, `api-gateway` | `[ ✔️ ] Done` |
+| **OBS-06** | **[Yeni Görev 🚀]:** Diğer tüm servislerde gelen `trace_id`'yi yakalama ve yayma (context propagation) işlemini implemente etmek. | **Yüksek** | Tümü | `[ ✔️ ] Done` |
 | **OBS-07** | **[Yeni Görev 🚀]:** Altyapıya Jaeger/Tempo (tracing backend) eklemek. | **Orta** | `infrastructure` | `[ ⬜ ] To Do` |
 
 ---
@@ -62,14 +62,14 @@ Bu belge, stratejik yol haritasını, taktiksel görev panosunu ve teknik iyile�
 
 | ID | Görev | Öncelik | Repo(lar) | Durum |
 | :--- | :--- | :--- | :--- | :--- |
-| **P2-T01**| **[Görev]: Veritabanı:** `init.sql` ile "Genesis Bloğu" (tüm tablolar) mantığını tamamlama| **Kritik**| `infrastructure` | `[ ✔️ ] Done` |
+| **P2-T01**| **[Görev]: Veritabanı:** `init.sql` ile "Genesis Bloğu" (tüm tablolar ve veriler) mantığını tamamlama| **Kritik**| `infrastructure`, `config` | `[ ✔️ ] Done` |
 | **P2-T02**| **[Görev]: Çekirdek:** `dialplan-service` ve `user-service`'in veritabanından okuma/yazma yetenekleri | **Kritik**| `dialplan-service`, `user-service` | `[ ✔️ ] Done` |
 | **P2-T03**| **[Görev]: Telekom:** `sip-signaling` ve `media-service`'in temel çağrı kurma ve port yönetimi yetenekleri | **Yüksek**| `sip-signaling-service`, `media-service` | `[ ✔️ ] Done` |
 | **P2-T04**| **[Görev]: Olaylaşma:** `sip-signaling`'in `call.started/ended` olaylarını RabbitMQ'ya atması | Yüksek | `sip-signaling-service` | `[ ✔️ ] Done` |
-| **P2-T05**| **[Görev]: Raporlama:** `cdr-service`'in olayları dinleyip DB'ye temel kayıtları atması | Yüksek | `cdr-service` | `[ ⬜ ] To Do` |
+| **P2-T05**| **[Görev]: Raporlama:** `cdr-service`'in olayları dinleyip DB'ye temel kayıtları atması | Yüksek | `cdr-service` | `[ ✔️ ] Done` |
 | **P2-T06**| **[Görev]: Test:** `cli` ile tam bir çağrı akışını (INVITE -> BYE) simüle edip DB'de CDR kaydını doğrulama | Yüksek | `cli`, `cdr-service` | `[ ⬜ ] To Do` |
-| **P2-T07**| **[Yeni Görev 🚀]: Çekirdek:** `sentiric-task-service` iskeletini (Celery/Redis) oluşturma | **Yüksek** | `task-service`, `infrastructure` | `[ ⬜ ] To Do` |
-| **P2-T08**| **[Yeni Görev 🚀]: Entegrasyon:** `sentiric-messaging-gateway-service` iskeletini oluşturma | **Orta** | `messaging-gateway-service`, `infrastructure` | `[ ⬜ ] To Do` |
+| **P2-T07**| **[Yeni Görev 🚀]: Çekirdek:** `sentiric-task-service` iskeletini (Celery/Redis) oluşturma | **Yüksek** | `task-service`, `infrastructure` | `[ ✔️ ] Done` |
+| **P2-T08**| **[Yeni Görev 🚀]: Entegrasyon:** `sentiric-messaging-gateway-service` iskeletini oluşturma | **Orta** | `messaging-gateway-service`, `infrastructure` | `[ ✔️ ] Done` |
 | **P2-T09**| **[Yeni Görev 🚀]: Veri Bütünlüğü:** `saga_transactions` tablosunu `init.sql`'e ekle | **Yüksek** | `infrastructure` | `[ ⬜ ] To Do` |
 | **P2-T10**| **[Yeni Görev 🚀]: Veri Bütünlüğü:** `agent-service`'de `SagaManager` modülünün iskeletini oluştur | **Yüksek** | `agent-service` | `[ ⬜ ] To Do` |
 | **P2-T11**| **[Yeni Görev 🚀]: Veri Bütünlüğü:** Katılımcı servislerde temel işlem/tazmin endpoint'lerini tanımla | **Orta** | `user-service`, `connectors-service` | `[ ⬜ ] To Do` |
@@ -103,7 +103,7 @@ Bu belge, stratejik yol haritasını, taktiksel görev panosunu ve teknik iyile�
 | **P3-T01**| **[Yeni Görev 🚀]: AI Çekirdek:** `agent-service`'de Redis tabanlı Durum Makinesi (State Machine) implementasyonu | **Kritik**| `agent-service`, `infrastructure` | `[ ⬜ ] To Do` |
 | **P3-T02**| **[Görev]: AI Çekirdek:** `llm-service`'in `agent-service` ile entegrasyonu | **Kritik**| `llm-service`, `agent-service` | `[ ✔️ ] Done` |
 | **P3-T03**| **[Görev]: Akış:** `agent-service`'in `dialplan` kararına göre `media-service`'e `PlayAudio` komutu göndermesi | **Yüksek**| `agent-service`, `media-service` | `[ ✔️ ] Done` |
-| **P3-T04**| **[Görev]: AI Duyular:** `tts-service` ve `stt-service` iskeletlerinin oluşturulması ve entegrasyonu
+| **P3-T04**| **[Görev]: AI Duyular:** `tts-service` ve `stt-service` iskeletlerinin oluşturulması ve entegrasyonu | Yüksek | `stt-service`, `tts-service`, `infrastructure` | `[ ✔️ ] Done` |
 | **P3-T05**| **[Görev]: UI:** `dashboard-ui`'nin `api-gateway` üzerinden `cdr-service` verilerini göstermesi | Yüksek | `dashboard-ui`, `api-gateway-service` | `[ ⬜ ] To Do` |
 | **P3-T06**| **[Görev]: Test:** Gerçek bir telefonla arama yapıp sistemin ilk anonsunu duyma (Uçtan Uca Test) | Yüksek | Tümü | `[ ✔️ ] Done` |
 
@@ -115,9 +115,8 @@ Bu belge, stratejik yol haritasını, taktiksel görev panosunu ve teknik iyile�
 
 | ID | Görev | Öncelik | Repo(lar) | Durum |
 | :--- | :--- | :--- | :--- | :--- |
-| **P4-T01**| **[Görev]: UI:** `web-agent-ui` iskeletinin oluşturulması ve çağrı devri için altyapı hazırlığı | **Kritik**| `web-agent-ui` | `[ ⬜ ] To Do` |
-| **P4-T02**| **[Görev]: AI Zeka:** `knowledge-service` (RAG) iskeletinin oluşturulması ve `agent-service` entegrasyonu | **Yüksek**| `knowledge-service`, `agent-service` | `[ ⬜ ] To Do` |
+| **P4-T01**| **[Görev]: UI:** `web-agent-ui` iskeletinin oluşturulması ve çağrı devri için altyapı hazırlığı | **Kritik**| `web-agent-ui` | `[ ✔️ ] Done` |
+| **P4-T02**| **[Görev]: AI Zeka:** `knowledge-service` (RAG) iskeletinin oluşturulması ve `agent-service` entegrasyonu | **Yüksek**| `knowledge-service`, `agent-service` | `[ ✔️ ] Done` |
 | **P4-T03**| **[Görev]: Entegrasyon:** `connectors-service` için ilk konektörün (örn. Google Calendar) geliştirilmesi | Yüksek| `connectors-service` | `[ ⬜ ] To Do` |
-| **P4-T04**| **[Yeni Görev 🚀]: Vizyon:** `sentiric-marketplace-service` iskeletini oluşturma | **Orta** | `marketplace-service`, `infrastructure` | `[ ⬜ ] To Do` |
+| **P4-T04**| **[Yeni Görev 🚀]: Vizyon:** `sentiric-marketplace-service` iskeletini oluşturma | **Orta** | `marketplace-service` | `[ ⬜ ] To Do` |
 | **P4-T05**| **[Görev]: UI/UX:** `dashboard-ui` üzerine "Low-Code Dialplan Tasarımcısı" v1.0 eklenmesi | Orta| `dashboard-ui` | `[ ⬜ ] To Do` |
-```

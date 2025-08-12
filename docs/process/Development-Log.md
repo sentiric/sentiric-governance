@@ -3,6 +3,17 @@
 Bu belge, projenin gelişim hikayesini, alınan önemli kararları ve bu kararların arkasındaki "neden"leri kaydeder. Ters kronolojik sıra ile tutulur.
 
 ---
+### **2025-08-12: ZAFER - Veri Modeli Devrimi ve Platform Stabilizasyonu Tamamlandı**
+
+*   **Karar:** Platformun temel veri mimarisi, telefon numarası merkezli bir yapıdan, `UUID` tabanlı kullanıcı profillerini ve onlara bağlı `contacts` (iletişim kanalları) yapısını destekleyen, ölçeklenebilir ve "omnichannel" uyumlu bir modele tamamen geçirildi. Bu süreçte tespit edilen tüm kritik hatalar (RabbitMQ mimarisi, derleme sorunları, konfigürasyon tutarsızlıkları, "sessiz çöküşler") giderildi.
+*   **Gerekçe:** Projenin başlangıçtaki veri modeli, gelecekteki çoklu kanal (WhatsApp, e-posta) desteği için yetersizdi ve raporlama için esnek değildi. Tüm çekirdek servislerin bu yeni, sağlam temel üzerinde çalışması, platformun uzun vadeli sağlığı ve genişletilebilirliği için zorunlu bir adımdı. Yapılan titiz hata ayıklama süreci, "sıfır hata toleransı" manifestosunun bir gereğiydi.
+*   **Uygulanan Değişiklikler ve Sonuçlar:**
+    1.  **Veritabanı:** `users`, `contacts`, `calls` tablolarını içeren yeni şema başarıyla uygulandı.
+    2.  **API Sözleşmeleri:** `sentiric-contracts` v1.6.2 olarak güncellendi ve tüm servisler bu yeni versiyonu kullanmaya başladı.
+    3.  **Servisler:** `user-service`, `dialplan-service`, `cdr-service`, `agent-service` ve `sip-signaling-service`, yeni veri modeliyle ve birbirleriyle tam uyumlu hale getirildi.
+    4.  **Stabilite:** `docker ps` çıktısında, tüm 22 servisin de `Up` veya `Healthy` durumunda olduğu, hiçbir servisin `Restarting` döngüsünde olmadığı kanıtlandı.
+*   **Sonuç:** Bu kilometre taşı ile, Sentiric platformunun temel altyapı ve mimari stabilizasyon fazı **tamamlanmıştır.** Platform, artık üzerine karmaşık AI ve iş mantığı özelliklerinin güvenle inşa edilebileceği, son derece sağlam ve gözlemlenebilir bir omurgaya sahiptir.
+---
 ### **2025-08-08: Asenkron Omurganın İnşası - `sentiric-task-service` Tamamlandı**
 
 *   **Karar:** Platformun uzun süren ve zamanlanmış görevlerini yönetecek olan `sentiric-task-service`'in, Celery, RabbitMQ ve Redis kullanılarak, `stt-service` ve `tts-service` ile aynı yüksek kalite standartlarında inşa edilmesine karar verilmiştir.
