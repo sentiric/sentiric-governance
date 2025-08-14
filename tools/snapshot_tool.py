@@ -99,6 +99,30 @@ DEFAULT_EXCLUDE_PATTERNS = [
     "*.db", "*.sqlite", "*.sqlite3", "*.mdb"
 ]
 
+# Flutter projeleri için özel ayarlar
+FLUTTER_INCLUDE_DIRS = ["lib", "assets", "test"]  # Sadece bu dizinleri tarar
+FLUTTER_INCLUDE_EXTENSIONS = [
+    ".dart", 
+    ".yaml", 
+    ".md", 
+    "pubspec.yaml",
+    ".txt"
+]
+FLUTTER_EXCLUDE_PATTERNS = [
+    "build/",
+    ".dart_tool/",
+    ".idea/",
+    "ios/",
+    "android/",
+    "web/",
+    "linux/",
+    "windows/",
+    "macos/",
+    "*.iml",
+    ".flutter-plugins*",
+    ".metadata"
+]
+
 # Language specific exclude patterns
 LANGUAGE_SPECIFIC_EXCLUDES = {
     "python": ["*.py[cod]", "__pycache__", ".pytest_cache", ".mypy_cache"],

@@ -56,8 +56,6 @@ python tools/snapshot_tool.py collect ../coqui-tts-service.txt --base-dir ../ --
 python tools/snapshot_tool.py collect ../dashboard-ui.txt --base-dir ../ --include-dir sentiric-dashboard-ui
 python tools/snapshot_tool.py collect ../db-models.txt --base-dir ../ --include-dir sentiric-db-models
 python tools/snapshot_tool.py collect ../dialplan-service.txt --base-dir ../ --include-dir sentiric-dialplan-service
-python tools/snapshot_tool.py collect ../edge-tts-service.txt --base-dir ../ --include-dir sentiric-edge-tts-service
-python tools/snapshot_tool.py collect ../elevenlabs-tts-service.txt --base-dir ../ --include-dir sentiric-elevenlabs-tts-service
 python tools/snapshot_tool.py collect ../embeddable-voice-widget-sdk.txt --base-dir ../ --include-dir sentiric-embeddable-voice-widget-sdk
 python tools/snapshot_tool.py collect ../governance.txt --base-dir ../ --include-dir sentiric-governance
 python tools/snapshot_tool.py collect ../infrastructure.txt --base-dir ../ --include-dir sentiric-infrastructure
@@ -71,11 +69,13 @@ python tools/snapshot_tool.py collect ../sip-client-sdk.txt --base-dir ../ --inc
 python tools/snapshot_tool.py collect ../sip-gateway-service.txt --base-dir ../ --include-dir sentiric-sip-gateway-service
 python tools/snapshot_tool.py collect ../sip-signaling-service.txt --base-dir ../ --include-dir sentiric-sip-signaling-service
 python tools/snapshot_tool.py collect ../stt-service.txt --base-dir ../ --include-dir sentiric-stt-service
-python tools/snapshot_tool.py collect ../styletts2-tts-service.txt --base-dir ../ --include-dir sentiric-styletts2-tts-service
 python tools/snapshot_tool.py collect ../task-service.txt --base-dir ../ --include-dir sentiric-task-service
+python tools/snapshot_tool.py collect ../tts-coqui-service.txt --base-dir ../ --include-dir sentiric-tts-coqui-service
+python tools/snapshot_tool.py collect ../tts-edge-service.txt --base-dir ../ --include-dir sentiric-tts-edge-service
+python tools/snapshot_tool.py collect ../tts-elevenlabs-service.txt --base-dir ../ --include-dir sentiric-tts-elevenlabs-service
 python tools/snapshot_tool.py collect ../tts-gateway-service.txt --base-dir ../ --include-dir sentiric-tts-gateway-service
-python tools/snapshot_tool.py collect ../telephony-gateway-service.txt --base-dir ../ --include-dir sentiric-telephony-gateway-service
-python tools/snapshot_tool.py collect ../tts-service.txt --base-dir ../ --include-dir sentiric-tts-service
+# python tools/snapshot_tool.py collect ../tts-service.txt --base-dir ../ --include-dir sentiric-tts-service
+# python tools/snapshot_tool.py collect ../telephony-gateway-service.txt --base-dir ../ --include-dir sentiric-telephony-gateway-service
 python tools/snapshot_tool.py collect ../user-service.txt --base-dir ../ --include-dir sentiric-user-service
 python tools/snapshot_tool.py collect ../web-agent-ui.txt --base-dir ../ --include-dir sentiric-web-agent-ui
 ```
