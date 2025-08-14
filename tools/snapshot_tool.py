@@ -9,6 +9,7 @@ from fnmatch import fnmatch
 # Enhanced configuration for included/excluded paths and extensions
 DEFAULT_INCLUDE_DIRS = ["."]
 DEFAULT_INCLUDE_EXTENSIONS = [
+    ".env",
     # Config files
     ".toml", ".yaml", ".yml", ".json", ".ini", ".cfg", ".conf",
     
@@ -257,7 +258,7 @@ def collect_project_files_full(
     if include_extensions is None: 
         include_extensions = DEFAULT_INCLUDE_EXTENSIONS
     if exclude_patterns is None: 
-        exclude_patterns = DEFAULT_EXCLUDE_PATTERNS
+        exclude_patterns = DEFAULT_EXCLUDE_PATTERNS + FLUTTER_EXCLUDE_PATTERNS
 
     abs_base_dir = os.path.abspath(base_dir)
     project_types = detect_project_type(abs_base_dir)
