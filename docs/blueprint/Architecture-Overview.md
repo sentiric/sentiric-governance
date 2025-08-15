@@ -97,17 +97,21 @@ graph TD
 
 ### **2.2. Teknoloji Yığını ve Gerekçeleri**
 
-*   **Rust (`sip-gateway`, `media-service`):** Maksimum performans, bellek güvenliği ve düşük seviye ağ kontrolü gerektiren, dış dünyaya en yakın servisler için.
+*   **Rust (`sip-gateway`, `media-service`, `tts-gateway`):** Maksimum performans, bellek güvenliği ve düşük seviye ağ kontrolü gerektiren, dış dünyaya en yakın ve yüksek verim gerektiren servisler için.
 *   **Go (`dialplan-service`, `user-service`, `agent-service`):** Hızlı, basit, yüksek eşzamanlılık gerektiren ve veritabanı ile yoğun iletişim kuran gRPC tabanlı uzman servisler ve ana orkestratör için.
-*   **Python (`llm-service`, `stt-service`, `tts-service`):** Zengin AI/ML ekosistemi, hızlı prototipleme ve karmaşık AI mantığının uygulanması için ideal olan, izole AI ağ geçitleri için.
+*   **Python (`llm-service`, `stt-service`, `tts-*` uzman motorları):** Zengin AI/ML ekosistemi, hızlı prototipleme ve karmaşık AI mantığının uygulanması için ideal olan, izole AI ağ geçitleri için.
 
+### **2.3. Uçtan Uca Sesli Yanıt Akışı (Yeni Mimari)**
 
-### **2.3. Uçtan Uca Çağrı Akışı (Genesis Senaryosu)**
+1.  **Giriş ve Karar:** `INVITE` paketi gelir, `sip-gateway` -> `sip-signaling` -> `dialplan-service` akışı çalışır. `call.started` olayı RabbitMQ'ya atılır.
+2.  **Devralma:** `agent-service` olayı alır. Diyalog akışında bir ses çalınması gerektiğine karar verir.
+3.  **Ses Talebi:** `agent-service`, metin ve klonlama URL'si gibi bilgilerle `tts-gateway`'e **gRPC** ile bir `Synthesize` isteği gönderir.
+4.  **Akıllı Yönlendirme:** `tts-gateway` isteği analiz eder. Klonlama URL'si olduğu için isteği `tts-coqui-service`'e yönlendirir.
+5.  **Sentezleme:** `tts-coqui-service` sesi üretir ve ham ses verisini (`bytes`) `tts-gateway`'e geri döner.
+6.  **Yanıt:** `tts-gateway`, bu ham ses verisini `agent-service`'e gRPC yanıtı olarak iletir.
+7.  **Medya Oynatma:** `agent-service`, aldığı ham ses verisini base64'e kodlar, bir `data:` URI'si oluşturur ve `media-service`'in `PlayAudio` RPC'sini bu URI ile çağırır.
+8.  **Sonuç:** `media-service` URI'yi çözer, sesi RTP paketlerine dönüştürür ve kullanıcıya gönderir.
 
-1.  **Giriş:** Bir `INVITE` paketi `sip-gateway`'e ulaşır.
-2.  **Senkron Karar:** `sip-gateway`, `dialplan-service`'i **gRPC** ile çağırır. `dialplan-service` de `user-service`'i çağırır, veritabanını sorgular ve nihai kararı (`DP_GUEST_ENTRY` vb.) `sip-gateway`'e geri döner.
-3.  **Asenkron Devir:** `sip-gateway`, bu karar ve çağrı bilgileriyle birlikte bir `call.started` olayını **RabbitMQ**'ya atar.
-4.  **Uygulama:** `agent-service`, bu olayı tüketir, kararı okur (`PROCESS_GUEST_CALL`) ve ilgili uzman servisleri (`user-service`, `media-service`) **gRPC** ile çağırarak eylemi hayata geçirir.
 
 ## **BÖLÜM 3: YOL HARİTASI VE GELECEK VİZYONU**
 
