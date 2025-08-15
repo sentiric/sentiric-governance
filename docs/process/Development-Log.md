@@ -2,6 +2,11 @@
 
 Bu belge, projenin gelişim hikayesini, alınan önemli kararları ve bu kararların arkasındaki "neden"leri kaydeder. Ters kronolojik sıra ile tutulur.
 
+### **14.08.2025: KRİTİK GÜVENLİK AÇIĞI GİDERİLDİ - `agent-service` Tamamen Güvenli Hale Getirildi**
+
+*   **Karar:** AI Mimar'ın son analizinde tespit edilen, `agent-service`'in `tts-gateway` ile güvensiz (mTLS olmayan) bir bağlantı kurmasına neden olan kritik güvenlik açığı ve yanıltıcı RabbitMQ konfigürasyonu derhal giderilmiştir.
+*   **Gerekçe:** Platformun "Sıfır Güven" mimarisi, tüm iç servis iletişiminin mTLS ile şifrelenmesini zorunlu kılar. `agent-service`'deki bu istisna, kabul edilemez bir riskti ve platformun genel güvenlik duruşuyla çelişiyordu. Benzer şekilde, kullanılmayan konfigürasyon değişkenleri, kodun okunabilirliğini ve bakımını zorlaştıran bir teknik borç oluşturuyordu.
+*   **Sonuç:** Bu düzeltmeyle birlikte, `agent-service` de dahil olmak üzere tüm Go tabanlı servisler arası gRPC iletişimi artık %100 mTLS ile korunmaktadır. Platformun temel omurgası, planlandığı gibi güvenli ve tutarlı bir yapıya kavuşmuştur. Bu, platformun üzerine karmaşık AI diyalog mantığının inşa edileceği bir sonraki faza geçiş için son engeli de ortadan kaldırmıştır.
 ---
 ### **2025-08-12: ZAFER - Veri Modeli Devrimi ve Platform Stabilizasyonu Tamamlandı**
 
