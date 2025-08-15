@@ -2,6 +2,12 @@
 
 Bu belge, projenin gelişim hikayesini, alınan önemli kararları ve bu kararların arkasındaki "neden"leri kaydeder. Ters kronolojik sıra ile tutulur.
 
+### **15.08.2025: KRİTİK HATA TEŞHİSİ - `agent-service` ve `tts-gateway` Arasındaki mTLS Sorununu İzole Etme**
+
+*   **Karar:** `agent-service`'in sürekli olarak `tts-gateway` bağlantısında "context deadline exceeded" hatası alması üzerine, sorunu izole etmek için `tts-gateway`'in mTLS (karşılıklı doğrulama) zorunluluğu geçici olarak kaldırılmış ve tek yönlü TLS moduna alınmıştır.
+*   **Gerekçe:** Diğer tüm servislerin mTLS ile sorunsuz konuşuyor olması, bu iki servis arasındaki etkileşimde dile özgü (Go vs. Rust) bir TLS implementasyon farkı veya spesifik bir konfigürasyon hatası olabileceğine işaret ediyordu. İstemci doğrulamasını devre dışı bırakmak, sorunun sunucu tarafındaki doğrulama adımında mı yoksa istemci tarafındaki bağlantı kurma adımında mı olduğunu anlamak için en hızlı ve en etkili teşhis yöntemidir.
+*   **Sonuç:** Bu değişiklik, bir sonraki testte `agent-service`'in davranışına göre sorunun kaynağını kesin olarak ortaya koyacaktır. Eğer bağlantı başarılı olursa, Tonic'in istemci CA doğrulama mekanizması üzerinde durulacaktır; başarısız olursa, Go istemcisinin TLS yapılandırması tekrar incelenecektir. Bu, körlemesine denemeler yapmak yerine, sorunu bilimsel bir metotla çözme adımını temsil eder.
+---
 ### **14.08.2025: KRİTİK GÜVENLİK AÇIĞI GİDERİLDİ - `agent-service` Tamamen Güvenli Hale Getirildi**
 
 *   **Karar:** AI Mimar'ın son analizinde tespit edilen, `agent-service`'in `tts-gateway` ile güvensiz (mTLS olmayan) bir bağlantı kurmasına neden olan kritik güvenlik açığı ve yanıltıcı RabbitMQ konfigürasyonu derhal giderilmiştir.
